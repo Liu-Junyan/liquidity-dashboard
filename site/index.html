@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="美元流动性周度研究看板。当前为使用本地合成数据的交互原型。">
+  <meta name="theme-color" content="#12374b">
+  <title>美元流动性观察</title>
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./assets/styles.css">
+  <script src="./assets/vendor/echarts-5.6.0.min.js" defer></script>
+  <script type="module" src="./assets/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#research" data-i18n="skip"></a>
+  <header class="masthead">
+    <div class="container masthead-inner">
+      <a class="brand" href="#" data-i18n-aria-label="home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span><span data-i18n="brand"></span><span class="brand-sub" data-i18n="brandEnglish"></span></span></a>
+      <div class="masthead-note" data-i18n="mastheadNote"></div>
+    </div>
+  </header>
+  <nav class="main-nav" data-i18n-aria-label="mainNavigation"><div class="container nav-inner"><a class="active" href="#" data-i18n="dashboard"></a><a href="#methodology" data-i18n="methodology"></a><span class="nav-edition" data-i18n="edition"></span></div></nav>
+  <main class="container">
+    <section class="intro" aria-labelledby="page-title">
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <div class="title-row"><h1 id="page-title" data-i18n="title"></h1><span class="demo-badge"><span aria-hidden="true"></span><span data-i18n="demoBadge"></span></span></div>
+      <p class="intro-copy" data-i18n="intro"></p>
+      <div class="dataset-strip"><span><span class="status-dot" aria-hidden="true"></span><span data-i18n="weekly"></span></span><span id="dataset-date"></span><span id="dataset-window"></span><a href="#methodology" data-i18n="aboutData"></a></div>
+    </section>
+    <section class="overview" aria-labelledby="overview-title"><div class="section-kicker"><h2 id="overview-title" data-i18n="overview"></h2><span data-i18n="overviewHint"></span></div><div id="categories" class="category-grid"></div></section>
+    <section id="research" class="research" aria-labelledby="category-title" tabindex="-1">
+      <div class="research-heading"><div><p class="eyebrow" id="category-eyebrow"></p><h2 id="category-title"></h2></div><div class="range-field"><span data-i18n="rangeLabel"></span><div class="range-controls" id="ranges" role="group" data-i18n-aria-label="rangeAria"></div></div></div>
+      <div class="research-subtitle"><p id="category-description"></p><span class="legend"><i aria-hidden="true"></i><span data-i18n="syntheticSeries"></span></span></div>
+      <div id="charts" class="chart-grid" aria-live="polite"></div>
+      <p class="chart-note" data-i18n="chartNote"></p>
+    </section>
+    <section id="methodology" class="methodology" aria-labelledby="methodology-title"><div><p class="eyebrow" data-i18n="readingEyebrow"></p><h2 id="methodology-title" data-i18n="methodology"></h2></div><div class="methodology-copy"><p data-i18n="methodologyBody"></p><p data-i18n="placeholderNote"></p><p class="collection-time" id="collection-time"></p></div></section>
+    <p id="status" class="status-message" role="status"></p>
+    <noscript><p>请启用 JavaScript 以查看本地合成数据与交互图表。当前页面为演示原型，非实时市场数据。</p></noscript>
+  </main>
+  <footer><div class="container footer-inner"><span data-i18n="title"></span><span data-i18n="footerNote"></span><a href="#" data-i18n="backTop"></a></div></footer>
+  <dialog id="indicator-dialog" aria-labelledby="dialog-title"><div class="dialog-shell"><div class="dialog-top"><span class="demo-badge" data-i18n="demoBadge"></span><button id="close-dialog" class="icon-button" data-i18n-aria-label="close">×</button></div><div id="dialog-content"></div></div></dialog>
+</body>
+</html>

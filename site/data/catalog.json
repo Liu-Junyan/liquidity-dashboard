@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "dataset": {
+    "id": "synthetic-weekly-v1",
+    "isDemo": true,
+    "observationStart": "2021-10-27",
+    "observationEnd": "2026-10-28",
+    "collectedAt": "2026-10-28T00:00:00Z"
+  },
+  "categories": [
+    {"id": "category-1", "order": 1, "name": "类别一", "description": "框架待确认 · 以准备金与逆回购余额演示周度指标。"},
+    {"id": "category-2", "order": 2, "name": "类别二", "description": "框架待确认 · 以短期利率演示资金价格与基点变化。"},
+    {"id": "category-3", "order": 3, "name": "类别三", "description": "框架待确认 · 以财政账户与资产余额演示历史趋势。"},
+    {"id": "category-4", "order": 4, "name": "类别四", "description": "框架待确认 · 以回购交易与交易商头寸演示市场指标。"}
+  ],
+  "indicators": [
+    {"id": "reserve-balances", "categoryId": "category-1", "name": "准备金余额（示例）", "explanation": "以存款机构准备金余额为概念的合成序列，用于演示存量指标的观察方式。数值并非真实准备金余额；类别归属为临时展示安排。", "unit": {"kind": "amount", "label": "十亿美元", "precision": 1}, "frequency": "weekly", "source": {"name": "Federal Reserve · H.4.1（拟接入）", "url": "https://www.federalreserve.gov/releases/h41/"}, "isDemo": true},
+    {"id": "reverse-repo", "categoryId": "category-1", "name": "隔夜逆回购余额（示例）", "explanation": "以隔夜逆回购操作余额为概念的合成序列。刻意保留四周前的缺失观测，展示无法计算比较值时的空白状态。未接入官方操作结果。", "unit": {"kind": "amount", "label": "十亿美元", "precision": 1}, "frequency": "weekly", "source": {"name": "New York Fed · Reverse Repo（拟接入）", "url": "https://www.newyorkfed.org/markets/desk-operations/reverse-repo"}, "isDemo": true},
+    {"id": "sofr", "categoryId": "category-2", "name": "担保隔夜融资利率（示例）", "explanation": "以 SOFR 为概念的合成利率序列。纵轴单位为百分比，四周与十三周变化以基点表示，1 个百分点等于 100 个基点。周度值仅为演示，尚未定义真实日度数据的周度聚合方法。", "unit": {"kind": "rate", "label": "%", "precision": 2}, "frequency": "weekly", "source": {"name": "New York Fed · SOFR（拟接入）", "url": "https://www.newyorkfed.org/markets/reference-rates/sofr"}, "isDemo": true},
+    {"id": "effr", "categoryId": "category-2", "name": "有效联邦基金利率（示例）", "explanation": "以 EFFR 为概念的合成利率序列，用于演示短期资金价格的周度变化。所有观测均为固定公式生成，不可用于推断政策利率路径。", "unit": {"kind": "rate", "label": "%", "precision": 2}, "frequency": "weekly", "source": {"name": "New York Fed · EFFR（拟接入）", "url": "https://www.newyorkfed.org/markets/reference-rates/effr"}, "isDemo": true},
+    {"id": "treasury-account", "categoryId": "category-3", "name": "财政部一般账户余额（示例）", "explanation": "以 TGA 余额为概念的合成序列，演示余额与历史变动。具体统计口径、周度聚合方式及类别映射待真实数据阶段确认。", "unit": {"kind": "amount", "label": "十亿美元", "precision": 1}, "frequency": "weekly", "source": {"name": "Federal Reserve · H.4.1（拟接入）", "url": "https://www.federalreserve.gov/releases/h41/"}, "isDemo": true},
+    {"id": "fed-assets", "categoryId": "category-3", "name": "美联储总资产（示例）", "explanation": "以美联储资产负债表总资产为概念的合成序列。为测试长时间范围下的趋势显示而生成，未复制真实资产负债表数据。", "unit": {"kind": "amount", "label": "十亿美元", "precision": 1}, "frequency": "weekly", "source": {"name": "Federal Reserve · H.4.1（拟接入）", "url": "https://www.federalreserve.gov/releases/h41/"}, "isDemo": true},
+    {"id": "repo-volume", "categoryId": "category-4", "name": "回购交易量（示例）", "explanation": "以回购交易量为概念的合成序列，仅用于演示流量型指标。真实数据的市场覆盖范围及周度统计口径尚待确认。", "unit": {"kind": "amount", "label": "十亿美元", "precision": 1}, "frequency": "weekly", "source": {"name": "OFR · Short-term Funding Monitor（拟接入）", "url": "https://www.financialresearch.gov/short-term-funding-monitor/"}, "isDemo": true},
+    {"id": "dealer-positions", "categoryId": "category-4", "name": "交易商国债净头寸（示例）", "explanation": "以一级交易商国债净头寸为概念的合成序列。最新一周刻意留空，以展示最新有效值及其实际观测日期；图表与数据表保留该缺口。", "unit": {"kind": "amount", "label": "十亿美元", "precision": 1}, "frequency": "weekly", "source": {"name": "New York Fed · Primary Dealer Statistics（拟接入）", "url": "https://www.newyorkfed.org/markets/counterparties/primary-dealers-statistics"}, "isDemo": true}
+  ]
+}
