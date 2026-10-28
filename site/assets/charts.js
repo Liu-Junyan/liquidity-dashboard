@@ -9,6 +9,11 @@ export function disposeCharts(parent) {
   }
 }
 export function drawChart(element, observations, indicator, {sparkline = false} = {}) {
+  if (!observations.some(point => point.value !== null)) {
+    element.classList.add('chart-empty');
+    element.textContent = t('unquantifiedChart');
+    return;
+  }
   if (!window.echarts) { if (!sparkline) element.textContent = t('chartUnavailable'); return; }
   const chart = window.echarts.init(element, null, {renderer: 'svg'});
   instances.set(element, chart);

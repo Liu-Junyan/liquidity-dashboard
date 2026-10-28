@@ -22,7 +22,7 @@ def validate(catalog, observations):
     collected = datetime.fromisoformat(dataset['collectedAt'].replace('Z', '+00:00'))
     require(collected.utcoffset() is not None, 'Collection time must include a timezone')
     categories, indicators = catalog['categories'], catalog['indicators']
-    require(len(categories) == 4, 'Expected four placeholder categories')
+    require(len(categories) == 4, 'Expected four research layers')
     ids = [item['id'] for item in categories + indicators]
     require(len(set(ids)) == len(ids), 'IDs must be unique across categories and indicators')
     require(all(identifier and all(char in 'abcdefghijklmnopqrstuvwxyz0123456789-' for char in identifier) for identifier in ids), 'IDs must be stable URL-safe slugs')
@@ -36,11 +36,12 @@ def validate(catalog, observations):
         require(indicator['categoryId'] in category_ids, 'Unknown category')
         require(indicator['isDemo'] is True, 'Indicator must identify synthetic data')
         require(indicator['frequency'] == 'weekly', 'Only weekly observations supported')
-        require(indicator['unit']['kind'] in {'amount', 'rate'}, 'Unknown unit kind')
+        require(indicator['unit']['kind'] in {'amount', 'rate', 'spread', 'ratio', 'index', 'price', 'count', 'multiple', 'scalar', 'unquantified'}, 'Unknown unit kind')
         require(type(indicator['unit']['precision']) is int and 0 <= indicator['unit']['precision'] <= 6, 'Invalid precision')
         require(all(indicator[field] for field in ('name', 'explanation')), 'Indicator metadata is required')
         require(indicator['unit']['label'] and indicator['source']['name'], 'Unit and source labels required')
-        require(urlparse(indicator['source']['url']).scheme == 'https', 'Source URL must use HTTPS')
+        source_url = indicator['source'].get('url')
+        require(source_url is None and indicator['source'].get('status') == 'pending' or isinstance(source_url, str) and urlparse(source_url).scheme == 'https', 'Source must be pending or use an HTTPS URL')
         points = observations[indicator['id']]
         require(len(points) > 1, 'Series needs dated observations')
         previous = None
@@ -53,7 +54,10 @@ def validate(catalog, observations):
             require(value is None or type(value) in (float, int) and math.isfinite(value), 'Values must be finite numbers or explicit null')
             has_value |= value is not None
             previous = current
-        require(has_value, 'Series needs at least one numeric value')
+        if indicator['unit']['kind'] == 'unquantified':
+            require(not has_value, 'Unquantified article patterns must not fabricate numeric observations')
+        else:
+            require(has_value, 'Series needs at least one numeric value')
         require(points[0]['date'] == dataset['observationStart'] and points[-1]['date'] == dataset['observationEnd'], 'Series must span the dataset interval')
 
 

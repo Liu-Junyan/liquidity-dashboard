@@ -12,30 +12,47 @@ START = date(2021, 10, 27)
 def generate():
     dates = [START + timedelta(weeks=i) for i in range((END - START).days // 7 + 1)]
     # Deliberately irregular, bounded signals: illustrative shapes, never market estimates.
-    specifications = [
-        ('reserve-balances', 3800, -3.1, 210, 1),
-        ('reverse-repo', 1700, -5.4, 190, 1),
-        ('sofr', 0.8, 0.013, 1.1, 2),
-        ('effr', 0.7, 0.012, 1.0, 2),
-        ('treasury-account', 520, 0.5, 160, 1),
-        ('fed-assets', 8700, -7.5, 170, 1),
-        ('repo-volume', 1600, 5.3, 180, 1),
-        ('dealer-positions', 220, 0.4, 45, 1),
-    ]
+    catalog = json.loads((ROOT / 'site/data/catalog.json').read_text(encoding='utf-8'))
+    profiles = {
+        'amount': (600, 0.8, 90), 'spread': (15, 0.02, 8),
+        'ratio': (8, 0.01, 2), 'index': (100, 0.015, 4),
+        'price': (30, 0.015, 3), 'count': (120, 0.2, 25),
+        'multiple': (3, 0.002, 0.5), 'scalar': (1, 0.001, 0.25),
+    }
+    overrides = {
+        'reserve-balances': (3800, -3.1, 210), 'reverse-repo': (1700, -5.4, 190),
+        'treasury-account': (520, 0.5, 160), 'fed-assets': (8700, -7.5, 170),
+        'discount-window': (8, 0.01, 6), 'fed-repo': (12, 0.01, 8),
+        'cross-currency-basis': (-25, -0.02, 12), 'swap-line': (5, 0.005, 3),
+        'fima-repo': (2, 0.002, 1), 'credit-spreads': (350, 0.3, 80),
+        'cds-spreads': (75, 0.1, 20), 'bond-issuance': (30, 0.03, 8),
+        'risky-debt-net-issuance': (0, 0.005, 8),
+        'zero-issuance-days': (3, 0, 2), 'asset-volatility': (20, 0.01, 5),
+        'bid-ask-spread': (0.5, 0.001, 0.15), 'market-depth': (0.8, -0.001, 0.2),
+    }
     result = {}
-    for series_index, (identifier, base, trend, amplitude, precision) in enumerate(specifications):
+    for series_index, indicator in enumerate(catalog['indicators']):
+        identifier = indicator['id']
+        kind = indicator['unit']['kind']
+        precision = indicator['unit']['precision']
+        if kind == 'unquantified':
+            result[identifier] = [{'date': observed_at.isoformat(), 'value': None} for observed_at in dates]
+            continue
+        base, trend, amplitude = overrides.get(identifier, profiles.get(kind, (5, 0.01, 1)))
         points = []
         for i, observed_at in enumerate(dates):
             wave = (math.sin(i / 13 + series_index) * 0.55
                     + math.sin(i / 5.7 + series_index * 0.7) * 0.23
                     + math.sin(i * 1.7 + series_index) * 0.08
                     + math.cos(i / 31 + series_index) * 0.6)
-            value = round(max(0.05, base + trend * i + amplitude * wave), precision)
+            raw_value = base + trend * i + amplitude * wave
+            signed = kind == 'spread' or identifier in {'positioning', 'risky-debt-net-issuance', 'lending-standards', 'bank-credit-growth'}
+            value = round(raw_value if signed else max(0, raw_value), precision)
             # Include isolated and consecutive gaps, a missing 4-week comparator,
             # and a stale last observation. Nulls are never filled or interpolated.
             missing = i in {47 + series_index, 123, 124, 207 - series_index}
             missing |= identifier == 'reverse-repo' and i == len(dates) - 5
-            missing |= identifier == 'dealer-positions' and i == len(dates) - 1
+            missing |= identifier == 'positioning' and i == len(dates) - 1
             points.append({'date': observed_at.isoformat(), 'value': None if missing else value})
         result[identifier] = points
     return result
@@ -44,5 +61,6 @@ def generate():
 if __name__ == '__main__':
     output = ROOT / 'site/data/observations.json'
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(generate(), ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-    print(f'Generated eight synthetic series: {START} to {END}')
+    observations = generate()
+    output.write_text(json.dumps(observations, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    print(f'Generated {len(observations)} article-aligned fixture series: {START} to {END}')

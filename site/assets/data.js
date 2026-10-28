@@ -55,7 +55,7 @@ export function formatDate(date, options = {}) {
 }
 export function formatChange(value, indicator) {
   if (value === null) return '—';
-  const suffix = indicator.unit.kind === 'rate' ? 'bp' : indicator.unit.label;
+  const suffix = indicator.unit.kind === 'rate' ? 'bp' : indicator.unit.kind === 'ratio' ? t('percentagePoints') : indicator.unit.label;
   const digits = indicator.unit.kind === 'rate' ? 1 : indicator.unit.precision;
   return `${value > 0 ? '+' : ''}${formatNumber(value, digits)} ${suffix}`;
 }
