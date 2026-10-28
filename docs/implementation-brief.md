@@ -51,7 +51,7 @@ Exclude composite scores, trading recommendations, alerts, accounts, and portfol
 - Build static output with Python and deploy through GitHub Actions to [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages). Use relative asset paths and hash-based navigation so project-subdirectory hosting and reloads work.
 - Prototype data comes entirely from local fixtures; no credentials or external data requests are needed.
 
-For later real-data integration, document the intended flow: **scheduled GitHub Actions collection → validation → static data files → deployment**. Use free public sources, keep API keys in Actions secrets, and preserve the last successful dataset when collection fails.
+For later real-data integration, use **automatic collection + manual inputs → validation → derived indicators → versioned static data → deployment**. Use free public sources and keep API keys in Actions secrets. Retain the last valid observations for individual sources that fail, while allowing other validated updates to publish; invalid assembled datasets must not deploy. The mixed-source implementation guide at the end of this document defines the future contract.
 
 ### 4. Verification and acceptance
 
@@ -180,6 +180,8 @@ Twenty-nine entries have illustrative numeric fixtures. Their units and conventi
 
 #### Files and minimum data interfaces
 
+This subsection describes the implemented synthetic prototype only. Its weekly grid, shared date interval, demo-only validation, and directly maintained site JSON are not requirements for production data. The future mixed-source guide below replaces those assumptions when real-data integration is implemented.
+
 `site/data/catalog.json` separates category definitions and indicator metadata from `site/data/observations.json`. `schemaVersion: 1` identifies the current contract. Stable IDs are lowercase ASCII slugs and independent of display labels.
 
 ```json
@@ -269,12 +271,95 @@ Article-alignment verification: five Python contract checks and ten JavaScript r
 
 Original prototype verification (before the article alignment): four Python contract checks and six JavaScript regression checks passed; the static build and `git diff --check` passed. Chrome review passed at 1440px desktop, 768px tablet, and 390px/320px phone widths without horizontal page overflow. All eight indicators, one-year (53 rows) and all-history (262 rows) tables, basis-point display, missing/latest observation dates, keyboard range activation, Escape/focus return, and direct expanded-dialog reloads beneath `/dist/` were exercised. No application errors were observed; browser-extension connection errors were unrelated to the dashboard. JavaScript checks were executed by importing the assertion suite in the available Node REPL because the shell has no Node binary on its PATH; CI provisions Node explicitly.
 
-#### Future collection and replacement plan
+#### Mixed-source data implementation guide (future real-data milestone)
 
-Use **scheduled GitHub Actions collection → validation → static JSON files → deployment**. Candidate free public sources are Federal Reserve H.4.1, New York Fed reference rates/operations/dealer statistics, Treasury Fiscal Data, and OFR. Confirm availability, series definitions, licensing, time zones, publication lags, and revision policies before implementation. Agree on weekly aggregation explicitly: end-of-week/latest available levels, weekly averages, and weekly sums have different meanings.
+This guide specifies future implementation work; the collectors, manual-input pipeline, and production data contract are not implemented by this documentation update. The existing prototype and its regression fixtures remain unchanged.
 
-Collectors should normalize units, align weekly dates, preserve gaps, record observation and collection timestamps separately (per series where necessary), and stage files before validation. Validate required series, finite values, duplicate dates, cadence, unit consistency, provenance, and unexpected staleness. Keep API keys solely in Actions secrets; public static files must never contain credentials.
+Use **automatic collection + manual inputs → validation and normalization → derived indicators → versioned snapshot → static build → GitHub Pages**. The browser reads generated local JSON, never provider APIs or editable input files. Git-backed files are sufficient initially; no database or browser-based administration interface is required.
 
-Only replace the previously published dataset after every required collection and validation step succeeds. On failure, fail the collection job, retain the last successful dataset/deployment, and record failure details in Actions logs. Do not overwrite valid files with empty responses or advance collection timestamps for unsuccessful pulls. First publish validated snapshots atomically, then build/deploy those exact files.
+##### Registry, ownership, and storage
 
-The current prototype intentionally requires `isDemo: true` and shows fixed demo notices. The real-data milestone must update validation to support provenance, replace the hardcoded synthetic notices/source labels with metadata-driven labels, and review collection metadata and all source links. Merely setting `isDemo` to false is insufficient. Keep synthetic fixtures for regression testing and visibly separate any mixed demo/real series.
+Create a source registry separate from the generated display catalog. Use these proposed repository locations:
+
+| Location | Purpose | Writer |
+| --- | --- | --- |
+| `data/registry.json` | Source definitions, measurement conventions, and transformation rules keyed by stable series ID | Maintainer |
+| `data/automatic/<series-id>.json` | Last validated automatic observations and provenance | Collector pipeline |
+| `data/manual/<series-id>.csv` | Manually maintained source observations | Maintainer |
+| `data/snapshot/` | Current validated normalized dataset, derived series, and run manifest; previous versions retained in Git | Assembly pipeline |
+| `site/data/` | Generated catalog, observations, and machine-readable operational metadata for the website | Build pipeline |
+
+The registry must include each series's stable ID, update method (`automatic`, `manual`, or `derived`), source reference, provider series identifier where applicable, native frequency, observation-date convention, source unit, normalized unit, and configured history interval. Include publication-lag expectations, optional aggregation, comparison rules, and conversion rules. Derived entries additionally specify input IDs and their formula. Source-only inputs, such as individual rate levels used in a spread, need not become dashboard entries.
+
+Assign exactly one update method to each series. Reject duplicate ownership, unknown inputs, and cyclic derivations. Collectors may write only automatic inputs; manual files must never be overwritten by collection. Do not introduce implicit manual overrides or switch to a different provider after a fetch failure. A source change requires an explicit registry edit and a review of historical comparability.
+
+Candidate sources include FRED and direct Federal Reserve, New York Fed, Treasury Fiscal Data, and OFR releases. Confirm each selected series's definition, availability, redistribution terms, units, seasonal adjustment, dates, publication lag, and revision behavior before activating it. Article-level indicator names alone are not sufficient source definitions.
+
+##### Manual entry and corrections
+
+Use UTF-8 CSV with one file per manual series and these columns:
+
+| Field | Requirement |
+| --- | --- |
+| `date` | Required ISO observation date (`YYYY-MM-DD`), following the registry's period convention |
+| `value` | Numeric value in the configured source unit; blank means explicitly missing, never zero |
+| `source_reference` | Required URL or traceable publication reference, including a page/table where useful |
+| `publication_date` | Optional ISO date of the source release; do not substitute the entry date |
+| `correction_note` | Optional for new observations; required when changing or removing a previously recorded observation |
+
+Maintain one row per observation date and sort rows chronologically. Add new rows for new periods; edit the existing row for a revision instead of adding a duplicate. Record the reason for a removed row in the commit message, since its CSV note will no longer be present. Validate corrections against the previous committed input. Git records previous values, authorship, and edit history; the pipeline records the input commit and its timestamp as entry provenance, separately from observation/publication dates.
+
+The maintenance routine is: edit the CSV → commit or open a pull request → review validation results → merge to the default branch → regenerate and publish. Pull requests validate without deploying. Manual edits trigger assembly from the last validated automatic inputs and do not require a successful fresh API request. Do not edit generated site JSON to correct data.
+
+##### Automatic collection, revisions, and scheduling
+
+Add a daily GitHub Actions schedule and an on-demand `workflow_dispatch` trigger. Store FRED and other API credentials solely in Actions secrets; redact credentials from logs and never include them in snapshots or public assets. Add a default-branch trigger for manual input and registry changes. Serialize snapshot-writing and deployment jobs so overlapping scheduled and manual runs cannot overwrite newer inputs; avoid recursive collection triggered by generated-data commits.
+
+Initially, fetch the full configured history for each automatic series on every collection run, including pagination where necessary. This captures historical revisions as well as new observations. Validate the complete response before replacing that series's stored input. Treat unexpected empty/truncated responses as collection failures, and report historical changes or removals explicitly in the run summary. A complete, valid response that contains no changes still counts as a successful check.
+
+Normalize provider missing-value markers to explicit missing values and preserve real zeroes. Record per-series source identity, latest observation date, last attempt time, last successful check time, and last data-change time. Use timezone-aware UTC timestamps for operational events. A failed check must not advance the last-success timestamp. Configure freshness expectations per series so monthly publication, holidays, and normal release delays are not treated as daily update failures.
+
+##### Native frequencies and derived indicators
+
+Store each source's observations at its native daily, weekly, monthly, quarterly, or irregular frequency. Do not impose a shared start/end date or uninterrupted weekly grid. Observation dates describe the measured period, not when the pipeline downloaded it. Distinguish normal non-observation dates from missing expected observations; do not insert zeroes or invent observations to fill a calendar.
+
+Any display aggregation must be explicit in the registry: target period, period-end convention, aggregation method (last observation, average, or sum), and treatment of incomplete periods. Preserve native inputs even when a display series is aggregated. Weekly research does not imply weekly source data.
+
+Compute derived indicators only after validating and normalizing their inputs. Join inputs on matching observation dates by default; if an input is missing, the derived value is missing. Any alternative alignment requires an explicit per-indicator rule with an age limit. Never silently forward-fill inputs or combine different observation periods. Document dimensional conversions before applying formulas: for example, a difference between rate levels expressed in percent is multiplied by 100 to yield basis points; spreads already in basis points are not multiplied again. Recalculate affected history when an input is revised, and retain input snapshot references with the derived result.
+
+Configure comparison periods and matching rules per indicator. Daily/weekly series may retain 4- and 13-week changes with an explicitly documented calendar-matching rule; monthly/quarterly series need comparisons appropriate to their release periods. A missing or excessively old comparison returns `—`. Update comparison labels to describe the calculation actually used. Review averages and percentiles for native-frequency data; state whether statistics use native observations or an explicitly aggregated series, and never increase sample counts by filling missing dates.
+
+##### Validation, failure handling, and atomic publication
+
+Stage all updates before modifying the publishable snapshot. Validate registry references, ownership, observation ordering, duplicate dates, finite values or explicit missing values, units, provenance, configured transformations, and the assembled output contract. Unexpected data movements should be reported for review, not silently clipped or changed.
+
+If an automatic series fails collection or source validation, retain that series's last validated observations and original successful timestamps. Other valid series may still update. If no valid history exists, emit an unavailable series with an empty observation array. Derivations may use retained inputs only under their documented date-alignment rules; missing compatible inputs produce missing results. Report collection failures in the workflow summary even when publication succeeds with retained data.
+
+Invalid manual edits, invalid registry/calculation rules, or an invalid assembled dataset block publication and leave the previous deployment intact. A fatal build or deployment error likewise leaves the previous published snapshot in place. Do not equate a recoverable individual source failure with a structural dataset failure.
+
+Commit validated automatic inputs and the assembled snapshot to Git, recording the source-input commit, snapshot ID, generation time, per-series outcomes, and revision summary in its manifest. Exclude secrets and credential-bearing request URLs. Build the website from that exact committed snapshot and deploy the complete Pages artifact as one unit; never update catalog and observations independently. Retain earlier snapshots through Git history for audit and rollback. This records versions captured by this project; it does not reconstruct historical publication vintages or establish a point-in-time backtesting dataset.
+
+##### Chart presentation and migration
+
+**Do not add `最近检查`, `人工录入时间`, `自动更新`, `人工维护`, or update-status badges to charts or overview cards.** Keep operational timestamps, collection failures, and maintenance diagnostics in machine-readable metadata and GitHub Actions reports. Retain the existing observation date beside the latest value, showing the date of that actual observation even when data is retained after a failure. Existing source explanations may remain in expanded details; no new operational-status UI is required.
+
+Introduce a versioned production contract that supports native frequencies, different history lengths, unavailable/empty series, per-series provenance, and generated outputs. Update backend validation and frontend parsing, date windows, comparison calculations, frequency labels, statistics, and empty-state rendering together. The prototype's weekly-grid assertions and demo-only checks remain valid for fixture tests, not for production inputs. Label the two contracts explicitly and keep their datasets separate.
+
+Keep deterministic synthetic fixtures in demo/test mode and prevent the fixture generator from writing production outputs. In production, an unconnected indicator displays `待接入` with an empty chart state; it must not fall back to synthetic observations. The unquantified cross-asset pattern remains nonnumeric unless a measurement definition is separately agreed. Remove fixed synthetic notices only for the production dataset after source/provenance handling is implemented; merely setting `isDemo` to false is insufficient.
+
+##### Implementation order and future acceptance cases
+
+Implement the registry and manual importer first, then one automatic collector, normalization/derivations, versioned snapshot assembly, and scheduled publication. Migrate the frontend to the production contract before enabling real data. Expand indicator coverage only after each measurement convention is confirmed.
+
+The real-data milestone must verify:
+
+- A manual addition appears after publication; a correction requires a reason and preserves the previous value in Git. Duplicate dates and conflicting ownership fail validation, and automatic collection cannot modify manual files.
+- A historical provider revision updates stored and derived history; a successful unchanged response updates check metadata without changing observations.
+- A partial collection failure retains the affected series while another valid series publishes. First-time unavailable series render empty states; invalid assembled data or build failure preserves the prior deployment.
+- Daily, monthly, and irregular series preserve their dates and distinct history lengths. Missing values remain missing, true zeroes survive, and missing comparisons or incompatible derived inputs yield no fabricated result.
+- Percent-to-basis-point and other configured conversions are correct; already-normalized spreads are not converted twice. Summary counts reflect actual observations.
+- Manual-input pushes, daily schedules, and on-demand runs use the same validation/assembly path. Concurrent runs cannot publish older inputs over newer ones, and generated commits do not create workflow loops.
+- Catalog and observations come from the same snapshot, prior versions are recoverable, and public artifacts/logs contain no credentials.
+- Production never displays synthetic fallback data. Charts and overview cards retain observation dates without any of the prohibited maintenance timestamps or status badges.
+
+These are future acceptance requirements, not checks performed by this documentation-only change.
