@@ -91,7 +91,8 @@ Responsive breakpoints: overview uses four columns above 900px, two from 601–9
 | Placeholder categories | 类别一 / 类别二 / 类别三 / 类别四 |
 | Time controls | YTD / 近1年 / 近5年 / 全部 |
 | Metrics | 最新值 / 近4周变化 / 近13周变化 / 观测日期 |
-| Indicator controls | 展开指标 / 查看数据表 / 收起数据表 |
+| Indicator controls | 展开指标 / 查看统计摘要 / 收起统计摘要; 查看数据表 in expanded details |
+| Summary statistics | 近3个月均值 / 近1年均值 / 当前值历史分位 |
 | Metadata | 指标说明 / 当前数据来源 / 后续拟接入来源 / 更新频率 |
 | Collection timestamp | 演示数据生成时间 |
 | Reading notes | 数据与阅读说明 |
@@ -146,6 +147,10 @@ Each series uses a sorted, uninterrupted weekly date grid, spanning the dataset 
 The latest metric uses the latest non-null observation and displays **that observation's date**. Four- and thirteen-week comparisons use the exact date 28/91 days before that latest valid date. A missing comparison produces `—`, never a comparison against another date. Rate differences multiply by 100 to produce basis points. Missing chart observations remain visible gaps (`connectNulls: false`); tables label them as missing. Dealer positions deliberately omit the final observation; reverse repo deliberately omits the four-week comparison.
 
 Time windows are anchored to `dataset.observationEnd`, not the browser clock. YTD starts on January 1 of the dataset-end year (UTC) and uses `range=ytd` in deep links; it applies to charts, expanded details, and data tables. One/five years use calendar-year boundaries; all history includes the complete fixture. Because the fixture starts one day before the five-year cutoff, the five-year range has 261 observations and all history has 262. Sparklines always use the latest calendar year. Each category remembers its selected range during the browser session; each category initially uses five years.
+
+The chart-card disclosure now shows summary statistics rather than raw observations. The 3M and 1Y means are arithmetic means of available weekly values within the trailing three calendar months and twelve calendar months ending on the latest valid observation date (inclusive); month-end cutoffs clamp to the last valid day of the target month. These fixed lookbacks do not change with the chart range. Means remain in native units, including percentage levels for rates. The current value's percentile uses valid observations in the selected chart range: `100 × count(value <= latest value) / count(valid observations)`, including the latest value and all ties. This empirical cumulative rank has a maximum of 100%; it is not an investment rating. Nulls are excluded, real zero values are retained, and an empty sample displays `—`. Each metric displays its valid observation count, and the disclosure states the methodology and date. Incomplete windows use the available sample. Raw data tables remain available in expanded details as the chart alternative.
+
+Summary-statistics verification: nine JavaScript regression checks passed, including tied ranks, empty samples, missing/latest observations, zero values, leap-day/year boundaries, and month-end cutoffs. Browser review confirmed keyboard disclosure toggling, unchanged means when switching chart ranges, recalculated percentiles, rate means in percentage units, retained detail tables, and a 320px phone layout without horizontal overflow.
 
 Adding an indicator requires only an entry in `catalog.indicators` and its series in `observations.json`; layout, tables, dialogs, and summary rendering are generated from configuration. The build validates unique IDs, metadata, category references, timezone-aware collection timestamps, safe HTTPS source links, finite numeric values, explicit nulls, weekly cadence, and matching observation keys.
 

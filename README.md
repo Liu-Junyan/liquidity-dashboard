@@ -2,6 +2,8 @@
 
 A Chinese-language weekly dollar-liquidity research prototype, styled with restrained navy, blue charts, thin rules, and editorial typography inspired by the New York Fed Markets Data Dashboard. **All observations are synthetic.** The four category labels and indicator mappings remain placeholders.
 
+Each indicator's **查看统计摘要** control shows its trailing 3-month and 1-year means and the latest value's percentile within the selected chart range, with valid sample counts and calculation notes. Raw observations remain available through **展开指标 → 查看数据表**.
+
 ## Preview
 
 Python 3.10+ is sufficient; no Python packages or frontend installation is needed.

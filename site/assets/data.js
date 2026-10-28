@@ -21,6 +21,31 @@ export function inRange(observations, range, anchor) {
   else start.setUTCFullYear(start.getUTCFullYear() - (range === '1y' ? 1 : 5));
   return observations.filter(point => timestamp(point.date) >= start.getTime());
 }
+export function summaryStatistics(observations, history = observations) {
+  const latest = latestObservation(observations);
+  const empty = () => ({value: null, count: 0});
+  if (!latest) return {average3m: empty(), average1y: empty(), percentile: empty()};
+  const end = timestamp(latest.date);
+  function average(months) {
+    const start = new Date(end);
+    const day = start.getUTCDate();
+    start.setUTCDate(1);
+    start.setUTCMonth(start.getUTCMonth() - months);
+    const lastDay = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth() + 1, 0)).getUTCDate();
+    start.setUTCDate(Math.min(day, lastDay));
+    const points = observations.filter(point => point.value !== null && timestamp(point.date) >= start.getTime() && timestamp(point.date) <= end);
+    return {value: points.length ? points.reduce((sum, point) => sum + point.value, 0) / points.length : null, count: points.length};
+  }
+  const validHistory = history.filter(point => point.value !== null && timestamp(point.date) <= end);
+  return {
+    average3m: average(3),
+    average1y: average(12),
+    percentile: {
+      value: validHistory.length ? validHistory.filter(point => point.value <= latest.value).length / validHistory.length * 100 : null,
+      count: validHistory.length,
+    },
+  };
+}
 export function formatNumber(value, precision = 2) {
   return value === null || value === undefined ? '—' : new Intl.NumberFormat(locale, {minimumFractionDigits: precision, maximumFractionDigits: precision}).format(value);
 }

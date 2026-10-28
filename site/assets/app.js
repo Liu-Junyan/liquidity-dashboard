@@ -1,5 +1,5 @@
 import {t} from './zh-CN.js';
-import {latestObservation, changeAt, inRange, formatNumber, formatDate, formatChange, parseRoute, frequencyLabel} from './data.js';
+import {latestObservation, changeAt, inRange, formatNumber, formatDate, formatChange, parseRoute, frequencyLabel, summaryStatistics} from './data.js';
 import {drawChart, disposeCharts} from './charts.js';
 
 const $ = selector => document.querySelector(selector);
@@ -10,7 +10,7 @@ const status = $('#status');
 const dialog = $('#indicator-dialog');
 let catalog, observations, categories, state, dialogTrigger;
 const rangesByCategory = new Map();
-const tableOpen = new Set();
+const statisticsOpen = new Set();
 let renderedCategory, renderedRange, renderedIndicator;
 
 function navigate(patch) {
@@ -33,6 +33,15 @@ function metrics(indicator) {
 function tableMarkup(indicator, points) {
   return `<div class="table-scroll" role="region" aria-label="${escape(indicator.name)} · ${t('table')}" tabindex="0"><table><caption>${t('tableCaption')} · ${points.length} ${t('sampleCount')}</caption><thead><tr><th scope="col">${t('date')}</th><th scope="col">${t('value')}（${escape(indicator.unit.label)}）</th></tr></thead><tbody>${points.toReversed().map(point => `<tr><td>${formatDate(point.date)}</td><td>${point.value === null ? `<span class="missing-value">— · ${t('missing')}</span>` : formatNumber(point.value, indicator.unit.precision)}</td></tr>`).join('')}</tbody></table></div>`;
 }
+function statisticsMarkup(indicator) {
+  const statistics = summaryStatistics(observations[indicator.id], pointsFor(indicator));
+  const latest = latestObservation(observations[indicator.id]);
+  return `<section class="statistics-panel" aria-label="${escape(indicator.name)} · ${t('statistics')}"><p class="statistics-date">${t('statisticsAsOf')}：${formatDate(latest?.date)} · ${t('syntheticSeries')}</p><dl class="statistics-grid">${['average3m', 'average1y', 'percentile'].map(key => {
+    const statistic = statistics[key];
+    const isPercentile = key === 'percentile';
+    return `<div><dt>${t(key)}${isPercentile ? `<span class="statistics-range">${t(state.range)}</span>` : ''}</dt><dd>${formatNumber(statistic.value, isPercentile ? 1 : indicator.unit.precision)}<small>${isPercentile ? '%' : escape(indicator.unit.label)}</small></dd><dd class="statistics-count">${t('validCount')}：${statistic.count}</dd></div>`;
+  }).join('')}</dl><p class="statistics-note">${t('statisticsNote')}</p></section>`;
+}
 function renderOverview() {
   $('#categories').innerHTML = categories.map((category, index) => {
     const items = catalog.indicators.filter(item => item.categoryId === category.id);
@@ -54,7 +63,7 @@ function renderCharts() {
   const parent = $('#charts');
   disposeCharts(parent);
   const indicators = catalog.indicators.filter(item => item.categoryId === state.category);
-  parent.innerHTML = indicators.map(indicator => `<article class="indicator-card" aria-labelledby="heading-${indicator.id}"><div class="card-heading"><h3 id="heading-${indicator.id}">${escape(indicator.name)}</h3><span class="card-demo">${t('demoShort')}</span></div>${metrics(indicator)}<div class="chart-unit">${t('unit')}：${escape(indicator.unit.label)}</div><div class="detail-chart" id="chart-${indicator.id}" role="img" aria-label="${escape(indicator.name)} · ${t(state.range)} · ${t('syntheticSeries')}，${t('table')}"></div><div class="card-actions"><button class="text-button" data-table="${indicator.id}" aria-expanded="${tableOpen.has(indicator.id)}" aria-controls="table-${indicator.id}"><span aria-hidden="true">▦</span> ${t(tableOpen.has(indicator.id) ? 'hideTable' : 'table')}</button><button class="text-button" data-expand="${indicator.id}">${t('expand')} <span aria-hidden="true">↗</span></button></div><div id="table-${indicator.id}" ${tableOpen.has(indicator.id) ? '' : 'hidden'}>${tableMarkup(indicator, pointsFor(indicator))}</div></article>`).join('');
+  parent.innerHTML = indicators.map(indicator => `<article class="indicator-card" aria-labelledby="heading-${indicator.id}"><div class="card-heading"><h3 id="heading-${indicator.id}">${escape(indicator.name)}</h3><span class="card-demo">${t('demoShort')}</span></div>${metrics(indicator)}<div class="chart-unit">${t('unit')}：${escape(indicator.unit.label)}</div><div class="detail-chart" id="chart-${indicator.id}" role="img" aria-label="${escape(indicator.name)} · ${t(state.range)} · ${t('syntheticSeries')}，${t('chartAlternative')}"></div><div class="card-actions"><button class="text-button" data-statistics="${indicator.id}" aria-expanded="${statisticsOpen.has(indicator.id)}" aria-controls="statistics-${indicator.id}"><span aria-hidden="true">▦</span> ${t(statisticsOpen.has(indicator.id) ? 'hideStatistics' : 'statistics')}</button><button class="text-button" data-expand="${indicator.id}">${t('expand')} <span aria-hidden="true">↗</span></button></div><div id="statistics-${indicator.id}" ${statisticsOpen.has(indicator.id) ? '' : 'hidden'}>${statisticsMarkup(indicator)}</div></article>`).join('');
   indicators.forEach(indicator => drawChart($(`#chart-${indicator.id}`), pointsFor(indicator), indicator));
 }
 function renderDialog() {
@@ -94,13 +103,13 @@ $('#ranges').addEventListener('click', event => {
 $('#charts').addEventListener('click', event => {
   const expand = event.target.closest('[data-expand]');
   if (expand) { dialogTrigger = expand; navigate({indicator: expand.dataset.expand}); return; }
-  const tableButton = event.target.closest('[data-table]');
-  if (!tableButton) return;
-  const id = tableButton.dataset.table;
-  if (tableOpen.has(id)) tableOpen.delete(id); else tableOpen.add(id);
-  $(`#table-${id}`).hidden = !tableOpen.has(id);
-  tableButton.setAttribute('aria-expanded', String(tableOpen.has(id)));
-  tableButton.innerHTML = `<span aria-hidden="true">▦</span> ${t(tableOpen.has(id) ? 'hideTable' : 'table')}`;
+  const statisticsButton = event.target.closest('[data-statistics]');
+  if (!statisticsButton) return;
+  const id = statisticsButton.dataset.statistics;
+  if (statisticsOpen.has(id)) statisticsOpen.delete(id); else statisticsOpen.add(id);
+  $(`#statistics-${id}`).hidden = !statisticsOpen.has(id);
+  statisticsButton.setAttribute('aria-expanded', String(statisticsOpen.has(id)));
+  statisticsButton.innerHTML = `<span aria-hidden="true">▦</span> ${t(statisticsOpen.has(id) ? 'hideStatistics' : 'statistics')}`;
 });
 function closeDialog() { navigate({indicator: null}); }
 $('#close-dialog').addEventListener('click', closeDialog);
