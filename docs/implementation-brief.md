@@ -68,10 +68,87 @@ The prototype is ready for review when:
 
 ### 5. Assumptions and reference material
 
-- The article’s exact category names and indicators remain unverified because its WeChat page could not be retrieved. Use explicit placeholders, `类别一` through `类别四`, for the prototype; do not invent article content.
+- The article’s four categories and indicators have now been extracted from the supplied [WeChat article text](../wechat.txt); see the article framework below. The existing prototype still uses `类别一` through `类别四` and demonstration indicators selected before the article was available. Updating the site catalog and fixtures is a separate implementation step.
 - English is the default for implementation instructions; the delivered interface is Chinese.
 - The dashboard is intended primarily for personal research, with public static hosting.
 - Use the [OFR Short-term Funding Monitor](https://www.financialresearch.gov/short-term-funding-monitor/) as a reference for grouped charts and interpretive guidance, and the [New York Fed Markets Data Dashboard](https://www.newyorkfed.org/markets/data-hub) as a reference for organizing market data. Their categories do not replace the article’s framework.
+
+#### Article framework: four categories and their indicators
+
+Source: [wechat.txt](../wechat.txt), supplied on October 28, 2026. The inventory below summarizes the article’s four layer sections, particularly their **观测** (observation) subsections. English descriptions explain the Chinese labels used by the article. These are article-derived research definitions; provider series, currencies, tenors, units, and aggregation rules still need to be selected for implementation. No live-data availability has been verified.
+
+| Order | Category / Chinese label | Article section title | Research focus |
+| --- | --- | --- | --- |
+| 1 | Monetary layer / 货币层 | 货币层：美元流动性之源 | Availability of base dollar funding, financing prices, and redistribution between financial institutions. |
+| 2 | Offshore layer / 离岸层 | 离岸层：美元的全球再分配 | Cross-border dollar circulation and non-US institutions’ access to dollar funding. |
+| 3 | Credit layer / 信用层 | 信用层：金融体系与实体部门的联结 | Whether funding translates into private credit and financing for businesses and households. |
+| 4 | Financial-market layer / 金融市场层 | 金融市场层：流动性的终点，也是反馈的起点 | Trading capacity, volatility, and the feedback from positioning, leverage, and forced selling. |
+
+**1. Monetary layer — 货币层**
+
+The article prioritizes funding prices over quantities, using central-bank facility usage to confirm severe stress.
+
+| Indicator / Chinese label | Role in the article | What it observes |
+| --- | --- | --- |
+| SOFR−EFFR / SOFR与EFFR利差 | Primary funding-price measure | Repo funding pressure relative to the federal funds market. |
+| SOFR−OIS / SOFR与OIS利差 | Primary funding-price measure | Secured funding premium relative to the OIS reference. The OIS tenor/convention is not specified. |
+| SOFR 99th percentile−SOFR / SOFR99分位−SOFR | Funding dispersion and tail pressure | Whether high-end repo rates diverge from the central SOFR rate. |
+| Bank reserve balances / 银行准备金 | Supporting quantity | Reserve availability; the article cautions against a universal fixed safe level. |
+| Reserves / commercial-bank total assets / 准备金占商业银行总资产比例 | Supporting relative quantity | Reserve adequacy relative to the banking system’s size. |
+| Federal Reserve balance sheet / 美联储资产负债表 | Reserve-supply context | Balance-sheet expansion or contraction and its effect on reserves. |
+| Treasury General Account balance / TGA余额 | Reserve-distribution context | Treasury cash movements that affect banking-system reserves. |
+| Overnight reverse repo balance / ON RRP余额 | Reserve-distribution context | Allocation of liquidity between reverse repo and bank reserves. |
+| Discount window usage / 贴现窗口用量 | Stress confirmation | Bank reliance on central-bank funding. |
+| Federal Reserve repo operations / 美联储正回购用量 | Stress confirmation | Central-bank funding supplied against collateral to ease repo-market shortages. |
+
+**2. Offshore layer — 离岸层**
+
+The article uses the dollar index as an outcome indicator, cross-currency basis as the direct funding-pressure measure, and official facilities as confirmation of extreme conditions.
+
+| Indicator / Chinese label | Role in the article | What it observes |
+| --- | --- | --- |
+| Cross-currency basis / 交叉货币基差 | Primary funding-price measure | Implied dollar funding cost through FX swaps relative to same-tenor dollar OIS/SOFR. Currency pair, tenor, and quotation convention are not specified. |
+| US dollar index / 美元指数（DXY） | Supporting outcome measure | Dollar strength; the article cautions that strength alone does not establish offshore funding stress. |
+| Central-bank dollar swap-line usage / 央行美元流动性互换工具用量（Swap Line） | Stress confirmation | Official dollar provision through foreign central banks when private funding is impaired. |
+| FIMA Repo Facility usage / 外国和国际货币当局回购工具用量 | Stress confirmation | Official dollar borrowing against Treasury collateral, reducing the need to sell Treasuries for cash. |
+
+Cross-border bank financing contraction and access to FX-swap funding are additional diagnostic context in the article’s **溯源** discussion; it does not prescribe a particular bank-flow series. Swap Line and FIMA are two distinct facilities, not duplicate swap indicators.
+
+**3. Credit layer — 信用层**
+
+The article pairs high-frequency credit prices with evidence that borrowers can actually obtain financing.
+
+| Indicator / Chinese label | Role in the article | What it observes |
+| --- | --- | --- |
+| Credit spreads / 信用利差 | Primary price measure | Credit risk pricing and funding costs, particularly high-yield (HY) spreads; investment-grade (IG) conditions help assess how far stress has spread. |
+| Credit default swap spreads / 信用违约互换价差（CDS） | Primary price measure | Market pricing of default risk, including bank CDS in the historical cases. |
+| BDC-related ETF prices / BDC相关ETF价格表现 | Supporting market proxy | Pricing of higher-risk nonbank and private-credit-related exposures. No ETF ticker is specified. |
+| CLO-related ETF prices / CLO相关ETF价格表现 | Supporting market proxy | Pricing of collateralized loan obligation exposures. No ETF ticker is specified. |
+| Bond issuance volume / 债券发行量 | Financing availability | Whether primary-market funding is open, distinguishing HY from IG issuers. |
+| Net issuance of risky debt / 风险债务净发行 | Financing availability | Net new risky-debt funding reaching borrowers. |
+| Primary-market freeze / zero-issuance days / 一级市场冻结天数／零发行天数 | Financing availability | Duration of issuance interruptions and whether freezes spread to higher-quality issuers. |
+| Bank lending standards / 银行贷款标准 | Supporting credit-supply measure | Banks’ willingness to lend and tightening or easing of access to credit. |
+| Bank credit / loan growth / 银行信贷增速／银行贷款增速 | Supporting quantity | Realized lending, including commercial and industrial loans. Early crisis growth can reflect precautionary credit-line drawdowns rather than improving conditions. |
+
+The category’s explanatory and **溯源** sections also discuss policy rates, loan demand, ISM manufacturing PMI, corporate free cash flow and capital expenditure, CET1 capital adequacy and SLR/eSLR constraints, leverage, debt-servicing capacity, and refinancing needs. These are context for locating vulnerabilities, rather than additional primary liquidity-price measures. The article highlights leveraged loans, private credit, and commercial real estate as areas to examine; these sectors are not separate dashboard categories.
+
+**4. Financial-market layer — 金融市场层**
+
+The article monitors equities, bonds, commodities, and foreign exchange through three dimensions: volatility, market depth, and positioning/leverage.
+
+| Indicator / Chinese label | Role in the article | What it observes |
+| --- | --- | --- |
+| Asset-market volatility / 股、债、商、汇波动率 | Initial stress signal | Abnormal price fluctuations across asset classes. VIX is explicitly named in the equity-market case study; other volatility index names are not specified. |
+| Bid–ask spread / 买卖价差（Bid-Ask） | Trading capacity | Wider spreads indicate worse trading conditions in the Treasury example. |
+| Market depth / 市场深度（Market Depth） | Trading capacity | Available capacity to absorb trades; the article specifically discusses 10-year Treasury depth. |
+| Price impact / 价格冲击（Price Impact） | Trading capacity | How strongly trading moves prices; higher impact accompanies impaired Treasury liquidity. |
+| Positioning / 仓位与头寸 | Crowding and unwind risk | Concentrated positions and position reductions; examples include yen noncommercial net shorts and swap-spread trade unwinds. |
+| Leverage / 杠杆水平与去杠杆进展 | Forced-selling risk | Exposure to margin calls and the progress of deleveraging. The article does not prescribe a single leverage series. |
+| Cross-asset co-movement / 跨资产同步抛售 | Stress propagation | Simultaneous declines in stocks, Treasuries, and gold, rising volatility, and falling depth across markets. This is an observed pattern, not an article-defined composite index. |
+
+Margin calls, VaR constraints, fund redemptions, and forced liquidations explain the feedback mechanism and help interpret positioning changes. The article does not define standalone quantitative series for each mechanism.
+
+For the dashboard, preserve the distinction between primary prices, supporting quantities, and facility usage in indicator explanations. The article’s inventory is broader than the prototype’s two examples per category; selecting an initial subset and updating the catalog remain implementation work. SOFR and EFFR levels are inputs to the monetary spread indicators. Repo volume and dealer Treasury positions in the current fixture are interface examples, not named primary indicators in the article’s observation inventory. Historical case-study statistics and trading-rule thresholds are not adopted as dashboard alerts or recommendations.
 
 ### 6. Implemented prototype and design handoff
 
@@ -97,7 +174,7 @@ Responsive breakpoints: overview uses four columns above 900px, two from 601–9
 | Collection timestamp | 演示数据生成时间 |
 | Reading notes | 数据与阅读说明 |
 
-Eight explicitly labeled examples are included: reserve balances, overnight reverse repo balances, SOFR, EFFR, Treasury General Account balances, Federal Reserve total assets, repo volume, and dealer Treasury positions. These examples and their category assignments were selected to exercise interface behaviors. They are **not verified article content**. Rate examples use percentage levels and basis-point changes; amount examples use billions of USD (`十亿美元`).
+Eight explicitly labeled examples are included: reserve balances, overnight reverse repo balances, SOFR, EFFR, Treasury General Account balances, Federal Reserve total assets, repo volume, and dealer Treasury positions. These examples and their category assignments were selected to exercise interface behaviors before the article was available. They **do not implement the article’s four-layer mapping** documented in section 5. Rate examples use percentage levels and basis-point changes; amount examples use billions of USD (`十亿美元`).
 
 #### Files and minimum data interfaces
 
@@ -172,7 +249,7 @@ The Python build validates input before replacing `dist/`, copies the site and p
 #### Milestones and acceptance review
 
 1. **Prototype implementation:** completed in this repository: four categories, eight indicators, local fixtures, responsive overview/drill-down, accessible controls, tables, deep links, validation, and Pages workflow.
-2. **Interface review:** user confirms category names/mapping, example indicator choices, information density, and reading workflow. No article taxonomy is inferred.
+2. **Interface review and article alignment:** section 5 now records the article’s category names and indicator inventory. Apply that mapping to the site catalog, select the initial indicator subset, and review information density and reading workflow. The current site still uses the original placeholder categories and fixtures.
 3. **Real-data integration:** implement collection and validation only after the interface and source/aggregation choices are agreed.
 
 Regression commands:
