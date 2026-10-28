@@ -24,7 +24,7 @@ Use **overview + drill-down**:
 [ 指标图表 A                  ] [ 指标图表 B                  ]
   最新值 · 近4周变化 · 近13周变化 · 数据日期
 
-展开指标 → 大图 · 指标说明 · 数据来源 · 更新频率 · 数据表
+展开指标 → 大图 · 指标说明 · 数据来源 · 更新频率
 ```
 
 - Keep all four category summaries visible; selecting one changes the detailed charts below. Select the first category initially.
@@ -34,7 +34,7 @@ Use **overview + drill-down**:
 - Distinguish observation dates from collection times. Missing observations remain gaps.
 - Use a light background, restrained blue chart lines, readable Chinese typography, and generous chart space. Rising values do not automatically mean “good.”
 - Arrange summaries across four columns on wide screens, two on tablets, and one on phones. Detailed charts use two columns on desktop and one on mobile.
-- Include keyboard-accessible controls and a data-table alternative to charts.
+- Include keyboard-accessible controls, labeled charts, and readable latest values and summary statistics. Do not render raw observation-history tables, including in expanded details.
 
 Exclude composite scores, trading recommendations, alerts, accounts, and portfolio tracking from this milestone.
 
@@ -58,7 +58,7 @@ For later real-data integration, use **automatic collection + manual inputs → 
 The prototype is ready for review when:
 
 - All four research layers and the current CSV-selected indicators render correctly; unavailable and removed entries do not appear.
-- Category selection, time ranges, expanded details, and data tables work.
+- Category selection, time ranges, expanded details, and summary-statistics disclosures work.
 - Latest values and changes match the fixtures; missing data is never converted to zero.
 - Every view clearly identifies synthetic data.
 - Chinese text, charts, and controls remain usable at mobile and desktop widths.
@@ -154,9 +154,9 @@ For the dashboard, preserve the distinction between primary prices, supporting q
 
 Implemented on October 28, 2026. The repository now contains a standalone static site; no live financial data is requested. The implementation uses the New York Fed page as a visual reference: navy masthead/navigation, serif Chinese page title, restrained blue lines, thin dividers, compact numeric summaries, and a white background. The prototype uses its own identity and does not imply Federal Reserve affiliation.
 
-**Page structure:** permanent four-category overview → selected category charts → data/reading notes. Overview cards show the first configured indicator as the primary value and one-year sparkline, one secondary indicator, and the category’s total indicator count. The complete inventory appears in the detail charts below. Detail cards render every configured indicator in the selected category. Native buttons support keyboard selection; native modal dialogs trap focus, close with Escape, and return focus to the triggering control. Charts have labeled data-table alternatives. No directional red/green coloring or composite judgments are used.
+**Page structure:** permanent four-category overview → selected category charts → data/reading notes. Overview cards show the first configured indicator as the primary value and one-year sparkline, one secondary indicator, and the category’s total indicator count. The complete inventory appears in the detail charts below. Detail cards render every configured indicator in the selected category. Native buttons support keyboard selection; native modal dialogs trap focus, close with Escape, and return focus to the triggering control. Charts are labeled and accompanied by latest-value text and keyboard-accessible summary statistics; raw-history views have been removed. No directional red/green coloring or composite judgments are used.
 
-Responsive breakpoints: overview uses four columns above 900px, two from 601–900px, and one at 600px and below. Indicator charts use two columns above 600px and one below. Tables scroll independently and preserve column headings. Reduced-motion preferences suppress chart animation.
+Responsive breakpoints: overview uses four columns above 900px, two from 601–900px, and one at 600px and below. Indicator charts use two columns above 600px and one below. Reduced-motion preferences suppress chart animation.
 
 #### Chinese interface labels
 
@@ -168,7 +168,7 @@ Responsive breakpoints: overview uses four columns above 900px, two from 601–9
 | Research layers | 货币层 / 离岸层 / 信用层 / 金融市场层 |
 | Time controls | YTD / 近1年 / 近5年 / 全部 |
 | Metrics | 最新值 / 近4周变化 / 近13周变化 / 观测日期 |
-| Indicator controls | 展开指标 / 查看统计摘要 / 收起统计摘要; 查看数据表 in expanded details |
+| Indicator controls | 展开指标 / 查看统计摘要 / 收起统计摘要 |
 | Summary statistics | 近3个月均值 / 近1年均值 / 当前值历史分位 |
 | Metadata | 指标说明 / 当前数据来源 / 后续拟接入来源 / 更新频率 |
 | Collection timestamp | 演示数据生成时间 |
@@ -228,15 +228,15 @@ The shortened example illustrates the shape; validation requires four research-l
 
 Each series uses a sorted, uninterrupted weekly date grid, spanning the dataset interval. Numeric indicators must contain at least one valid observation; `unquantified` entries must contain only nulls. Absent observations must have explicit `null` values. The checked-in fixture has 262 dates per series and is reproducible with `python3 scripts/generate_fixtures.py`. No random seeds, clocks, credentials, or network calls affect fixture generation.
 
-The latest metric uses the latest non-null observation and displays **that observation's date**. Four- and thirteen-week comparisons use the exact date 28/91 days before that latest valid date. A missing comparison produces `—`, never a comparison against another date. Rate differences multiply by 100 to produce basis points. Missing chart observations remain visible gaps (`connectNulls: false`); tables label them as missing. The new positioning fixture deliberately omits the final observation; reverse repo deliberately omits the four-week comparison.
+The latest metric uses the latest non-null observation and displays **that observation's date**. Four- and thirteen-week comparisons use the exact date 28/91 days before that latest valid date. A missing comparison produces `—`, never a comparison against another date. Rate differences multiply by 100 to produce basis points. Missing chart observations remain visible gaps (`connectNulls: false`). The new positioning fixture deliberately omits the final observation; reverse repo deliberately omits the four-week comparison.
 
-Time windows are anchored to `dataset.observationEnd`, not the browser clock. YTD starts on January 1 of the dataset-end year (UTC) and uses `range=ytd` in deep links; it applies to charts, expanded details, and data tables. One/five years use calendar-year boundaries; all history includes the complete fixture. Because the fixture starts one day before the five-year cutoff, the five-year range has 261 observations and all history has 262. Sparklines always use the latest calendar year. Each category remembers its selected range during the browser session; each category initially uses five years.
+Time windows are anchored to `dataset.observationEnd`, not the browser clock. YTD starts on January 1 of the dataset-end year (UTC) and uses `range=ytd` in deep links; it applies to charts, expanded details, and percentile reference history. One/five years use calendar-year boundaries; all history includes the complete fixture. Because the fixture starts one day before the five-year cutoff, the five-year range has 261 observations and all history has 262. Sparklines always use the latest calendar year. Each category remembers its selected range during the browser session; each category initially uses five years.
 
-The chart-card disclosure now shows summary statistics rather than raw observations. The 3M and 1Y means are arithmetic means of available weekly values within the trailing three calendar months and twelve calendar months ending on the latest valid observation date (inclusive); month-end cutoffs clamp to the last valid day of the target month. These fixed lookbacks do not change with the chart range. Means remain in native units, including percentage levels for rates. The current value's percentile uses valid observations in the selected chart range: `100 × count(value <= latest value) / count(valid observations)`, including the latest value and all ties. This empirical cumulative rank has a maximum of 100%; it is not an investment rating. Nulls are excluded, real zero values are retained, and an empty sample displays `—`. Each metric displays its valid observation count, and the disclosure states the methodology and date. Incomplete windows use the available sample. Raw data tables remain available in expanded details as the chart alternative.
+The chart-card disclosure now shows summary statistics rather than raw observations. The 3M and 1Y means are arithmetic means of available weekly values within the trailing three calendar months and twelve calendar months ending on the latest valid observation date (inclusive); month-end cutoffs clamp to the last valid day of the target month. These fixed lookbacks do not change with the chart range. Means remain in native units, including percentage levels for rates. The current value's percentile uses valid observations in the selected chart range: `100 × count(value <= latest value) / count(valid observations)`, including the latest value and all ties. This empirical cumulative rank has a maximum of 100%; it is not an investment rating. Nulls are excluded, real zero values are retained, and an empty sample displays `—`. Each metric displays its valid observation count, and the disclosure states the methodology and date. Incomplete windows use the available sample. Expanded details contain the larger chart, latest metrics, explanation, and source metadata. Raw data tables are intentionally omitted because full daily histories would add unwieldy output.
 
-Summary-statistics verification: nine JavaScript regression checks passed, including tied ranks, empty samples, missing/latest observations, zero values, leap-day/year boundaries, and month-end cutoffs. Browser review confirmed keyboard disclosure toggling, unchanged means when switching chart ranges, recalculated percentiles, rate means in percentage units, retained detail tables, and a 320px phone layout without horizontal overflow.
+Summary-statistics verification: nine JavaScript regression checks passed, including tied ranks, empty samples, missing/latest observations, zero values, leap-day/year boundaries, and month-end cutoffs. Browser review confirmed keyboard disclosure toggling, unchanged means when switching chart ranges, recalculated percentiles, rate means in percentage units, and a 320px phone layout without horizontal overflow.
 
-Add, rename, reorder, hide, or remove indicators by editing the CSV and rebuilding. Do not edit the generated catalog or observations. Layout, tables, dialogs, and summaries adapt automatically; no old catalog mapping is required. The build validates unique IDs, metadata, category references, timezone-aware collection timestamps, HTTPS or explicitly pending sources, finite numeric values, explicit nulls, unquantified patterns, weekly cadence, and matching observation keys.
+Add, rename, reorder, hide, or remove indicators by editing the CSV and rebuilding. Do not edit the generated catalog or observations. Layout, dialogs, and summaries adapt automatically; no old catalog mapping is required. The build validates unique IDs, metadata, category references, timezone-aware collection timestamps, HTTPS or explicitly pending sources, finite numeric values, explicit nulls, unquantified patterns, weekly cadence, and matching observation keys.
 
 #### Local preview and deployment
 
@@ -255,7 +255,7 @@ The Python build validates input before replacing `dist/`, copies the site and p
 
 #### Milestones and acceptance review
 
-1. **Prototype implementation:** completed in this repository: four research layers, the current registry-selected indicators, local fixtures, responsive overview/drill-down, accessible controls, tables, deep links, validation, and Pages workflow.
+1. **Prototype implementation:** completed in this repository: four research layers, the current registry-selected indicators, local fixtures, responsive overview/drill-down, accessible controls, summary statistics, deep links, validation, and Pages workflow.
 2. **Registry-controlled selection:** implemented: current CSV membership and metadata supersede the initial article inventory. Unavailable entries are omitted; new, removed, renamed, and split indicators require only a registry edit and rebuild.
 3. **Real-data integration:** implement collection and validation only after the interface and source/aggregation choices are agreed.
 
@@ -267,7 +267,7 @@ node --test tests/data.test.mjs
 python3 scripts/build.py
 ```
 
-Acceptance checks include fixture reproducibility; exact-date native-unit and basis-point calculations; explicit gaps; stale latest values; calendar windows; malformed and direct hash links; and adding an indicator through configuration. Browser review covers all categories, range switching, tables, expanded metadata, keyboard dismissal/focus, responsive columns, and reloads beneath a project-style subdirectory. The GitHub-hosted workflow itself requires a connected repository and Pages configuration to verify.
+Acceptance checks include fixture reproducibility; exact-date native-unit and basis-point calculations; explicit gaps; stale latest values; calendar windows; malformed and direct hash links; and adding an indicator through configuration. Browser review covers all categories, range switching, summary statistics, expanded metadata, keyboard dismissal/focus, responsive columns, and reloads beneath a project-style subdirectory. The GitHub-hosted workflow itself requires a connected repository and Pages configuration to verify.
 
 Original article-alignment verification (superseded by registry-controlled selection): five Python contract checks and ten JavaScript regression checks passed. The inventory check compares every catalog label and its order against the 30 Markdown rows, with category counts of 10/4/9/7. Chrome verified all 30 rendered entries, provisional source text without broken links, the unquantified pattern’s chart/detail/statistics states, a new YTD indicator deep link and reload beneath `/dist/`, negative-basis summary statistics, and 320px phone layouts with long labels and units. The build and whitespace checks passed; no application console errors were observed.
 
