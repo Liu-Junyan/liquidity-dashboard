@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "dataset": {
-    "id": "synthetic-article-framework-v2",
+    "id": "synthetic-registry-v1",
     "isDemo": true,
     "observationStart": "2021-10-27",
     "observationEnd": "2026-10-28",
@@ -36,572 +36,508 @@
   "indicators": [
     {
       "id": "sofr-effr-spread",
+      "seriesId": "sofr-effr-spread",
       "categoryId": "category-1",
       "name": "SOFR与EFFR利差",
-      "role": "主要资金价格",
-      "explanation": "观察回购融资相对联邦基金市场的压力。 SOFR减EFFR；真实数据的对齐日期与周度聚合方式待确认。 当前为合成数据演示，非真实市场观测。",
-      "unit": {
-        "kind": "spread",
-        "label": "bp",
-        "precision": 1
-      },
-      "frequency": "weekly",
-      "source": {
-        "name": "数据源与口径待确认",
-        "url": null,
-        "status": "pending"
-      },
-      "isDemo": true
-    },
-    {
-      "id": "sofr-ois-spread",
-      "categoryId": "category-1",
-      "name": "SOFR与OIS利差",
-      "role": "主要资金价格",
-      "explanation": "观察担保融资相对OIS参考利率的溢价。 OIS期限、报价口径及周度聚合方式待确认。 当前为合成数据演示，非真实市场观测。",
-      "unit": {
-        "kind": "spread",
-        "label": "bp",
-        "precision": 1
-      },
-      "frequency": "weekly",
-      "source": {
-        "name": "数据源与口径待确认",
-        "url": null,
-        "status": "pending"
-      },
-      "isDemo": true
-    },
-    {
-      "id": "sofr-tail-spread",
-      "categoryId": "category-1",
-      "name": "SOFR99分位−SOFR",
-      "role": "融资分布与尾部压力",
-      "explanation": "观察高端回购利率是否偏离SOFR中枢。 SOFR第99百分位减SOFR；真实数据来源与聚合方式待确认。 当前为合成数据演示，非真实市场观测。",
-      "unit": {
-        "kind": "spread",
-        "label": "bp",
-        "precision": 1
-      },
-      "frequency": "weekly",
-      "source": {
-        "name": "数据源与口径待确认",
-        "url": null,
-        "status": "pending"
-      },
-      "isDemo": true
-    },
-    {
-      "id": "reserve-balances",
-      "categoryId": "category-1",
-      "name": "银行准备金",
-      "role": "辅助数量",
-      "explanation": "观察银行体系可用准备金；原文不采用统一固定的安全水位。 沿用余额型演示单位；真实准备金统计口径待确认。 当前为合成数据演示，非真实市场观测。",
-      "unit": {
-        "kind": "amount",
-        "label": "十亿美元",
-        "precision": 1
-      },
-      "frequency": "weekly",
-      "source": {
-        "name": "数据源与口径待确认",
-        "url": null,
-        "status": "pending"
-      },
-      "isDemo": true
-    },
-    {
-      "id": "reserve-assets-ratio",
-      "categoryId": "category-1",
-      "name": "准备金占商业银行总资产比例",
-      "role": "辅助相对数量",
-      "explanation": "观察准备金相对银行体系规模的充足程度。 分子、分母的机构覆盖与时点必须对齐，真实统计口径待确认。 当前为合成数据演示，非真实市场观测。",
+      "role": "",
+      "explanation": "SOFR与EFFR利差的合成示例，尚未接入登记的数据源。 登记计算式：sofr-effr。当前演示数值不执行此公式。",
       "unit": {
         "kind": "ratio",
         "label": "%",
         "precision": 2
       },
       "frequency": "weekly",
+      "nativeFrequency": "daily",
       "source": {
-        "name": "数据源与口径待确认",
+        "name": "FRED",
         "url": null,
         "status": "pending"
       },
+      "comparisonRule": "less",
+      "isDemo": true
+    },
+    {
+      "id": "sofr-tail-spread",
+      "seriesId": "sofr-tail-spread",
+      "categoryId": "category-1",
+      "name": "SOFR99分位−SOFR",
+      "role": "",
+      "explanation": "SOFR99分位−SOFR的合成示例，尚未接入登记的数据源。 登记计算式：sofr99-sofr。当前演示数值不执行此公式。",
+      "unit": {
+        "kind": "ratio",
+        "label": "%",
+        "precision": 2
+      },
+      "frequency": "weekly",
+      "nativeFrequency": "daily",
+      "source": {
+        "name": "FRED",
+        "url": null,
+        "status": "pending"
+      },
+      "comparisonRule": "less",
       "isDemo": true
     },
     {
       "id": "fed-assets",
+      "seriesId": "fed-assets",
       "categoryId": "category-1",
-      "name": "美联储资产负债表",
-      "role": "准备金供给背景",
-      "explanation": "观察资产负债表扩张或收缩对准备金的影响。 暂以总资产余额作为单一演示序列；不拆分资产负债表项目，最终口径待确认。 当前为合成数据演示，非真实市场观测。",
+      "name": "美联储总资产",
+      "role": "",
+      "explanation": "美联储总资产的合成示例，尚未接入登记的数据源。",
       "unit": {
         "kind": "amount",
         "label": "十亿美元",
         "precision": 1
       },
       "frequency": "weekly",
+      "nativeFrequency": "weekly",
       "source": {
-        "name": "数据源与口径待确认",
+        "name": "FRED",
+        "url": "https://fred.stlouisfed.org/series/WALCL",
+        "status": "configured"
+      },
+      "comparisonRule": "greater",
+      "isDemo": true
+    },
+    {
+      "id": "reserve-balances",
+      "seriesId": "reserve-balances",
+      "categoryId": "category-1",
+      "name": "银行准备金",
+      "role": "",
+      "explanation": "银行准备金的合成示例，尚未接入登记的数据源。",
+      "unit": {
+        "kind": "amount",
+        "label": "十亿美元",
+        "precision": 1
+      },
+      "frequency": "weekly",
+      "nativeFrequency": "weekly",
+      "source": {
+        "name": "FRED",
+        "url": "https://fred.stlouisfed.org/series/WRBWFRBL",
+        "status": "configured"
+      },
+      "comparisonRule": "greater",
+      "isDemo": true
+    },
+    {
+      "id": "reserve-assets-ratio",
+      "seriesId": "reserve-assets-ratio",
+      "categoryId": "category-1",
+      "name": "准备金占商业银行总资产比例",
+      "role": "",
+      "explanation": "准备金占商业银行总资产比例的合成示例，尚未接入登记的数据源。 登记计算式：reserve-balances/bank-total-assets。当前演示数值不执行此公式。",
+      "unit": {
+        "kind": "ratio",
+        "label": "%",
+        "precision": 2
+      },
+      "frequency": "weekly",
+      "nativeFrequency": "weekly",
+      "source": {
+        "name": "登记派生指标",
         "url": null,
         "status": "pending"
       },
+      "comparisonRule": "greater",
       "isDemo": true
     },
     {
       "id": "treasury-account",
+      "seriesId": "treasury-account",
       "categoryId": "category-1",
       "name": "TGA余额",
-      "role": "准备金分配背景",
-      "explanation": "观察财政现金变动对银行准备金分配的影响。 财政部一般账户余额的真实来源、时点及聚合方式待确认。 当前为合成数据演示，非真实市场观测。",
+      "role": "",
+      "explanation": "TGA余额的合成示例，尚未接入登记的数据源。",
       "unit": {
         "kind": "amount",
         "label": "十亿美元",
         "precision": 1
       },
       "frequency": "weekly",
+      "nativeFrequency": "weekly",
       "source": {
-        "name": "数据源与口径待确认",
-        "url": null,
-        "status": "pending"
+        "name": "FRED",
+        "url": "https://fred.stlouisfed.org/series/WDTGAL",
+        "status": "configured"
       },
+      "comparisonRule": "greater",
       "isDemo": true
     },
     {
       "id": "reverse-repo",
+      "seriesId": "reverse-repo",
       "categoryId": "category-1",
       "name": "ON RRP余额",
-      "role": "准备金分配背景",
-      "explanation": "观察隔夜逆回购与银行准备金之间的流动性分配。 刻意保留四周前的合成数据缺口；未接入真实操作余额。 当前为合成数据演示，非真实市场观测。",
+      "role": "",
+      "explanation": "ON RRP余额的合成示例，尚未接入登记的数据源。",
       "unit": {
         "kind": "amount",
         "label": "十亿美元",
         "precision": 1
       },
       "frequency": "weekly",
+      "nativeFrequency": "weekly",
       "source": {
-        "name": "数据源与口径待确认",
-        "url": null,
-        "status": "pending"
+        "name": "FRED",
+        "url": "https://fred.stlouisfed.org/series/WLRRAL",
+        "status": "configured"
       },
+      "comparisonRule": "greater",
       "isDemo": true
     },
     {
       "id": "discount-window",
+      "seriesId": "discount-window",
       "categoryId": "category-1",
       "name": "贴现窗口用量",
-      "role": "压力确认",
-      "explanation": "观察银行对央行融资的依赖程度。 贴现窗口的贷款项目覆盖、余额与新增用量口径待确认。 当前为合成数据演示，非真实市场观测。",
+      "role": "",
+      "explanation": "贴现窗口用量的合成示例，尚未接入登记的数据源。 Pirmary credit",
       "unit": {
         "kind": "amount",
-        "label": "十亿美元",
+        "label": "百万美元",
         "precision": 1
       },
       "frequency": "weekly",
+      "nativeFrequency": "weekly",
       "source": {
-        "name": "数据源与口径待确认",
-        "url": null,
-        "status": "pending"
+        "name": "FRED",
+        "url": "https://fred.stlouisfed.org/series/WLCFLPCL",
+        "status": "configured"
       },
+      "comparisonRule": "less",
       "isDemo": true
     },
     {
       "id": "fed-repo",
+      "seriesId": "fed-repo",
       "categoryId": "category-1",
       "name": "美联储正回购用量",
-      "role": "压力确认",
-      "explanation": "观察央行通过抵押品融资缓解回购市场资金短缺的情况。 工具覆盖、用量统计及周度聚合方式待确认。 当前为合成数据演示，非真实市场观测。",
+      "role": "",
+      "explanation": "美联储正回购用量的合成示例，尚未接入登记的数据源。",
       "unit": {
         "kind": "amount",
         "label": "十亿美元",
         "precision": 1
       },
       "frequency": "weekly",
+      "nativeFrequency": "daily",
       "source": {
-        "name": "数据源与口径待确认",
-        "url": null,
-        "status": "pending"
+        "name": "NY FED",
+        "url": "https://www.newyorkfed.org/markets/desk-operations/repo",
+        "status": "configured"
       },
-      "isDemo": true
-    },
-    {
-      "id": "cross-currency-basis",
-      "categoryId": "category-2",
-      "name": "交叉货币基差",
-      "role": "主要融资价格",
-      "explanation": "观察通过外汇掉期获得美元相对同期限美元OIS或SOFR的资金价格。 货币对、期限与报价正负号约定待确认；暂保留一条合成示例，不按货币或期限拆分。 当前为合成数据演示，非真实市场观测。",
-      "unit": {
-        "kind": "spread",
-        "label": "bp",
-        "precision": 1
-      },
-      "frequency": "weekly",
-      "source": {
-        "name": "数据源与口径待确认",
-        "url": null,
-        "status": "pending"
-      },
+      "comparisonRule": "less",
       "isDemo": true
     },
     {
       "id": "dollar-index",
+      "seriesId": "dollar-index",
       "categoryId": "category-2",
-      "name": "美元指数（DXY）",
-      "role": "辅助结果",
-      "explanation": "观察美元强弱；美元走强本身不足以证明离岸融资压力。 真实指数数据源与周度取值方式待确认。 当前为合成数据演示，非真实市场观测。",
+      "name": "美元指数",
+      "role": "",
+      "explanation": "美元指数的合成示例，尚未接入登记的数据源。",
       "unit": {
         "kind": "index",
         "label": "点",
         "precision": 2
       },
       "frequency": "weekly",
+      "nativeFrequency": "daily",
       "source": {
-        "name": "数据源与口径待确认",
+        "name": "iFind",
         "url": null,
         "status": "pending"
       },
+      "comparisonRule": "less",
       "isDemo": true
     },
     {
       "id": "swap-line",
+      "seriesId": "swap-line",
       "categoryId": "category-2",
       "name": "央行美元流动性互换工具用量（Swap Line）",
-      "role": "压力确认",
-      "explanation": "观察私人融资受阻时，外国央行通过官方互换提供的美元资金。 暂保留一条用量示例；央行覆盖、余额及聚合方式待确认。 当前为合成数据演示，非真实市场观测。",
+      "role": "",
+      "explanation": "央行美元流动性互换工具用量（Swap Line）的合成示例，尚未接入登记的数据源。",
       "unit": {
         "kind": "amount",
-        "label": "十亿美元",
+        "label": "百万美元",
         "precision": 1
       },
       "frequency": "weekly",
+      "nativeFrequency": "weekly",
       "source": {
-        "name": "数据源与口径待确认",
-        "url": null,
-        "status": "pending"
+        "name": "FRED",
+        "url": "https://fred.stlouisfed.org/series/swpt",
+        "status": "configured"
       },
+      "comparisonRule": "less",
       "isDemo": true
     },
     {
       "id": "fima-repo",
+      "seriesId": "fima-repo",
       "categoryId": "category-2",
-      "name": "外国和国际货币当局回购工具用量",
-      "role": "压力确认",
-      "explanation": "观察货币当局以美债抵押获取美元的官方融资。 FIMA Repo与Swap Line是不同工具；具体公开系列与聚合方式待确认。 当前为合成数据演示，非真实市场观测。",
+      "name": "FIMA Repo",
+      "role": "",
+      "explanation": "FIMA Repo的合成示例，尚未接入登记的数据源。",
       "unit": {
         "kind": "amount",
-        "label": "十亿美元",
+        "label": "百万美元",
         "precision": 1
       },
       "frequency": "weekly",
+      "nativeFrequency": "weekly",
       "source": {
-        "name": "数据源与口径待确认",
-        "url": null,
-        "status": "pending"
+        "name": "FRED",
+        "url": "https://fred.stlouisfed.org/series/H41RESPPALGTRFNWW",
+        "status": "configured"
       },
+      "comparisonRule": "less",
       "isDemo": true
     },
     {
-      "id": "credit-spreads",
+      "id": "credit-spreads-ig",
+      "seriesId": "credit-spreads-ig",
       "categoryId": "category-3",
-      "name": "信用利差",
-      "role": "主要信用价格",
-      "explanation": "观察信用风险定价与融资成本，重点关注高收益债，并用投资级债判断压力扩散。 按原文一行保留一项；不拆分HY和IG，具体债券范围与期限待确认。 当前为合成数据演示，非真实市场观测。",
+      "name": "信用利差-投资级",
+      "role": "",
+      "explanation": "信用利差-投资级的合成示例，尚未接入登记的数据源。",
       "unit": {
-        "kind": "spread",
-        "label": "bp",
-        "precision": 1
-      },
-      "frequency": "weekly",
-      "source": {
-        "name": "数据源与口径待确认",
-        "url": null,
-        "status": "pending"
-      },
-      "isDemo": true
-    },
-    {
-      "id": "cds-spreads",
-      "categoryId": "category-3",
-      "name": "信用违约互换价差（CDS）",
-      "role": "主要信用价格",
-      "explanation": "观察违约风险的市场定价，原文案例包括银行CDS。 参考实体、指数、期限与真实来源待确认，不按实体拆分。 当前为合成数据演示，非真实市场观测。",
-      "unit": {
-        "kind": "spread",
-        "label": "bp",
-        "precision": 1
-      },
-      "frequency": "weekly",
-      "source": {
-        "name": "数据源与口径待确认",
-        "url": null,
-        "status": "pending"
-      },
-      "isDemo": true
-    },
-    {
-      "id": "bdc-etf",
-      "categoryId": "category-3",
-      "name": "BDC相关ETF价格表现",
-      "role": "辅助市场代理",
-      "explanation": "观察较高风险的非银行及私人信贷相关敞口定价。 原文未指定ETF；暂以美元价格演示，具体代码、复权及价格或回报口径待确认。 当前为合成数据演示，非真实市场观测。",
-      "unit": {
-        "kind": "price",
-        "label": "美元",
+        "kind": "ratio",
+        "label": "%",
         "precision": 2
       },
       "frequency": "weekly",
+      "nativeFrequency": "daily",
       "source": {
-        "name": "数据源与口径待确认",
-        "url": null,
-        "status": "pending"
+        "name": "FRED",
+        "url": "https://fred.stlouisfed.org/series/BAMLC0A0CM",
+        "status": "configured"
       },
+      "comparisonRule": "less",
       "isDemo": true
     },
     {
-      "id": "clo-etf",
+      "id": "credit-spreads-hy",
+      "seriesId": "credit-spreads-hy",
       "categoryId": "category-3",
-      "name": "CLO相关ETF价格表现",
-      "role": "辅助市场代理",
-      "explanation": "观察抵押贷款债务凭证相关敞口的市场定价。 原文未指定ETF；暂以美元价格演示，具体代码、复权及价格或回报口径待确认。 当前为合成数据演示，非真实市场观测。",
+      "name": "信用利差-高收益",
+      "role": "",
+      "explanation": "信用利差-高收益的合成示例，尚未接入登记的数据源。",
       "unit": {
-        "kind": "price",
-        "label": "美元",
+        "kind": "ratio",
+        "label": "%",
         "precision": 2
       },
       "frequency": "weekly",
+      "nativeFrequency": "daily",
       "source": {
-        "name": "数据源与口径待确认",
-        "url": null,
-        "status": "pending"
+        "name": "FRED",
+        "url": "https://fred.stlouisfed.org/series/BAMLH0A0HYM2",
+        "status": "configured"
       },
+      "comparisonRule": "less",
       "isDemo": true
     },
     {
       "id": "bond-issuance",
+      "seriesId": "bond-issuance",
       "categoryId": "category-3",
       "name": "债券发行量",
-      "role": "融资可得性",
-      "explanation": "观察一级融资渠道是否畅通，并区分HY与IG发行人。 当前只保留一项；发行人范围、HY或IG覆盖和周度发行统计待确认。 当前为合成数据演示，非真实市场观测。",
+      "role": "",
+      "explanation": "债券发行量的合成示例，尚未接入登记的数据源。",
       "unit": {
         "kind": "amount",
-        "label": "十亿美元",
-        "precision": 1
+        "label": "万亿美元",
+        "precision": 2
       },
       "frequency": "weekly",
+      "nativeFrequency": "monthly",
       "source": {
-        "name": "数据源与口径待确认",
+        "name": "SIFMA",
         "url": null,
         "status": "pending"
       },
+      "comparisonRule": "less",
       "isDemo": true
     },
     {
-      "id": "risky-debt-net-issuance",
+      "id": "treasury-bond-issuance",
+      "seriesId": "treasury-bond-issuance",
       "categoryId": "category-3",
-      "name": "风险债务净发行",
-      "role": "融资可得性",
-      "explanation": "观察新增净风险债务资金能否到达借款人。 风险债务范围、到期偿付扣减与周度净额口径待确认。 当前为合成数据演示，非真实市场观测。",
+      "name": "国债发行量",
+      "role": "",
+      "explanation": "国债发行量的合成示例，尚未接入登记的数据源。",
       "unit": {
         "kind": "amount",
-        "label": "十亿美元",
-        "precision": 1
+        "label": "万亿美元",
+        "precision": 2
       },
       "frequency": "weekly",
+      "nativeFrequency": "monthly",
       "source": {
-        "name": "数据源与口径待确认",
+        "name": "SIFMA",
         "url": null,
         "status": "pending"
       },
+      "comparisonRule": "less",
       "isDemo": true
     },
     {
-      "id": "zero-issuance-days",
+      "id": "corporate-bond-issuance",
+      "seriesId": "corporate-bond-issuance",
       "categoryId": "category-3",
-      "name": "一级市场冻结天数／零发行天数",
-      "role": "融资可得性",
-      "explanation": "观察发行中断持续多久，以及冻结是否扩散到更高质量发行人。 暂以连续零发行天数演示；连续天数或周内累计、工作日历及发行人范围待确认。 当前为合成数据演示，非真实市场观测。",
+      "name": "公司债发行量",
+      "role": "",
+      "explanation": "公司债发行量的合成示例，尚未接入登记的数据源。",
       "unit": {
-        "kind": "count",
-        "label": "天",
-        "precision": 0
+        "kind": "amount",
+        "label": "万亿美元",
+        "precision": 2
       },
       "frequency": "weekly",
+      "nativeFrequency": "monthly",
       "source": {
-        "name": "数据源与口径待确认",
+        "name": "SIFMA",
         "url": null,
         "status": "pending"
       },
+      "comparisonRule": "less",
       "isDemo": true
     },
     {
       "id": "lending-standards",
+      "seriesId": "lending-standards",
       "categoryId": "category-3",
       "name": "银行贷款标准",
-      "role": "辅助信贷供给",
-      "explanation": "观察银行放贷意愿和融资可得性的收紧或放松。 暂以净收紧占比演示；贷款类型、调查系列与频率转换待确认，合成周度值不代表真实周度发布。 当前为合成数据演示，非真实市场观测。",
+      "role": "",
+      "explanation": "银行贷款标准的合成示例，尚未接入登记的数据源。 Net Percentage of Domestic Banks Tightening Standards for Commercial and Industrial Loans to Large and Middle-Market Firms",
       "unit": {
         "kind": "ratio",
         "label": "%",
+        "precision": 2
+      },
+      "frequency": "weekly",
+      "nativeFrequency": "quarterly",
+      "source": {
+        "name": "FRED",
+        "url": "https://fred.stlouisfed.org/series/DRTSCILM",
+        "status": "configured"
+      },
+      "comparisonRule": "less",
+      "isDemo": true
+    },
+    {
+      "id": "bank-loans",
+      "seriesId": "bank-loans",
+      "categoryId": "category-3",
+      "name": "银行贷款",
+      "role": "",
+      "explanation": "银行贷款的合成示例，尚未接入登记的数据源。",
+      "unit": {
+        "kind": "amount",
+        "label": "十亿美元",
         "precision": 1
       },
       "frequency": "weekly",
+      "nativeFrequency": "weekly",
       "source": {
-        "name": "数据源与口径待确认",
-        "url": null,
-        "status": "pending"
+        "name": "FRED",
+        "url": "https://fred.stlouisfed.org/series/TOTLL",
+        "status": "configured"
       },
+      "comparisonRule": "greater",
       "isDemo": true
     },
     {
-      "id": "bank-credit-growth",
-      "categoryId": "category-3",
-      "name": "银行信贷增速／银行贷款增速",
-      "role": "辅助数量",
-      "explanation": "观察已实现贷款增长，包括工商业贷款；危机早期增长也可能反映预防性提款。 当前只保留一个增长率示例；贷款覆盖、同比或环比与年化规则待确认。 当前为合成数据演示，非真实市场观测。",
-      "unit": {
-        "kind": "ratio",
-        "label": "%",
-        "precision": 2
-      },
-      "frequency": "weekly",
-      "source": {
-        "name": "数据源与口径待确认",
-        "url": null,
-        "status": "pending"
-      },
-      "isDemo": true
-    },
-    {
-      "id": "asset-volatility",
+      "id": "vix",
+      "seriesId": "vix",
       "categoryId": "category-4",
-      "name": "股、债、商、汇波动率",
-      "role": "初始压力信号",
-      "explanation": "观察不同资产类别的异常价格波动，原文股票案例提到VIX。 按原文一行保留一项；暂以单个波动率百分比示例展示，不拆分资产，不合成为跨资产指数。 当前为合成数据演示，非真实市场观测。",
+      "name": "VIX指数",
+      "role": "",
+      "explanation": "VIX指数的合成示例，尚未接入登记的数据源。",
       "unit": {
-        "kind": "ratio",
-        "label": "%",
+        "kind": "index",
+        "label": "点",
         "precision": 2
       },
       "frequency": "weekly",
+      "nativeFrequency": "daily",
       "source": {
-        "name": "数据源与口径待确认",
+        "name": "FRED",
+        "url": "https://fred.stlouisfed.org/series/VIXCLS",
+        "status": "configured"
+      },
+      "comparisonRule": "less",
+      "isDemo": true
+    },
+    {
+      "id": "move",
+      "seriesId": "move",
+      "categoryId": "category-4",
+      "name": "MOVE指数",
+      "role": "",
+      "explanation": "MOVE指数的合成示例，尚未接入登记的数据源。",
+      "unit": {
+        "kind": "index",
+        "label": "点",
+        "precision": 2
+      },
+      "frequency": "weekly",
+      "nativeFrequency": "daily",
+      "source": {
+        "name": "iFind",
         "url": null,
         "status": "pending"
       },
+      "comparisonRule": "less",
       "isDemo": true
     },
     {
       "id": "bid-ask-spread",
+      "seriesId": "bid-ask-spread",
       "categoryId": "category-4",
-      "name": "买卖价差（Bid-Ask）",
-      "role": "交易承载能力",
-      "explanation": "观察交易条件，原文以美债买卖价差扩大为例。 暂用基点演示；具体券种、价格或收益率价差与报价口径待确认。 当前为合成数据演示，非真实市场观测。",
+      "name": "买卖价差",
+      "role": "",
+      "explanation": "买卖价差的合成示例，尚未接入登记的数据源。",
       "unit": {
         "kind": "spread",
         "label": "bp",
         "precision": 2
       },
       "frequency": "weekly",
+      "nativeFrequency": "daily",
       "source": {
-        "name": "数据源与口径待确认",
+        "name": "Treasury Direct",
         "url": null,
         "status": "pending"
       },
-      "isDemo": true
-    },
-    {
-      "id": "market-depth",
-      "categoryId": "category-4",
-      "name": "市场深度（Market Depth）",
-      "role": "交易承载能力",
-      "explanation": "观察市场吸收交易的能力，原文具体讨论10年期美债深度。 暂以可交易金额演示；档位、价差范围、时段及真实数据源待确认。 当前为合成数据演示，非真实市场观测。",
-      "unit": {
-        "kind": "amount",
-        "label": "十亿美元",
-        "precision": 2
-      },
-      "frequency": "weekly",
-      "source": {
-        "name": "数据源与口径待确认",
-        "url": null,
-        "status": "pending"
-      },
+      "comparisonRule": "less",
       "isDemo": true
     },
     {
       "id": "price-impact",
+      "seriesId": "price-impact",
       "categoryId": "category-4",
       "name": "价格冲击（Price Impact）",
-      "role": "交易承载能力",
-      "explanation": "观察交易对价格的推动幅度，较高冲击对应较弱的交易承载能力。 暂以单位成交额的收益率冲击演示；冲击估计方法、交易规模和采样方式待确认。 当前为合成数据演示，非真实市场观测。",
+      "role": "",
+      "explanation": "价格冲击（Price Impact）的合成示例，尚未接入登记的数据源。 登记计算式：treasury-yield-chg/treasury-trading-volume。当前演示数值不执行此公式。 展示单位尚待确认，数值仅用于界面演示。",
       "unit": {
         "kind": "scalar",
-        "label": "bp／十亿美元",
+        "label": "待确认",
         "precision": 2
       },
       "frequency": "weekly",
+      "nativeFrequency": "daily",
       "source": {
-        "name": "数据源与口径待确认",
+        "name": "登记派生指标",
         "url": null,
         "status": "pending"
       },
-      "isDemo": true
-    },
-    {
-      "id": "positioning",
-      "categoryId": "category-4",
-      "name": "仓位与头寸",
-      "role": "拥挤与平仓风险",
-      "explanation": "观察集中仓位和减仓，原文示例包括日元非商业净空头与掉期利差交易平仓。 暂以合约数展示单个头寸示例；市场、资产、合约、净多空方向与系列待确认，不复用旧交易商国债头寸。 当前为合成数据演示，非真实市场观测。",
-      "unit": {
-        "kind": "count",
-        "label": "合约",
-        "precision": 0
-      },
-      "frequency": "weekly",
-      "source": {
-        "name": "数据源与口径待确认",
-        "url": null,
-        "status": "pending"
-      },
-      "isDemo": true
-    },
-    {
-      "id": "leverage",
-      "categoryId": "category-4",
-      "name": "杠杆水平与去杠杆进展",
-      "role": "被动卖出风险",
-      "explanation": "观察追加保证金的敞口与去杠杆进度，原文未指定唯一杠杆系列。 暂以单个杠杆倍数演示；机构覆盖、敞口与资本或资产的分母待确认，不另造去杠杆指数。 当前为合成数据演示，非真实市场观测。",
-      "unit": {
-        "kind": "multiple",
-        "label": "倍",
-        "precision": 2
-      },
-      "frequency": "weekly",
-      "source": {
-        "name": "数据源与口径待确认",
-        "url": null,
-        "status": "pending"
-      },
-      "isDemo": true
-    },
-    {
-      "id": "cross-asset-selling",
-      "categoryId": "category-4",
-      "name": "跨资产同步抛售",
-      "role": "压力传播",
-      "explanation": "观察股票、美债和黄金同步下跌，以及波动率上升和市场深度下降的传播模式。 原文描述的是共振模式而非合成指数；保留单个条目，数值与统计留空，待确认观察规则后再量化。 当前为合成数据演示，非真实市场观测。",
-      "unit": {
-        "kind": "unquantified",
-        "label": "待定义",
-        "precision": 0
-      },
-      "frequency": "weekly",
-      "source": {
-        "name": "数据源与口径待确认",
-        "url": null,
-        "status": "pending"
-      },
+      "comparisonRule": "less",
       "isDemo": true
     }
   ]

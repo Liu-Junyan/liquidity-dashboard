@@ -6,6 +6,15 @@ from datetime import date, datetime
 from pathlib import Path
 from urllib.parse import urlparse
 
+if __package__:
+    from .catalog import build_catalog
+    from .registry import load_registry
+    from .generate_fixtures import generate
+else:
+    from catalog import build_catalog
+    from registry import load_registry
+    from generate_fixtures import generate
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -30,7 +39,6 @@ def validate(catalog, observations):
     require(len({item['order'] for item in categories}) == len(categories), 'Category order must be unique')
     for category in categories:
         require(category['name'] and category['description'], 'Category metadata is required')
-        require(any(item['categoryId'] == category['id'] for item in indicators), 'Each category needs an indicator')
     require(set(observations) == {item['id'] for item in indicators}, 'Observation series must match indicator IDs')
     for indicator in indicators:
         require(indicator['categoryId'] in category_ids, 'Unknown category')
@@ -63,12 +71,14 @@ def validate(catalog, observations):
 
 def build():
     source = ROOT / 'site'
-    catalog = json.loads((source / 'data/catalog.json').read_text(encoding='utf-8'))
-    observations = json.loads((source / 'data/observations.json').read_text(encoding='utf-8'))
+    catalog = build_catalog(load_registry())
+    observations = generate(catalog)
     validate(catalog, observations)
     vendor = source / 'assets/vendor/echarts-5.6.0.min.js'
     if not vendor.is_file() or vendor.stat().st_size < 100_000:
         raise ValueError('Pinned Apache ECharts bundle is missing')
+    for name, value in [('catalog', catalog), ('observations', observations)]:
+        (source / f'data/{name}.json').write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     output = ROOT / 'dist'
     if output.exists():
         shutil.rmtree(output)

@@ -50,11 +50,13 @@ function sourceMarkup(indicator) {
 function renderOverview() {
   $('#categories').innerHTML = categories.map((category, index) => {
     const items = catalog.indicators.filter(item => item.categoryId === category.id);
+    if (!items.length) return `<button class="category-card" data-category="${category.id}" aria-pressed="false" aria-controls="charts"><span class="category-top"><span class="category-number">0${index + 1}</span><span class="category-name">${escape(category.name)}</span></span><span class="summary-label">${t('emptyCategory')}</span><span class="summary-date">0 ${t('indicatorCount')}</span></button>`;
     const primary = items[0], latest = latestObservation(observations[primary.id]);
     return `<button class="category-card" data-category="${category.id}" aria-pressed="false" aria-controls="charts"><span class="category-top"><span class="category-number">0${index + 1}</span><span class="category-name">${escape(category.name)}</span><span class="category-arrow" aria-hidden="true">↗</span></span><span class="summary-label">${escape(primary.name)}</span><span class="summary-value">${formatNumber(latest?.value, primary.unit.precision)}<small>${escape(primary.unit.label)}</small></span><span class="sparkline" id="spark-${category.id}" aria-hidden="true"></span><span class="secondary-summary">${items.slice(1, 2).map(item => secondarySummary(item, latest?.date)).join('<br>')}</span><span class="summary-date">${t('observationDate')} ${formatDate(latest?.date)} · ${items.length} ${t('indicatorCount')} · ${t('demoShort')}</span></button>`;
   }).join('');
   categories.forEach(category => {
     const indicator = catalog.indicators.find(item => item.categoryId === category.id);
+    if (!indicator) return;
     drawChart($(`#spark-${category.id}`), inRange(observations[indicator.id], '1y', catalog.dataset.observationEnd), indicator, {sparkline: true});
   });
 }
@@ -68,6 +70,10 @@ function renderCharts() {
   const parent = $('#charts');
   disposeCharts(parent);
   const indicators = catalog.indicators.filter(item => item.categoryId === state.category);
+  if (!indicators.length) {
+    parent.innerHTML = `<p class="empty-category">${t('emptyCategory')}</p>`;
+    return;
+  }
   parent.innerHTML = indicators.map(indicator => `<article class="indicator-card" aria-labelledby="heading-${indicator.id}"><div class="card-heading"><h3 id="heading-${indicator.id}">${escape(indicator.name)}</h3><span class="card-demo">${t('demoShort')}</span></div><p class="indicator-role">${escape(indicator.role ?? '')}</p>${metrics(indicator)}<div class="chart-unit">${t('unit')}：${escape(indicator.unit.label)}</div><div class="detail-chart" id="chart-${indicator.id}" role="img" aria-label="${escape(indicator.name)} · ${t(state.range)} · ${t('syntheticSeries')}，${t('chartAlternative')}"></div><div class="card-actions"><button class="text-button" data-statistics="${indicator.id}" aria-expanded="${statisticsOpen.has(indicator.id)}" aria-controls="statistics-${indicator.id}"><span aria-hidden="true">▦</span> ${t(statisticsOpen.has(indicator.id) ? 'hideStatistics' : 'statistics')}</button><button class="text-button" data-expand="${indicator.id}">${t('expand')} <span aria-hidden="true">↗</span></button></div><div id="statistics-${indicator.id}" ${statisticsOpen.has(indicator.id) ? '' : 'hidden'}>${statisticsMarkup(indicator)}</div></article>`).join('');
   indicators.forEach(indicator => drawChart($(`#chart-${indicator.id}`), pointsFor(indicator), indicator));
 }

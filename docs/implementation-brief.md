@@ -28,7 +28,7 @@ Use **overview + drill-down**:
 ```
 
 - Keep all four category summaries visible; selecting one changes the detailed charts below. Select the first category initially.
-- Show one indicator entry per row of the article inventory: 10 monetary, 4 offshore, 9 credit, and 7 financial-market entries. Numeric demonstrations use deterministic weekly observations spanning five years; the unquantified cross-asset selling pattern retains an explicit empty state.
+- Use `data/registry.csv` as the source of truth for current dashboard entries. Display categorized rows except `unavailable`; omit blank-category source inputs. Names, order, additions, and deletions follow the CSV. Numeric demonstrations retain deterministic weekly observations spanning five years.
 - Default charts to five years. Time-range controls affect the selected category’s charts; overview sparklines show the latest year.
 - Express changes in the indicator’s native units; use basis points for rates. Missing comparison observations display `—`.
 - Distinguish observation dates from collection times. Missing observations remain gaps.
@@ -57,7 +57,7 @@ For later real-data integration, use **automatic collection + manual inputs → 
 
 The prototype is ready for review when:
 
-- All four research layers and 30 article-derived indicator entries render correctly, with one entry per inventory row.
+- All four research layers and the current CSV-selected indicators render correctly; unavailable and removed entries do not appear.
 - Category selection, time ranges, expanded details, and data tables work.
 - Latest values and changes match the fixtures; missing data is never converted to zero.
 - Every view clearly identifies synthetic data.
@@ -68,7 +68,7 @@ The prototype is ready for review when:
 
 ### 5. Assumptions and reference material
 
-- The article’s four categories and indicators have been extracted from the supplied [WeChat article text](../wechat.txt) and applied to the site catalog; see the article framework below. Each indicator inventory row maps to one dashboard entry. Numeric data remains synthetic; source series and measurement conventions are not yet finalized.
+- The article’s four categories and indicators have been extracted from the supplied [WeChat article text](../wechat.txt) and applied to the site catalog; see the article framework below. The article inventory is a reference; the maintained CSV now controls the actual dashboard selection. Numeric data remains synthetic; source series and measurement conventions are not yet finalized.
 - English is the default for implementation instructions; the delivered interface is Chinese.
 - The dashboard is intended primarily for personal research, with public static hosting.
 - Use the [OFR Short-term Funding Monitor](https://www.financialresearch.gov/short-term-funding-monitor/) as a reference for grouped charts and interpretive guidance, and the [New York Fed Markets Data Dashboard](https://www.newyorkfed.org/markets/data-hub) as a reference for organizing market data. Their categories do not replace the article’s framework.
@@ -148,7 +148,7 @@ The article monitors equities, bonds, commodities, and foreign exchange through 
 
 Margin calls, VaR constraints, fund redemptions, and forced liquidations explain the feedback mechanism and help interpret positioning changes. The article does not define standalone quantitative series for each mechanism.
 
-For the dashboard, preserve the distinction between primary prices, supporting quantities, and facility usage in indicator explanations. The site now includes all 30 inventory rows as individual entries; combined variables are not expanded into currency, asset, tenor, issuer, or HY/IG sub-series. SOFR and EFFR levels are inputs to the monetary spread indicators. The former repo-volume and dealer-Treasury-position examples have been removed. The broader article-defined positioning entry has its own ID and provisional measurement note. Historical case-study statistics and trading-rule thresholds are not adopted as dashboard alerts or recommendations.
+For the dashboard, preserve the distinction between primary prices, supporting quantities, and facility usage in indicator explanations. The original 30-row inventory above is historical research context. The maintained CSV supersedes it for dashboard membership and can split variables, rename entries, or omit them; the current credit selection includes separate investment-grade and high-yield spreads. SOFR and EFFR levels are inputs to the monetary spread indicators. The former repo-volume and dealer-Treasury-position examples have been removed. The broader article-defined positioning entry has its own ID and provisional measurement note. Historical case-study statistics and trading-rule thresholds are not adopted as dashboard alerts or recommendations.
 
 ### 6. Implemented prototype and design handoff
 
@@ -174,21 +174,23 @@ Responsive breakpoints: overview uses four columns above 900px, two from 601–9
 | Collection timestamp | 演示数据生成时间 |
 | Reading notes | 数据与阅读说明 |
 
-The catalog follows the 30 Chinese indicator labels in section 5 exactly and preserves their order and research roles. There are 10 entries in 货币层, 4 in 离岸层, 9 in 信用层, and 7 in 金融市场层. SOFR/EFFR levels, repo volume, and the old dealer-position example are no longer separate dashboard entries. Unspecified currency pairs, tenors, ETFs, credit segments, and asset classes remain combined into one entry per article row.
+The maintained `data/registry.csv` now determines which indicators appear. A row is visible when `category` and `indicator_id` are populated and `status` is not `unavailable`. Blank-category rows are calculation inputs even if their indicator ID is filled. CSV row order determines order within each research layer; names and source notes are used directly. Removed rows are not restored from the old catalog or article inventory.
 
-Twenty-nine entries have illustrative numeric fixtures. Their units and conventions are explicitly provisional in each explanation: dollar amounts, basis-point spreads, percentage ratios, index points, ETF prices, day/contract counts, leverage multiples, and price impact. The broad balance-sheet entry temporarily demonstrates total assets. These choices are interface examples, not verified provider-series definitions. `跨资产同步抛售` is retained as an unquantified observation pattern with all-null fixtures and an explanatory empty state; no composite index is invented. All provider sources are currently marked pending, so the interface displays plain source text rather than unverified provider links.
+The current registry contains 37 series: 23 displayed indicators (9 monetary, 3 offshore, 7 credit, 4 financial-market), 6 source-only inputs, and 8 unavailable entries. Investment-grade and high-yield spreads have unique IDs, `credit-spreads-ig` and `credit-spreads-hy`. The display uses the registered normalized units where present, localizing common amount scales and bp/% labels; missing units remain explicitly unconfirmed. Production unit conversion and formulas are not executed in this demo.
+
+`python3 scripts/build.py` reads and validates the CSV, generates the current catalog and synthetic observations together, and builds `dist/`. No independently maintained display catalog controls membership. The four research-layer definitions live in `data/categories.json`; empty categories remain valid and render an empty state. Demo signals are stable per indicator ID, so changing registry row order does not alter their numeric history.
 
 #### Files and minimum data interfaces
 
-This subsection describes the implemented synthetic prototype only. Its weekly grid, shared date interval, demo-only validation, and directly maintained site JSON are not requirements for production data. The future mixed-source guide below replaces those assumptions when real-data integration is implemented.
+This subsection describes the implemented synthetic prototype only. Its weekly grid, shared date interval, demo-only validation, and generated demo site JSON are not requirements for production data. The future mixed-source guide below replaces those assumptions when real-data integration is implemented.
 
-`site/data/catalog.json` separates category definitions and indicator metadata from `site/data/observations.json`. `schemaVersion: 1` identifies the current contract. Stable IDs are lowercase ASCII slugs and independent of display labels.
+`site/data/catalog.json` is generated from the registry and `data/categories.json`; it separates indicator metadata from the generated `site/data/observations.json`. `schemaVersion: 1` identifies the current contract. Stable IDs are lowercase ASCII slugs and independent of display labels.
 
 ```json
 {
   "schemaVersion": 1,
   "dataset": {
-    "id": "synthetic-article-framework-v2",
+    "id": "synthetic-registry-v1",
     "isDemo": true,
     "observationStart": "2021-10-27",
     "observationEnd": "2026-10-28",
@@ -213,7 +215,7 @@ This subsection describes the implemented synthetic prototype only. Its weekly g
 }
 ```
 
-The shortened example illustrates the shape; validation requires four populated categories. `unit.kind` supports `amount`, `rate`, `spread`, `ratio`, `index`, `price`, `count`, `multiple`, `scalar`, and `unquantified`. Rate levels are expressed in percentage points (e.g. `4.25` means 4.25%) and their changes convert to bp. Spread levels already use bp and are never multiplied by 100; ratio changes use percentage points. All other changes preserve their native unit. `source` accepts either a verified HTTPS URL or `url: null` with `status: "pending"`. The UI separately identifies the current data source as a local synthetic fixture.
+The shortened example illustrates the shape; validation requires four research-layer definitions but permits empty categories. `unit.kind` supports `amount`, `rate`, `spread`, `ratio`, `index`, `price`, `count`, `multiple`, `scalar`, and `unquantified`. Rate levels are expressed in percentage points (e.g. `4.25` means 4.25%) and their changes convert to bp. Spread levels already use bp and are never multiplied by 100; ratio changes use percentage points. All other changes preserve their native unit. `source` accepts either a verified HTTPS URL or `url: null` with `status: "pending"`. The UI separately identifies the current data source as a local synthetic fixture.
 
 ```json
 {
@@ -234,7 +236,7 @@ The chart-card disclosure now shows summary statistics rather than raw observati
 
 Summary-statistics verification: nine JavaScript regression checks passed, including tied ranks, empty samples, missing/latest observations, zero values, leap-day/year boundaries, and month-end cutoffs. Browser review confirmed keyboard disclosure toggling, unchanged means when switching chart ranges, recalculated percentiles, rate means in percentage units, retained detail tables, and a 320px phone layout without horizontal overflow.
 
-Adding an indicator requires only an entry in `catalog.indicators` and its series in `observations.json`; layout, tables, dialogs, and summary rendering are generated from configuration. The build validates unique IDs, metadata, category references, timezone-aware collection timestamps, HTTPS or explicitly pending sources, finite numeric values, explicit nulls, unquantified patterns, weekly cadence, and matching observation keys.
+Add, rename, reorder, hide, or remove indicators by editing the CSV and rebuilding. Do not edit the generated catalog or observations. Layout, tables, dialogs, and summaries adapt automatically; no old catalog mapping is required. The build validates unique IDs, metadata, category references, timezone-aware collection timestamps, HTTPS or explicitly pending sources, finite numeric values, explicit nulls, unquantified patterns, weekly cadence, and matching observation keys.
 
 #### Local preview and deployment
 
@@ -247,14 +249,14 @@ python3 -m http.server 8000 --directory dist --bind 127.0.0.1
 
 Open `http://127.0.0.1:8000/`. To verify repository-subpath hosting, serve the repository root and open `/dist/`. Do not open the HTML using `file://`, because the app fetches local JSON and uses JavaScript modules.
 
-Navigation uses hashes such as `#category=category-2&range=1y&indicator=cross-currency-basis`. Reloading and browser history restore the selected category, range, and open detail dialog without server route support. Invalid route values safely fall back to the first category/five-year range; an indicator deep link resolves its own category. Assets and data URLs are relative to the site directory.
+Navigation uses hashes such as `#category=category-2&range=1y&indicator=dollar-index`. Reloading and browser history restore the selected category, range, and open detail dialog without server route support. Invalid route values safely fall back to the first category/five-year range; an indicator deep link resolves its own category. Assets and data URLs are relative to the site directory.
 
 The Python build validates input before replacing `dist/`, copies the site and pinned ECharts 5.6.0 bundle/license, and creates `.nojekyll`. The tracked GitHub Actions workflow runs Python and JavaScript checks and uploads `dist/`. Pull requests only validate; pushes to `main` and manual workflow runs can deploy using the `github-pages` environment. Configure repository Settings → Pages → GitHub Actions before the first deployment. This local checkout has no Git remote; live publication is not part of the completed local verification.
 
 #### Milestones and acceptance review
 
-1. **Prototype implementation:** completed in this repository: four research layers, 30 indicator entries, local fixtures, responsive overview/drill-down, accessible controls, tables, deep links, validation, and Pages workflow.
-2. **Article alignment:** completed: all 30 inventory rows are mapped to the four research layers, with no sub-series expansion. Next review the provisional numeric definitions, information density, and reading workflow before real-data selection.
+1. **Prototype implementation:** completed in this repository: four research layers, the current registry-selected indicators, local fixtures, responsive overview/drill-down, accessible controls, tables, deep links, validation, and Pages workflow.
+2. **Registry-controlled selection:** implemented: current CSV membership and metadata supersede the initial article inventory. Unavailable entries are omitted; new, removed, renamed, and split indicators require only a registry edit and rebuild.
 3. **Real-data integration:** implement collection and validation only after the interface and source/aggregation choices are agreed.
 
 Regression commands:
@@ -267,31 +269,38 @@ python3 scripts/build.py
 
 Acceptance checks include fixture reproducibility; exact-date native-unit and basis-point calculations; explicit gaps; stale latest values; calendar windows; malformed and direct hash links; and adding an indicator through configuration. Browser review covers all categories, range switching, tables, expanded metadata, keyboard dismissal/focus, responsive columns, and reloads beneath a project-style subdirectory. The GitHub-hosted workflow itself requires a connected repository and Pages configuration to verify.
 
-Article-alignment verification: five Python contract checks and ten JavaScript regression checks passed. The inventory check compares every catalog label and its order against the 30 Markdown rows, with category counts of 10/4/9/7. Chrome verified all 30 rendered entries, provisional source text without broken links, the unquantified pattern’s chart/detail/statistics states, a new YTD indicator deep link and reload beneath `/dist/`, negative-basis summary statistics, and 320px phone layouts with long labels and units. The build and whitespace checks passed; no application console errors were observed.
+Original article-alignment verification (superseded by registry-controlled selection): five Python contract checks and ten JavaScript regression checks passed. The inventory check compares every catalog label and its order against the 30 Markdown rows, with category counts of 10/4/9/7. Chrome verified all 30 rendered entries, provisional source text without broken links, the unquantified pattern’s chart/detail/statistics states, a new YTD indicator deep link and reload beneath `/dist/`, negative-basis summary statistics, and 320px phone layouts with long labels and units. The build and whitespace checks passed; no application console errors were observed.
+
+Registry-selection verification: thirteen Python tests and ten JavaScript checks passed. Tests cover arbitrary new registry IDs, additions/deletions/renames/order/group/unit changes, unavailable exclusions, source-only inputs, empty categories and an all-hidden catalog, stable per-ID fixtures, and dependency validation. Chrome confirmed 23 visible entries with counts of 9/3/7/4, both IG/HY credit spreads, revised names and source references, summary statistics, an omitted indicator link falling back without reopening it, a new bank-loan YTD link/reload, and a 320px phone layout without horizontal overflow or application console errors. CI now builds from the CSV before validating generated output.
 
 Original prototype verification (before the article alignment): four Python contract checks and six JavaScript regression checks passed; the static build and `git diff --check` passed. Chrome review passed at 1440px desktop, 768px tablet, and 390px/320px phone widths without horizontal page overflow. All eight indicators, one-year (53 rows) and all-history (262 rows) tables, basis-point display, missing/latest observation dates, keyboard range activation, Escape/focus return, and direct expanded-dialog reloads beneath `/dist/` were exercised. No application errors were observed; browser-extension connection errors were unrelated to the dashboard. JavaScript checks were executed by importing the assertion suite in the available Node REPL because the shell has no Node binary on its PATH; CI provisions Node explicitly.
 
 #### Mixed-source data implementation guide (future real-data milestone)
 
-This guide specifies future implementation work; the collectors, manual-input pipeline, and production data contract are not implemented by this documentation update. The existing prototype and its regression fixtures remain unchanged.
+This guide specifies the real-data milestone. The editable source-registry scaffold and specification validation/export are now implemented as described below. Collectors, manual observation import, executable transformation rules, snapshot assembly, and the production frontend contract remain future work. Dashboard selection is now generated from the registry, while observations remain synthetic and the real-data pipeline is not yet active.
 
 Use **automatic collection + manual inputs → validation and normalization → derived indicators → versioned snapshot → static build → GitHub Pages**. The browser reads generated local JSON, never provider APIs or editable input files. Git-backed files are sufficient initially; no database or browser-based administration interface is required.
 
 ##### Registry, ownership, and storage
 
-Create a source registry separate from the generated display catalog. Use these proposed repository locations:
+Maintain the source registry separately from the generated display catalog. Use CSV for human editing and an optional generated JSON export for future pipeline consumption. The repository locations are:
 
 | Location | Purpose | Writer |
 | --- | --- | --- |
-| `data/registry.json` | Source definitions, measurement conventions, and transformation rules keyed by stable series ID | Maintainer |
+| `data/registry.csv` | Editable source definitions and specification text; one row per stable series ID | Maintainer |
+| `data/registry.json` | Optional generated JSON export keyed by stable series ID; ignored by Git and never hand-edited | Registry export command |
 | `data/automatic/<series-id>.json` | Last validated automatic observations and provenance | Collector pipeline |
 | `data/manual/<series-id>.csv` | Manually maintained source observations | Maintainer |
 | `data/snapshot/` | Current validated normalized dataset, derived series, and run manifest; previous versions retained in Git | Assembly pipeline |
 | `site/data/` | Generated catalog, observations, and machine-readable operational metadata for the website | Build pipeline |
 
-The registry must include each series's stable ID, update method (`automatic`, `manual`, or `derived`), source reference, provider series identifier where applicable, native frequency, observation-date convention, source unit, normalized unit, and configured history interval. Include publication-lag expectations, optional aggregation, comparison rules, and conversion rules. Derived entries additionally specify input IDs and their formula. Source-only inputs, such as individual rate levels used in a spread, need not become dashboard entries.
+The simplified registry has 16 columns: stable series and indicator IDs, category, name, status, update method (`automatic`, `manual`, or `derived`), provider, source reference, optional provider series ID, native frequency, source unit, normalized unit, comparison rules, input IDs, formula, and notes. Source references, provider series IDs, and unit fields may remain incomplete during dashboard selection; provider-only manual entries are supported. Collector-specific completeness is deferred to the integration step. A reference identifies a source page/publication; a provider ID identifies the series to a collector. Source-only inputs, such as individual rate levels used in a spread, have a blank `category`; their `indicator_id` may be blank or populated. Technical policies for timing, history, date handling, aggregation, conversions, and statistics belong in the later pipeline implementation rather than maintainer-filled registry columns.
 
-Assign exactly one update method to each series. Reject duplicate ownership, unknown inputs, and cyclic derivations. Collectors may write only automatic inputs; manual files must never be overwritten by collection. Do not introduce implicit manual overrides or switch to a different provider after a fetch failure. A source change requires an explicit registry edit and a review of historical comparability.
+The CSV is authoritative for current dashboard membership and may contain new entries not in the original inventory. `unavailable` is a supported status and excludes the row from the generated catalog/observations while retaining its source record. Blank-category rows are source-only inputs. Draft and unquantified categorized rows remain displayable as demo or nonnumeric entries. Duplicate stable IDs, conflicting categorized output IDs, unknown inputs, and cycles remain errors. Fill specs using the [registry guide](../data/README.md). Input IDs are semicolon-separated; formulas and comparison notes remain metadata until executable calculations are implemented.
+
+Run `python3 scripts/build.py` to regenerate dashboard files after CSV edits. Run `python3 scripts/registry.py` to validate the full registry or `python3 scripts/registry.py --output data/registry.json` to export the registry. CSV supports UTF-8 Chinese text, quoted commas, and multiline notes. The export converts blank fields to `null`, parses input IDs into arrays, and keys entries by `series_id`. Drafts, unquantified entries, and unavailable entries remain explicitly marked in the complete export; the dashboard build filters from the CSV directly. `ready` requires a method and native frequency, a provider for automatic/manual sources, and known ready inputs plus a formula for derived outputs; it does not verify source availability, implement a calculation, collect data, or activate a production series. Future consumers must exclude unfinished definitions.
+
+Assign exactly one update method to each ready numeric series; incomplete drafts may leave it blank, and unquantified patterns have none. Reject duplicate ownership, unknown inputs, and cyclic derivations. Collectors may write only automatic inputs; manual files must never be overwritten by collection. Do not introduce implicit manual overrides or switch to a different provider after a fetch failure. A source change requires an explicit registry edit and a review of historical comparability.
 
 Candidate sources include FRED and direct Federal Reserve, New York Fed, Treasury Fiscal Data, and OFR releases. Confirm each selected series's definition, availability, redistribution terms, units, seasonal adjustment, dates, publication lag, and revision behavior before activating it. Article-level indicator names alone are not sufficient source definitions.
 
@@ -301,7 +310,7 @@ Use UTF-8 CSV with one file per manual series and these columns:
 
 | Field | Requirement |
 | --- | --- |
-| `date` | Required ISO observation date (`YYYY-MM-DD`), following the registry's period convention |
+| `date` | Required ISO observation date (`YYYY-MM-DD`), following the source's measured-period convention |
 | `value` | Numeric value in the configured source unit; blank means explicitly missing, never zero |
 | `source_reference` | Required URL or traceable publication reference, including a page/table where useful |
 | `publication_date` | Optional ISO date of the source release; do not substitute the entry date |
@@ -315,17 +324,17 @@ The maintenance routine is: edit the CSV → commit or open a pull request → r
 
 Add a daily GitHub Actions schedule and an on-demand `workflow_dispatch` trigger. Store FRED and other API credentials solely in Actions secrets; redact credentials from logs and never include them in snapshots or public assets. Add a default-branch trigger for manual input and registry changes. Serialize snapshot-writing and deployment jobs so overlapping scheduled and manual runs cannot overwrite newer inputs; avoid recursive collection triggered by generated-data commits.
 
-Initially, fetch the full configured history for each automatic series on every collection run, including pagination where necessary. This captures historical revisions as well as new observations. Validate the complete response before replacing that series's stored input. Treat unexpected empty/truncated responses as collection failures, and report historical changes or removals explicitly in the run summary. A complete, valid response that contains no changes still counts as a successful check.
+Initially, fetch the full available history for each automatic series on every collection run, including pagination where necessary. This captures historical revisions as well as new observations. Validate the complete response before replacing that series's stored input. Treat unexpected empty/truncated responses as collection failures, and report historical changes or removals explicitly in the run summary. A complete, valid response that contains no changes still counts as a successful check.
 
-Normalize provider missing-value markers to explicit missing values and preserve real zeroes. Record per-series source identity, latest observation date, last attempt time, last successful check time, and last data-change time. Use timezone-aware UTC timestamps for operational events. A failed check must not advance the last-success timestamp. Configure freshness expectations per series so monthly publication, holidays, and normal release delays are not treated as daily update failures.
+Normalize provider missing-value markers to explicit missing values and preserve real zeroes. Record per-series source identity, latest observation date, last attempt time, last successful check time, and last data-change time. Use timezone-aware UTC timestamps for operational events. A failed check must not advance the last-success timestamp. Implement source-specific freshness expectations in collector code so monthly publication, holidays, and normal release delays are not treated as daily update failures; this does not require additional registry fields.
 
 ##### Native frequencies and derived indicators
 
 Store each source's observations at its native daily, weekly, monthly, quarterly, or irregular frequency. Do not impose a shared start/end date or uninterrupted weekly grid. Observation dates describe the measured period, not when the pipeline downloaded it. Distinguish normal non-observation dates from missing expected observations; do not insert zeroes or invent observations to fill a calendar.
 
-Any display aggregation must be explicit in the registry: target period, period-end convention, aggregation method (last observation, average, or sum), and treatment of incomplete periods. Preserve native inputs even when a display series is aggregated. Weekly research does not imply weekly source data.
+Any display aggregation must be explicit in the relevant pipeline code: target period, period-end convention, aggregation method (last observation, average, or sum), and treatment of incomplete periods. Preserve native inputs even when a display series is aggregated. Weekly research does not imply weekly source data.
 
-Compute derived indicators only after validating and normalizing their inputs. Join inputs on matching observation dates by default; if an input is missing, the derived value is missing. Any alternative alignment requires an explicit per-indicator rule with an age limit. Never silently forward-fill inputs or combine different observation periods. Document dimensional conversions before applying formulas: for example, a difference between rate levels expressed in percent is multiplied by 100 to yield basis points; spreads already in basis points are not multiplied again. Recalculate affected history when an input is revised, and retain input snapshot references with the derived result.
+Compute derived indicators only after validating and normalizing their inputs. Join inputs on matching observation dates by default; if an input is missing, the derived value is missing. Any alternative alignment requires an explicit per-indicator implementation rule with an age limit, rather than another registry column. Never silently forward-fill inputs or combine different observation periods. Document dimensional conversions before applying formulas: for example, a difference between rate levels expressed in percent is multiplied by 100 to yield basis points; spreads already in basis points are not multiplied again. Recalculate affected history when an input is revised, and retain input snapshot references with the derived result.
 
 Configure comparison periods and matching rules per indicator. Daily/weekly series may retain 4- and 13-week changes with an explicitly documented calendar-matching rule; monthly/quarterly series need comparisons appropriate to their release periods. A missing or excessively old comparison returns `—`. Update comparison labels to describe the calculation actually used. Review averages and percentiles for native-frequency data; state whether statistics use native observations or an explicitly aggregated series, and never increase sample counts by filling missing dates.
 
@@ -349,7 +358,7 @@ Keep deterministic synthetic fixtures in demo/test mode and prevent the fixture 
 
 ##### Implementation order and future acceptance cases
 
-Implement the registry and manual importer first, then one automatic collector, normalization/derivations, versioned snapshot assembly, and scheduled publication. Migrate the frontend to the production contract before enabling real data. Expand indicator coverage only after each measurement convention is confirmed.
+The registry scaffold is implemented; next fill/review the source specifications and implement the manual importer, then one automatic collector, normalization/derivations, versioned snapshot assembly, and scheduled publication. Migrate the frontend to the production contract before enabling real data. Expand indicator coverage only after each measurement convention is confirmed.
 
 The real-data milestone must verify:
 
@@ -362,4 +371,4 @@ The real-data milestone must verify:
 - Catalog and observations come from the same snapshot, prior versions are recoverable, and public artifacts/logs contain no credentials.
 - Production never displays synthetic fallback data. Charts and overview cards retain observation dates without any of the prohibited maintenance timestamps or status badges.
 
-These are future acceptance requirements, not checks performed by this documentation-only change.
+These are future pipeline acceptance requirements. Current registry verification covers CSV-driven membership, additions/removals/renames/order/units, unavailable exclusions, source-only inputs, empty categories, stable per-ID demo histories, the 16-field export, Unicode round trips, duplicate IDs, dependency cycles, and ready derived metadata. Registry validation is included in GitHub Actions; no collector or production-data workflow has been enabled.

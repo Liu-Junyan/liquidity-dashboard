@@ -1,44 +1,46 @@
 import copy
-import json
 import unittest
-from pathlib import Path
 from scripts.build import validate
+from scripts.catalog import build_catalog
 from scripts.generate_fixtures import generate
-
-ROOT = Path(__file__).resolve().parents[1]
+from scripts.registry import load_registry
 
 
 class DataContractTests(unittest.TestCase):
     def setUp(self):
-        self.catalog = json.loads((ROOT / 'site/data/catalog.json').read_text())
-        self.observations = json.loads((ROOT / 'site/data/observations.json').read_text())
+        self.registry = load_registry()
+        self.catalog = build_catalog(self.registry)
+        self.observations = generate(self.catalog)
 
     def test_fixture_contract_and_reproducibility(self):
         validate(self.catalog, self.observations)
-        self.assertEqual(self.observations, generate())
-        self.assertEqual(len(self.catalog['indicators']), 30)
-        self.assertEqual([category['name'] for category in self.catalog['categories']], ['货币层', '离岸层', '信用层', '金融市场层'])
-        for category, expected in zip(self.catalog['categories'], [10, 4, 9, 7]):
-            self.assertEqual(sum(item['categoryId'] == category['id'] for item in self.catalog['indicators']), expected)
-        # The Markdown inventory is the source of truth: preserve exactly one indicator per row.
-        brief = (ROOT / 'docs/implementation-brief.md').read_text()
-        inventory = brief.split('#### Article framework:')[1].split('### 6.')[0]
-        article_names = [line.split('|')[1].strip().rsplit(' / ', 1)[1] for line in inventory.splitlines() if line.startswith('| ') and ' / ' in line.split('|')[1] and not line.startswith('| Indicator')]
-        self.assertEqual([item['name'] for item in self.catalog['indicators']], article_names)
+        self.assertEqual(self.observations, generate(self.catalog))
+        visible = [(key, row) for key, row in self.registry['series'].items()
+                   if row['category'] and row['status'] != 'unavailable']
+        self.assertEqual([item['id'] for item in self.catalog['indicators']], [row['indicator_id'] for _, row in visible])
+        self.assertEqual([item['name'] for item in self.catalog['indicators']], [row['name'] for _, row in visible])
+        self.assertEqual([item['seriesId'] for item in self.catalog['indicators']], [key for key, _ in visible])
+        self.assertEqual(set(self.observations), {item['id'] for item in self.catalog['indicators']})
 
     def test_reject_invalid_values_and_weekly_dates(self):
+        if not self.catalog['indicators']:
+            self.skipTest('No displayed numeric fixtures to corrupt')
+        identifier = self.catalog['indicators'][0]['id']
         for invalid in [float('nan'), float('inf'), '0', False]:
             broken = copy.deepcopy(self.observations)
-            broken['sofr-effr-spread'][0]['value'] = invalid
+            broken[identifier][0]['value'] = invalid
             with self.subTest(invalid=invalid), self.assertRaises(ValueError):
                 validate(self.catalog, broken)
         broken = copy.deepcopy(self.observations)
-        broken['sofr-effr-spread'][1]['date'] = broken['sofr-effr-spread'][0]['date']
+        broken[identifier][1]['date'] = broken[identifier][0]['date']
         with self.assertRaises(ValueError):
             validate(self.catalog, broken)
 
     def test_missing_series_and_wrong_category_rejected(self):
-        del self.observations['sofr-effr-spread']
+        if not self.catalog['indicators']:
+            self.skipTest('No displayed fixtures to corrupt')
+        identifier = self.catalog['indicators'][0]['id']
+        del self.observations[identifier]
         with self.assertRaises(ValueError):
             validate(self.catalog, self.observations)
         self.setUp()
@@ -46,23 +48,57 @@ class DataContractTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             validate(self.catalog, self.observations)
 
-    def test_add_indicator_through_configuration_only(self):
-        extra = copy.deepcopy(self.catalog['indicators'][0])
-        extra['id'] = 'additional-indicator'
-        extra['name'] = '新增指标（示例）'
-        self.catalog['indicators'].append(extra)
-        self.observations[extra['id']] = copy.deepcopy(self.observations['reserve-balances'])
-        validate(self.catalog, self.observations)
+    def test_registry_edits_control_membership_names_order_and_units(self):
+        template = copy.deepcopy(next(iter(self.registry['series'].values())))
+        template.update(category='货币层', status='draft', input_series_ids=[], formula=None)
+        self.registry['series'] = {f'example-{index}': template | {'indicator_id':f'example-{index}', 'name':f'Example {index}'} for index in range(3)}
+        original = list(self.registry['series'].items())
+        displayed = [key for key, row in original if row['category'] and row['status'] != 'unavailable']
+        removed, hidden, renamed = displayed[:3]
+        del self.registry['series'][removed]
+        self.registry['series'][hidden]['status'] = 'unavailable'
+        entry = self.registry['series'][renamed]
+        entry.update(name='修改后的指标', normalized_unit='Millions', category='信用层')
+        added = copy.deepcopy(entry)
+        added.update(indicator_id='new-dashboard-entry', name='新指标')
+        self.registry['series'] = {'new-series': added} | self.registry['series']
+        catalog = build_catalog(self.registry)
+        ids = {item['id'] for item in catalog['indicators']}
+        self.assertNotIn(removed, ids)
+        self.assertNotIn(hidden, ids)
+        self.assertEqual(catalog['indicators'][0]['id'], 'new-dashboard-entry')
+        revised = next(item for item in catalog['indicators'] if item['seriesId'] == renamed)
+        self.assertEqual((revised['name'], revised['categoryId'], revised['unit']['label']), ('修改后的指标', 'category-3', '百万美元'))
+        validate(catalog, generate(catalog))
 
-    def test_unquantified_pattern_and_unresolved_sources_are_explicit(self):
-        self.assertTrue(all(point['value'] is None for point in self.observations['cross-asset-selling']))
-        broken = copy.deepcopy(self.observations)
-        broken['cross-asset-selling'][0]['value'] = 42
+    def test_empty_categories_and_all_hidden_catalog_are_valid(self):
+        for row in self.registry['series'].values():
+            row['status'] = 'unavailable'
+        catalog = build_catalog(self.registry)
+        self.assertEqual(catalog['indicators'], [])
+        self.assertEqual(generate(catalog), {})
+        validate(catalog, {})
+
+    def test_fixture_shapes_survive_registry_reordering(self):
+        self.registry['series'] = dict(reversed(list(self.registry['series'].items())))
+        self.assertEqual(self.observations, generate(build_catalog(self.registry)))
+
+    def test_unquantified_and_missing_unit_entries_are_explicit(self):
+        entry = copy.deepcopy(next(iter(self.registry['series'].values())))
+        entry.update(category='货币层', indicator_id='unquantified-example', name='未量化示例', status='draft')
+        self.registry['series']['unquantified-example'] = entry
+        identifier = entry['indicator_id']
+        entry.update(normalized_unit=None)
+        item = next(item for item in build_catalog(self.registry)['indicators'] if item['id'] == identifier)
+        self.assertEqual(item['unit']['label'], '待确认')
+        entry['status'] = 'unquantified'
+        catalog = build_catalog(self.registry)
+        observations = generate(catalog)
+        self.assertTrue(all(point['value'] is None for point in observations[identifier]))
+        validate(catalog, observations)
+        observations[identifier][0]['value'] = 42
         with self.assertRaises(ValueError):
-            validate(self.catalog, broken)
-        self.catalog['indicators'][0]['source'] = {'name':'Unresolved', 'url':None}
-        with self.assertRaises(ValueError):
-            validate(self.catalog, self.observations)
+            validate(catalog, observations)
 
 
 if __name__ == '__main__':

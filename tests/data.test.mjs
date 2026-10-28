@@ -10,7 +10,7 @@ const catalog = JSON.parse(readFileSync(new URL('../site/data/catalog.json', imp
 const fixtures = JSON.parse(readFileSync(new URL('../site/data/observations.json', import.meta.url)));
 
 test('native changes use the exact calendar week, including zero', () => {
-  const indicator = catalog.indicators.find(item => item.id === 'reserve-balances');
+  const indicator = {unit:{kind:'amount',label:'十亿美元',precision:1}};
   const data = [{date:'2026-09-30',value:0}, {date:'2026-10-28',value:15}];
   assert.equal(changeAt(data, 4, indicator), 15);
   assert.equal(changeAt([{date:'2026-09-30',value:15}, data[1]], 4, indicator), 0);
@@ -26,9 +26,9 @@ test('rate changes convert percentage points to basis points', () => {
 });
 
 test('missing comparison and latest data are never treated as zero', () => {
-  const reverse = catalog.indicators.find(item => item.id === 'reverse-repo');
-  assert.equal(changeAt(fixtures[reverse.id], 4, reverse), null);
-  const latest = latestObservation(fixtures['positioning']);
+  const indicator = {unit:{kind:'amount',label:'十亿美元',precision:1}};
+  assert.equal(changeAt([{date:'2026-09-30',value:null},{date:'2026-10-28',value:5}], 4, indicator), null);
+  const latest = latestObservation([{date:'2026-10-21',value:5},{date:'2026-10-28',value:null}]);
   assert.equal(latest.date, '2026-10-21');
   assert.equal(latestObservation([{date:'2026-10-28',value:null}]), null);
 });
@@ -53,7 +53,10 @@ test('all fixture metrics match independent dated comparisons', () => {
 });
 
 test('calendar ranges use dataset end, preserve nulls and differ from all', () => {
-  const points = fixtures['reserve-balances'];
+  const points = Array.from({length:262}, (_, index) => ({
+    date:new Date(Date.UTC(2021, 9, 27) + index * 7 * 86400000).toISOString().slice(0,10),
+    value:index === 100 ? null : index,
+  }));
   const year = inRange(points, '1y', catalog.dataset.observationEnd);
   assert.equal(year.length, 53);
   assert.equal(inRange(points, '5y', catalog.dataset.observationEnd).length, 261);
@@ -75,11 +78,14 @@ test('calendar ranges use dataset end, preserve nulls and differ from all', () =
 });
 
 test('deep links and malformed hashes resolve to safe valid state', () => {
-  const parse = hash => parseRoute(hash, catalog.categories, catalog.indicators);
+  const categories = [{id:'category-1'},{id:'category-2'}];
+  const indicators = [{id:'visible-indicator',categoryId:'category-2'}];
+  const parse = hash => parseRoute(hash, categories, indicators);
   assert.deepEqual(parse(''), {category:'category-1',range:'5y',indicator:null});
   assert.deepEqual(parse('#category=invalid&range=bad&indicator=bad'), parse(''));
-  assert.deepEqual(parse('#indicator=cross-currency-basis&range=1y'), {category:'category-2',range:'1y',indicator:'cross-currency-basis'});
-  assert.deepEqual(parse('#indicator=sofr-effr-spread&range=ytd'), {category:'category-1',range:'ytd',indicator:'sofr-effr-spread'});
+  assert.deepEqual(parse('#indicator=visible-indicator&range=1y'), {category:'category-2',range:'1y',indicator:'visible-indicator'});
+  assert.equal(parse('#indicator=removed-indicator').indicator, null);
+  assert.deepEqual(parse('#indicator=visible-indicator&range=ytd'), {category:'category-2',range:'ytd',indicator:'visible-indicator'});
   assert.equal(parse('#methodology').category, 'category-1');
 });
 
@@ -135,13 +141,13 @@ test('percentile includes tied current values, is range-aware and handles no val
 });
 
 test('article spread values stay in basis points and ratios change in percentage points', () => {
-  const spread = catalog.indicators.find(item => item.id === 'sofr-effr-spread');
-  const ratio = catalog.indicators.find(item => item.id === 'reserve-assets-ratio');
+  const spread = {unit:{kind:'spread',label:'bp',precision:2}};
+  const ratio = {unit:{kind:'ratio',label:'%',precision:2}};
   const points = [{date:'2026-09-30',value:-5}, {date:'2026-10-28',value:-4.75}];
   assert.equal(changeAt(points, 4, spread), 0.25);
-  assert.equal(formatChange(0.3, spread), '+0.3 bp');
+  assert.equal(formatChange(0.3, spread), '+0.30 bp');
   assert.equal(formatChange(0.25, ratio), '+0.25 百分点');
-  assert.deepEqual(summaryStatistics(fixtures['cross-asset-selling']), {
+  assert.deepEqual(summaryStatistics([]), {
     average3m:{value:null,count:0}, average1y:{value:null,count:0}, percentile:{value:null,count:0},
   });
 });

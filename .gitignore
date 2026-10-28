@@ -3,3 +3,5 @@ __pycache__/
 .DS_Store
 *.pyc
 wechat.txt
+# Generated from the editable data/registry.csv; never maintain both by hand.
+/data/registry.json

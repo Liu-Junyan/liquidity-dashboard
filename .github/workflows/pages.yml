@@ -24,12 +24,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Build dashboard from registry
+        run: python scripts/build.py
       - name: Verify data and calculations
         run: |
+          python scripts/registry.py
           python -m unittest discover -s tests -p 'test_*.py'
           node --test tests/data.test.mjs
-      - name: Build static site
-        run: python scripts/build.py
       - uses: actions/upload-pages-artifact@v4
         with:
           path: dist
