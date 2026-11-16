@@ -57,6 +57,45 @@ Source references and provider IDs are complementary: a URL identifies a readabl
 
 History selection, publication timing, date handling, aggregation, conversions, and production statistics will be handled in pipeline code rather than extra CSV columns. The current source-unit/normalized-unit fields do not perform numeric conversion on demo data.
 
+## Manual observation files (Slice 2 format)
+
+Use one UTF-8 CSV per manual series at `data/manual/<series-id>.csv`, with exactly
+this header:
+
+```csv
+date,value
+```
+
+- `date`: ISO observation date (`YYYY-MM-DD`), unique and sorted oldest first.
+  Monthly observations follow the date convention documented for that series.
+- `value`: finite numeric amount in the registry's `source_unit`, without currency
+  symbols or thousands separators. Blank means missing; `0` means a reported zero.
+
+The three SIFMA test inputs belong at:
+
+```text
+data/manual/bond-issuance.csv
+data/manual/treasury-bond-issuance.csv
+data/manual/corporate-bond-issuance.csv
+```
+
+Record the shared source in the registry's `source_reference`, with worksheet,
+column, coverage, and period details in `notes`. Do not repeat source references
+in every CSV row or add publication-date/correction-note columns. The current
+SIFMA entries still need those details and verified units: their configured source
+and normalized units are both `Trillion`, which is not verification of a SIFMA
+table's actual scale. Confirm monthly amounts versus year-to-date totals too.
+
+For revisions, edit the existing row. Explain changed values, values replaced by
+missing, and deleted rows in the input commit message, identifying the series and
+affected dates or range. New observations need no correction reason. Git preserves
+the previous values; the planned importer compares against the previous committed
+input and requires a baseline instead of silently skipping correction checks.
+
+The importer is not implemented yet. These files prepare Slice 2 test inputs;
+placing them here does not activate a series or update the dashboard. Source
+review and activation checks still apply before production use.
+
 ## Production foundation (Slice 1)
 
 ```sh

@@ -308,17 +308,20 @@ Candidate sources include FRED and direct Federal Reserve, New York Fed, Treasur
 
 ##### Manual entry and corrections
 
-Use UTF-8 CSV with one file per manual series and these columns:
+Use UTF-8 CSV at `data/manual/<series-id>.csv`, with exactly two columns:
+
+```csv
+date,value
+```
 
 | Field | Requirement |
 | --- | --- |
 | `date` | Required ISO observation date (`YYYY-MM-DD`), following the source's measured-period convention |
 | `value` | Numeric value in the configured source unit; blank means explicitly missing, never zero |
-| `source_reference` | Required URL or traceable publication reference, including a page/table where useful |
-| `publication_date` | Optional ISO date of the source release; do not substitute the entry date |
-| `correction_note` | Optional for new observations; required when changing or removing a previously recorded observation |
 
-Maintain one row per observation date and sort rows chronologically. Add new rows for new periods; edit the existing row for a revision instead of adding a duplicate. Record the reason for a removed row in the commit message, since its CSV note will no longer be present. Validate corrections against the previous committed input. Git records previous values, authorship, and edit history; the pipeline records the input commit and its timestamp as entry provenance, separately from observation/publication dates.
+Record the shared source once in `data/registry.csv`: `source_reference` identifies the URL or publication/table, and `notes` describes the worksheet, column, coverage, and measured-period convention where needed. Values use the registry's `source_unit`. A reviewed source reference is required before activation, but incomplete future registry entries remain allowed. The importer/assembler obtains source provenance from the reviewed registry; rows do not repeat it. Do not add publication dates or correction notes to the observation CSV, and do not infer publication dates from entry or commit times.
+
+Maintain one row per observation date and sort rows chronologically. Add new rows for new periods; edit the existing row for a revision instead of adding a duplicate. Record reasons for changed values, replacing a value with missing, and removed rows in the input commit message, identifying the affected series and dates or date range. New rows need no correction reason. Validate corrections against the previous committed input and report a missing baseline rather than skipping the comparison. Git records previous values, reasons, authorship, and edit history; the pipeline derives input-commit provenance without additional maintainer-filled CSV fields.
 
 The maintenance routine is: edit the CSV → commit or open a pull request → review validation results → merge to the default branch → regenerate and publish. Pull requests validate without deploying. Manual edits trigger assembly from the last validated automatic inputs and do not require a successful fresh API request. Do not edit generated site JSON to correct data.
 

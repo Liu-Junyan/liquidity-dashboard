@@ -183,6 +183,28 @@ class ProductionContractTests(unittest.TestCase):
         record['requestParameters'] = {}
         self.validate()
 
+    def test_manual_date_value_points_use_series_level_provenance(self):
+        self.manifest['provenance']['daily'] = {
+            'specHash': 'a' * 64, 'method': 'manual',
+            'sourceUnit': '%', 'normalizedUnit': '%',
+            'sourceReference': 'Illustrative workbook, daily sheet, value column',
+            'requestParameters': {}, 'transformation': 'lin',
+        }
+        self.manifest['outcomes']['daily'] = {
+            'status': 'imported', 'latestObservationDate': '2026-11-13',
+            'lastAttempt': None, 'lastSuccessfulCheck': None, 'lastDataChange': None,
+        }
+        # Candidate points after CSV parsing: no per-row references, release dates,
+        # or correction notes. CSV parsing and commit comparisons arrive in Slice 2.
+        self.observations['series']['daily'] = [
+            {'date': '2026-11-12', 'value': 0},
+            {'date': '2026-11-13', 'value': None},
+        ]
+        self.validate()
+        self.manifest['provenance']['daily']['sourceReference'] = ''
+        with self.assertRaisesRegex(ValueError, 'reference'):
+            self.validate()
+
     def test_comparison_policy_mismatch_and_malformed_payloads(self):
         self.catalog['indicators'][1]['comparisonPolicy']['maxAgeDays'] = 8
         with self.assertRaisesRegex(ValueError, 'Comparison policy'):

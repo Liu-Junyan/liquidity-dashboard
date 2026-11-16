@@ -2,7 +2,7 @@ import copy
 import unittest
 from dataclasses import replace
 
-from scripts.policies import (ACTIVE_SERIES, PILOT_SERIES, POLICIES, conversion_policy,
+from scripts.policies import (ACTIVE_SERIES, PILOT_SERIES, POLICIES, SeriesPolicy, conversion_policy,
                               load_reviews, specification_hash, validate_activation,
                               validate_policies)
 from scripts.registry import load_registry
@@ -88,6 +88,28 @@ class PolicyTests(unittest.TestCase):
             validate_policies(self.registry, reviews=reviews)
         self.assertEqual(load_reviews()['fed-repo']['specHash'],
                          specification_hash(self.registry['series']['fed-repo']))
+
+    def test_manual_source_is_reviewed_once_in_registry(self):
+        # Illustrative metadata only: this does not certify or activate SIFMA data.
+        identifier = 'bond-issuance'
+        entry = self.registry['series'][identifier]
+        entry.update(provider='Test publication', provider_series_id=None,
+                     source_reference='Illustrative issuance workbook, monthly sheet, total column',
+                     notes='Monthly amounts dated at calendar month-end; illustrative test source.')
+        policies = POLICIES | {identifier: SeriesPolicy('manual', 'manual-csv', 'month-end')}
+        reviews = load_reviews() | {identifier: {
+            'specHash': specification_hash(entry), 'reviewedOn': '2026-11-16',
+            'reference': 'Illustrative test review', 'explanation': 'Test monthly issuance',
+            'dateRule': 'month-end', 'redistribution': 'Illustrative test data only',
+        }}
+        self.assertEqual(validate_policies(self.registry, {identifier}, policies=policies,
+                                           reviews=reviews), [identifier])
+        entry['source_reference'] = None
+        with self.assertRaisesRegex(ValueError, 'source reference'):
+            validate_policies(self.registry, {identifier}, policies=policies, reviews=reviews)
+        entry['source_reference'] = 'Different workbook or table'
+        with self.assertRaisesRegex(ValueError, 'needs review'):
+            validate_policies(self.registry, {identifier}, policies=policies, reviews=reviews)
 
 
 if __name__ == '__main__':

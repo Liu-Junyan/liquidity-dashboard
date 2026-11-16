@@ -125,10 +125,13 @@ Exit check: pilot specifications are complete; unknown conversions, ambiguous tr
 No manual data preparation is required to begin this slice. Implement build-mode
 isolation and the importer using temporary test registries/CSV fixtures for a
 manual series; do not activate a placeholder or use `fed-repo` as manual input.
-Real manual source selection, review, and import are deferred to Slice 6.
+The maintainer has selected the three SIFMA issuance series as manual test inputs:
+`bond-issuance`, `treasury-bond-issuance`, and `corporate-bond-issuance`. Prepared
+samples can exercise the importer after their registry source, units, and monthly
+date conventions are specified. Their production activation remains in Slice 6.
 
-- [ ] Implement UTF-8 CSV import with `date,value,source_reference,publication_date,correction_note`; blank values become null. Enforce sorted, unique ISO dates, finite numbers, required references, and supported units.
-- [ ] Compare manual edits against the previous committed input. Changed values or nulling a prior value require a correction note; removed rows require an explicit reason in the input commit message. New rows need no correction note. CI fetches enough history for this comparison and reports a missing baseline rather than bypassing validation.
+- [ ] Implement UTF-8 CSV import with exactly `date,value` at `data/manual/<series-id>.csv`; blank values become null. Enforce the two-column schema, sorted unique ISO dates, finite numbers, and supported registry units. Resolve the shared source reference and table/measurement details from `data/registry.csv`, not individual observations. Require a reviewed source reference before activation; no publication-date or correction-note columns are maintained.
+- [ ] Compare manual edits against the previous committed input. Changed values, nulling a prior value, and removed rows require a reason in the input commit message identifying the series and affected dates or range. New rows need no correction reason. CI fetches enough history for this comparison and reports a missing baseline rather than bypassing validation.
 - [ ] Enforce ownership: collectors cannot write manual files, and manual files cannot override automatic inputs.
 - [ ] Add explicit demo and production build modes. Preserve existing demo commands/tests; production cannot invoke `generate_fixtures.py` or write to its output paths.
 
@@ -199,7 +202,7 @@ Use existing Python unittest and Node test runners. Add tests for behaviors that
 | --- | --- |
 | Normalization | Millions → billions; ratio → percent; percent-point difference → bp once; identity conversions |
 | Transformations | `chg` request is explicit and distinct from `pch`; missing source periods are not silently replaced by previous valid values |
-| Manual integrity | Additions, documented revisions/removals, duplicate dates, invalid references, and ownership rejection |
+| Manual integrity | Two-column CSVs; additions; commit-documented revisions/nulling/removals; missing baselines; duplicate dates; missing/invalid registry source references; ownership rejection |
 | Automatic history | Pagination, provider missing markers, true zeroes, revisions, unchanged responses, truncated/empty failure, bounded retries |
 | Derived history | Same-date joins, null inputs, zero denominator, dependency order, revision propagation, stale retained inputs with compatible dates |
 | Production UI | Empty/all-null/single-point/short histories; mixed frequencies; holidays; ranges without points; correct comparison labels and sample counts |

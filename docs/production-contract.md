@@ -63,7 +63,13 @@ Each provenance record contains `specHash` (reviewed registry identity), `method
 `sourceReference`, `requestParameters`, and `transformation` (`lin` for untransformed
 manual input). Automatic records also preserve `providerUnits` (provider's original
 unit description); request parameters must include `series_id` and `units`.
-Manual request parameters are always `{}`. Derived records contain a named
+Manual request parameters are always `{}`. Manual observations are maintained as
+`date,value` CSVs; the assembler obtains `sourceReference` and units from the
+reviewed registry, not per-row metadata. Publication dates and correction notes
+are not CSV fields. Correction/removal reasons belong in the input commit message;
+`sourceInputCommit` links the snapshot to that history. Operational timestamps
+below are pipeline metadata, not dates the maintainer must enter.
+Derived records contain a named
 `calculation`, `inputHashes` identifying their exact upstream normalized inputs,
 and `missingInputs` (normally `[]`). Digests must match the manifest input hashes.
 First-time failed upstream sources go into `missingInputs`; such a derivation
