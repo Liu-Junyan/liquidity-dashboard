@@ -12,7 +12,7 @@ reserve-assets-ratio,reserve-assets-ratio,货币层,准备金占商业银行总�
 treasury-account,treasury-account,货币层,TGA余额,ready,automatic,FRED,https://fred.stlouisfed.org/series/WDTGAL,,weekly,Millions,Billions,greater,,,
 reverse-repo,reverse-repo,货币层,ON RRP余额,ready,automatic,FRED,https://fred.stlouisfed.org/series/rrpontsyd,,daily,Billions,Billions,greater,,,
 discount-window,discount-window,货币层,贴现窗口用量,ready,automatic,FRED,https://fred.stlouisfed.org/series/WLCFLPCL,,weekly,Millions,Millions,less,,,Pirmary credit
-fed-repo,fed-repo,货币层,美联储隔夜正回购接受量,ready,manual,NY FED,https://www.newyorkfed.org/markets/desk-operations/repo,,daily,Billions,Billions,less,,,按纽约操作日期汇总全部隔夜场次及抵押品接受量（含小额测试）；不含定期回购、逆回购及FIMA；为每日流量而非未偿余额。
+fed-repo,fed-repo,货币层,美联储隔夜正回购总量,ready,automatic,FRED,https://fred.stlouisfed.org/series/RPONTTLD,RPONTTLD,daily,Billions,Billions,less,,,采用FRED的隔夜正回购每日总量；覆盖美国国债、联邦机构债及机构MBS；原始单位为十亿美元；为每日交易量而非未偿余额；保留来源日期及缺失值。
 cross-currency-basis,cross-currency-basis,离岸层,交叉货币基差,unavailable,,,,,,,,,,,
 dollar-index,dollar-index,离岸层,美元指数,ready,manual,iFind,,,daily,none,none,less,,,
 swap-line,swap-line,离岸层,央行美元流动性互换工具用量（Swap Line）,ready,automatic,FRED,https://fred.stlouisfed.org/series/swpt,,weekly,Millions,Millions,less,,,

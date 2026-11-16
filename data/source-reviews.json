@@ -24,12 +24,12 @@
     "redistribution": "NY Fed terms apply; attribution and applicable reference-rate notices required. See source review."
   },
   "fed-repo": {
-    "specHash": "e6aeeb73a85e1f3aa58c818b1d5aa8121a2f41c3c08b7a9cee3309e9e448159b",
+    "specHash": "268efab12fa0004407c6f00f86e81ef3c57dde4610ef39b8ba2e2a751f182947",
     "reviewedOn": "2026-11-16",
     "reference": "docs/source-review.md#fed-repo",
-    "explanation": "纽约联储按操作日公布的隔夜正回购接受量，汇总各场次及抵押品类别（包括小额测试），单位为十亿美元；排除定期回购、逆回购和FIMA，为每日流量而非未偿余额。",
-    "dateRule": "ny-operation-date-overnight-total",
-    "redistribution": "NY Fed terms apply; attribution and applicable reference-rate notices required. See source review."
+    "explanation": "FRED发布的隔夜正回购每日总量，来源为纽约联储临时公开市场操作；覆盖美国国债、联邦机构债及机构MBS。原始单位已为十亿美元，保持原值及来源日期；为每日交易量而非未偿余额；缺失值不视为零。",
+    "dateRule": "source-business-date",
+    "redistribution": "Copyrighted, citation required; cite NY Fed and FRED. NY Fed general content terms apply; recheck before publication."
   },
   "sofr-effr-spread": {
     "specHash": "39d93190bb4177ee36c9484cc67a92327fa5f1ae641ef3495f6dfd05c18e19bd",

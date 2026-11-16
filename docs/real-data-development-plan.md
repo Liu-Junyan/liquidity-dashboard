@@ -12,10 +12,11 @@ The first production milestone is deliberately small:
 
 - Fed total assets (`fed-assets`, FRED `WALCL`), exercising weekly collection and amount conversion.
 - SOFR and EFFR source inputs, producing `sofr-effr-spread`, exercising daily collection and derivation.
-- One verified manual series, exercising import, correction history, and publication. Prefer `fed-repo` after defining the exact operations measure; another registry manual series may be selected if its source is ready first.
+- Fed overnight repo totals across Treasury, agency debt, and agency MBS collateral (`fed-repo`, FRED `RPONTTLD`), exercising daily collection with identity conversion in billions. This replaces the earlier manual all-collateral pilot.
+- Manual import and correction validation remain in Slice 2, using isolated offline test fixtures. A real manual series and its publication check move to Slice 6 after a source is ready; they are not prerequisites for this first release.
 - Other categorized entries remain visible with `待接入` and empty charts until their implementations pass activation checks. Existing `unavailable` entries remain excluded; source-only inputs remain hidden.
 
-Completion means these series work through collection/import, normalization, derivation, snapshot assembly, frontend rendering, and repeatable publication. Full coverage of all 23 displayed indicators is a later milestone. Trading signals, a database, accounts, and maintenance controls in the browser are outside this release.
+Completion means these pilot series work through collection, normalization, derivation, snapshot assembly, frontend rendering, and repeatable publication, with manual import validation covered offline. Full coverage of all 23 displayed indicators is a later milestone. Trading signals, a database, accounts, and maintenance controls in the browser are outside this release.
 
 ## 2. Current state and implementation constraints
 
@@ -43,6 +44,7 @@ Use Python 3.10+ and standard-library modules initially. If a dependency becomes
 | `reserve-assets-ratio` | `100 * reserve-balances / bank-total-assets`, using normalized inputs | 3,000 / 25,000 → 12 (%) |
 | `sofr-effr-spread`, `sofr-tail-spread` | Subtract normalized percent-level inputs; current `%` outputs retain percentage-point scale | 4.10 − 4.00 → 0.10; multiply by 100 only if the output is explicitly changed to bp |
 | `treasury-yield-chg` | Request `DGS10` with `units=chg`; current registry specifies `%` → `bp`, so multiply the returned difference by 100 once | Yield 4.00% → 4.10% gives API change 0.10, then normalized change 10 bp |
+| `fed-repo` | FRED `RPONTTLD`; Treasury, agency debt, and agency MBS collateral; daily billions → billions with `units=lin` | No division by 1,000; replaces manual all-collateral aggregation |
 | `reverse-repo` | Use the updated `RRPONTSYD` mapping; daily billions → billions | No weekly resampling or amount conversion by default |
 
 Slice 1 corrected the reserve/assets CSV formula to include `100` and corrected the `Biliions` spelling. The source review records the reserve/bank-asset coverage and seasonal-adjustment mismatch; resolve and disclose it before activation. Common units alone do not establish identical coverage.
@@ -98,12 +100,14 @@ Implement the slices in order, with each slice independently reviewable. Do not 
 - [x] Review definitions, units, frequency, coverage/seasonality, publication lag, history, revisions, and public redistribution conditions for pilot sources (activation remains gated).
 - [x] Fix the reserve/assets formula and document normalization semantics in the registry guide. Preserve the updated bank-assets and ON RRP definitions.
 - [x] Implement policy validation and the version 2 contract; keep the current registry validator usable for incomplete future entries.
-- [x] Resolve the pilot manual series's exact measure, source reference, source unit, and observation-date convention.
+- [x] Resolve the repo pilot's exact measure, source reference, source unit, and observation-date convention; updated to automatic FRED `RPONTTLD` on November 16, 2026.
 
 Implemented November 16, 2026: [source review](source-review.md),
 [contract reference](production-contract.md), `scripts/policies.py`,
-`scripts/contracts.py`, and offline regression tests. The maintainer confirmed
-daily accepted overnight repo amounts summed across sessions/collateral types.
+`scripts/contracts.py`, and offline regression tests. The original manual
+all-collateral repo specification was superseded at the maintainer's request by
+automatic FRED `RPONTTLD`, covering Treasury, agency debt, and agency MBS collateral. The registry, source
+review, and policy now reflect that choice.
 `python3 scripts/policies.py` checks all five pilot specifications. The activation
 set is empty; `--check-activation` fails until executable paths arrive in later
 slices. No credentials are read, no production observations generated, and no
@@ -118,16 +122,21 @@ Exit check: pilot specifications are complete; unknown conversions, ambiguous tr
 
 ### Slice 2 — Manual import and fixture isolation
 
+No manual data preparation is required to begin this slice. Implement build-mode
+isolation and the importer using temporary test registries/CSV fixtures for a
+manual series; do not activate a placeholder or use `fed-repo` as manual input.
+Real manual source selection, review, and import are deferred to Slice 6.
+
 - [ ] Implement UTF-8 CSV import with `date,value,source_reference,publication_date,correction_note`; blank values become null. Enforce sorted, unique ISO dates, finite numbers, required references, and supported units.
 - [ ] Compare manual edits against the previous committed input. Changed values or nulling a prior value require a correction note; removed rows require an explicit reason in the input commit message. New rows need no correction note. CI fetches enough history for this comparison and reports a missing baseline rather than bypassing validation.
 - [ ] Enforce ownership: collectors cannot write manual files, and manual files cannot override automatic inputs.
 - [ ] Add explicit demo and production build modes. Preserve existing demo commands/tests; production cannot invoke `generate_fixtures.py` or write to its output paths.
 
-Exit check: a manual addition and a documented correction assemble offline; duplicate dates, undocumented corrections/removals, and cross-method writes fail. Production with no snapshot fails without modifying demo files.
+Exit check: a manual addition and a documented correction validate as candidate inputs offline using isolated test fixtures (full snapshot assembly arrives in Slice 4); duplicate dates, undocumented corrections/removals, and cross-method writes fail. Production with no snapshot fails without modifying demo files.
 
 ### Slice 3 — FRED collection, normalization, and derivation
 
-- [ ] Implement metadata review checks and JSON observations collection for `WALCL`, then `SOFR` and `EFFR`. Store `FRED_API_KEY` in the local environment and later Actions secrets; never record credential-bearing URLs.
+- [ ] Implement metadata review checks and JSON observations collection for `WALCL`, then `SOFR`, `EFFR`, and `RPONTTLD`. Store `FRED_API_KEY` in the local environment and later Actions secrets; never record credential-bearing URLs.
 - [ ] Fetch complete available histories initially, including pagination and response-count checks, to capture revisions. Unexpected empty/truncated responses fail collection; provider missing markers become null. Keep source-scale values before project normalization.
 - [ ] Add bounded retries for transient failures and source-specific freshness expectations. Do not change providers after a failure.
 - [ ] Normalize units and implement the pilot spread. Add normalization/derivation cases for reserve/assets and FRED `chg` using recorded or small illustrative test inputs, even if those series are activated later.
@@ -174,6 +183,7 @@ Exit check: the first production milestone is published successfully; scheduled,
 ### Slice 6 — Expand coverage
 
 - [ ] Add remaining reviewed FRED sources, including reserves/assets, daily ON RRP, credit spreads, facility usage, bank loans, VIX, and quarterly lending standards. Apply each source's actual conventions rather than inheriting the pilot's defaults.
+- [ ] Select and review the first real manual series; verify addition, documented correction/removal, snapshot assembly, and publication using the Slice 2 importer. No manual definition may reuse the superseded `fed-repo` ownership.
 - [ ] Add SIFMA monthly inputs after defining the specific tables, measures, and potential overlap among aggregate/Treasury/corporate issuance entries. Add iFind exports only with traceable identifiers, adjustment conventions, and permitted publication scope.
 - [ ] Verify the Treasury bid–ask source and instrument definition; the current provider label alone is insufficient.
 - [ ] Activate Treasury yield change with the explicit `chg` request and current bp normalization once reviewed. Defer price impact until FINRA coverage, volume units, matching dates, sign/absolute-value convention, and the proxy's interpretation are defined. A yield-change/aggregate-volume ratio must not be presented as a directly measured market-impact coefficient without methodological support.

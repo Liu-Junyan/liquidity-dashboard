@@ -76,37 +76,36 @@ spread is contextual information, not a pure credit-risk measure.
 
 ## fed-repo
 
-**Confirmed with the maintainer November 16, 2026:** daily total accepted overnight
-repo amounts. The chart name now makes the overnight accepted-amount definition
-explicit. This is a project aggregation of published operation results.
+**Source changed November 16, 2026 at the maintainer's request:** use automatic
+FRED `RPONTTLD` instead of manually aggregating NY Fed results. This replaces
+the interim Treasury-only selection with the provider's overnight total across
+**Treasury securities, federal agency debt, and agency MBS**. The chart name
+now states that it is a total. The release is NY Fed Temporary Open Market
+Operations, not the Board's H.4.1 balance-sheet release.
 
-- Select **Repo**, **Overnight** results, including small-value exercises. Exclude
-  term repos, reverse repos and FIMA. Use the provider's Overnight classification;
-  Friday-to-Monday maturity does not turn an overnight operation into a term repo.
-- For each New York operation date, sum accepted amounts across every reported
-  session and Treasury/agency/MBS collateral types. Count each operation once;
-  never add a total to its own collateral breakdown. Do not net maturing operations.
-- Manual input reads the website's **billions of USD** display and stores that
-  same unit. A future API exporting dollars requires a separately reviewed adapter.
-  Do not silently reuse this input-scale assumption for such an API.
-- `date` is the displayed operation date in New York, not maturity date or UTC
-  import date. `publication_date` is the result's publication date; record the
-  observed date rather than inventing an exact release timestamp. Results follow
-  the operation's completion; wait for all sessions before entering a daily total.
-- A reported zero is zero. An incomplete day's results are null, not a partial
-  sum. No result/no operation is not evidence of zero. Do not add weekends or
-  holidays. Keep a date-filtered result reference identifying the sessions used
-  (plain-text date/session context alongside the public source URL is sufficient).
-- Manual history starts with the first verified imported date, not a claimed
-  continuous archive. Historical backfill needs the same session and unit checks.
-  Corrections retain their source references and correction notes in Git.
+- **Identity/units:** NY Fed temporary open-market repo transactions, aggregated
+  daily by FRED; daily, not seasonally adjusted, already billions of USD. Request
+  `units=lin` and use identity normalization. Do not divide by 1,000 or add the
+  collateral component series to this total. Coverage is overnight operations;
+  term repo transactions are outside this series.
+- **Dates/history:** preserve FRED observation dates and missing markers. The
+  history table starts January 3, 2000. Observation dates are distinct from FRED
+  update timestamps; do not invent an intraday publication guarantee. Slice 3
+  must establish a freshness policy from live release checks before activation.
+- **Revisions/missing values:** retrieve full history in Slice 3 and retain
+  captured revisions in Git. Preserve reported zeroes; `.` becomes null. Do not
+  infer zero from an absent date or fill weekends/holidays. This measures daily
+  transactions, not outstanding balances.
+- **Redistribution:** FRED marks the series copyrighted with citation required.
+  Attribute NY Fed as source and FRED as distributor; recheck applicable terms
+  before publication.
 
-Evidence: [operation results](https://www.newyorkfed.org/markets/desk-operations/repo),
-[dashboard with units and sessions](https://www.newyorkfed.org/markets/data-hub),
-[operation FAQ](https://www.newyorkfed.org/markets/repo-agreement-ops-faq).
-As a source-scale spot check, the November 13, 2026 dashboard showed zero accepted
-for all three collateral types in both sessions: daily total 0 billion. This review
-does not create a production observation or fabricate a historical sample.
+Evidence: [canonical metadata](https://fred.stlouisfed.org/series/RPONTTLD),
+[history](https://fred.stlouisfed.org/data/RPONTTLD).
+The history table reports 8.990 billion on January 3, 2000; the series page shows
+0.001 on November 12, 2026, zero on November 13, and missing on November 11.
+These are reconciliation examples, not imported production observations. No
+manual history was imported, so there is no stored history to migrate or splice.
 
 ## Public presentation requirements
 

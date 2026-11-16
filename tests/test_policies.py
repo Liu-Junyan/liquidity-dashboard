@@ -45,7 +45,7 @@ class PolicyTests(unittest.TestCase):
             ('fed-repo', 'source_reference', None, 'source reference'),
             ('sofr-effr-spread', 'formula', '__import__("os")', 'calculation'),
             ('sofr-effr-spread', 'input_series_ids', ['sofr', 'sofr99'], 'calculation'),
-            ('fed-repo', 'update_method', 'automatic', 'conflicting ownership'),
+            ('fed-repo', 'update_method', 'manual', 'conflicting ownership'),
             ('sofr', 'status', 'unavailable', 'ready specification'),
         ]:
             registry = copy.deepcopy(self.registry)

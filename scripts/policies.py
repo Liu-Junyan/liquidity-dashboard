@@ -15,7 +15,7 @@ else:
     from registry import DEFAULT_REGISTRY, load_registry
 
 ROOT = Path(__file__).resolve().parents[1]
-POLICY_VERSION = '1'
+POLICY_VERSION = '2'
 ACTIVE_SERIES = frozenset()
 PILOT_SERIES = frozenset({'fed-assets', 'sofr', 'effr', 'sofr-effr-spread', 'fed-repo'})
 # Keys are pipeline capabilities, values must be real callable implementations.
@@ -36,7 +36,7 @@ POLICIES = {
     'fed-assets': SeriesPolicy('automatic', 'fred-observations', 'wednesday-level', 'lin'),
     'sofr': SeriesPolicy('automatic', 'fred-observations', 'source-business-date', 'lin'),
     'effr': SeriesPolicy('automatic', 'fred-observations', 'source-business-date', 'lin'),
-    'fed-repo': SeriesPolicy('manual', 'manual-csv', 'ny-operation-date-overnight-total'),
+    'fed-repo': SeriesPolicy('automatic', 'fred-observations', 'source-business-date', 'lin'),
     'sofr-effr-spread': SeriesPolicy('derived', 'same-date-difference', 'exact-date-union',
                                      calculation='sofr-effr'),
 }

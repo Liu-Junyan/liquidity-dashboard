@@ -64,7 +64,7 @@ python3 scripts/policies.py
 ```
 
 This offline command checks the five reviewed pilot specifications: `fed-assets`,
-`sofr`, `effr`, `sofr-effr-spread`, and manual `fed-repo`. The existing registry
+`sofr`, `effr`, `sofr-effr-spread`, and automatic FRED `fed-repo`. The existing registry
 validator continues to accept incomplete future entries. No collector, importer,
 or production publisher is enabled. `python3 scripts/policies.py --check-activation`
 deliberately fails until the required implementations are registered in later slices.
@@ -100,11 +100,12 @@ than pass through. Policy code names the Treasury `chg` request explicitly;
 `notes=units=chg` is documentation, never executable configuration. Formula text
 is matched to a known calculation definition, never evaluated with `eval`.
 
-The manual repo input is the daily accepted overnight amount, summed across all
-operation sessions/collateral types, in billions. Its date is the New York
-operation date. It is a flow, not an outstanding balance; see the source review
-for term, holiday, zero, and incomplete-day handling. Manual CSV import arrives
-in Slice 2; adding CSV observations is not supported yet.
+The repo input now uses FRED `RPONTTLD`: daily overnight repo totals across
+Treasury securities, federal agency debt, and agency MBS, already in billions,
+with an identity conversion and preserved source dates. This replaces the earlier manual all-collateral aggregation; it is not an
+outstanding balance. See the source review for coverage and missing-value handling.
+Manual CSV import still arrives in Slice 2 for other manual series, initially
+tested with offline fixtures; no real manual sample is needed to start that slice.
 
 The [version 2 contract](../docs/production-contract.md) and
 `scripts/contracts.py` define production artifact validation independently of

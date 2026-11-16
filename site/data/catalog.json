@@ -214,9 +214,9 @@
       "id": "fed-repo",
       "seriesId": "fed-repo",
       "categoryId": "category-1",
-      "name": "美联储隔夜正回购接受量",
+      "name": "美联储隔夜正回购总量",
       "role": "",
-      "explanation": "美联储隔夜正回购接受量的合成示例，尚未接入登记的数据源。 按纽约操作日期汇总全部隔夜场次及抵押品接受量（含小额测试）；不含定期回购、逆回购及FIMA；为每日流量而非未偿余额。",
+      "explanation": "美联储隔夜正回购总量的合成示例，尚未接入登记的数据源。 采用FRED的隔夜正回购每日总量；覆盖美国国债、联邦机构债及机构MBS；原始单位为十亿美元；为每日交易量而非未偿余额；保留来源日期及缺失值。",
       "unit": {
         "kind": "amount",
         "label": "十亿美元",
@@ -225,8 +225,8 @@
       "frequency": "weekly",
       "nativeFrequency": "daily",
       "source": {
-        "name": "NY FED",
-        "url": "https://www.newyorkfed.org/markets/desk-operations/repo",
+        "name": "FRED · RPONTTLD",
+        "url": "https://fred.stlouisfed.org/series/RPONTTLD",
         "status": "configured"
       },
       "comparisonRule": "less",
