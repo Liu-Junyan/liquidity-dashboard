@@ -22,7 +22,7 @@ The current CSV has 37 series: 23 displayed indicators (9 monetary, 3 offshore, 
 3. Set `status=unavailable` to hide a future indicator. Other allowed values are `draft` (also the default for a blank status), `ready`, and `unquantified`. Unquantified visible entries display an explanatory nonnumeric state.
 4. Validate with `python3 scripts/registry.py`, then rebuild with `python3 scripts/build.py`. CI rebuilds from the CSV before running tests.
 
-`ready` records the maintainer's intended configuration; it is not proof of source availability or a completed collector. Ready numeric rows require an update method and native frequency; automatic/manual rows also require a provider, and derived rows require known ready inputs and a formula. Source references, provider IDs, units, and comparison notes may still be completed later. Collection-specific checks belong to the future data integration.
+`ready` records the maintainer's intended configuration; it is not proof of source availability or a completed collector. Ready numeric rows require an update method and native frequency; automatic/manual rows also require a provider, and derived rows require known ready inputs and a formula. Source references, provider IDs, units, and comparison notes may still be completed later for nonpilot entries. The separate production policy validator checks reviewed pilot definitions and gates activation on executable implementations.
 
 To export all registry records (including hidden rows and source-only inputs) for future pipeline use:
 
@@ -56,3 +56,57 @@ The JSON export is optional, generated, and ignored by Git. It uses `schemaVersi
 Source references and provider IDs are complementary: a URL identifies a readable publication, while a code identifies a series to a future collector. You can supply either, both, or just the provider while completing a manual source. No missing provider detail is invented by the build.
 
 History selection, publication timing, date handling, aggregation, conversions, and production statistics will be handled in pipeline code rather than extra CSV columns. The current source-unit/normalized-unit fields do not perform numeric conversion on demo data.
+
+## Production foundation (Slice 1)
+
+```sh
+python3 scripts/policies.py
+```
+
+This offline command checks the five reviewed pilot specifications: `fed-assets`,
+`sofr`, `effr`, `sofr-effr-spread`, and manual `fed-repo`. The existing registry
+validator continues to accept incomplete future entries. No collector, importer,
+or production publisher is enabled. `python3 scripts/policies.py --check-activation`
+deliberately fails until the required implementations are registered in later slices.
+
+The [source review](../docs/source-review.md) records definitions, release and date
+conventions, revision treatment, coverage, and redistribution conditions.
+`source-reviews.json` binds each review to a hash of the relevant CSV fields. When
+changing scientific definitions, review the source again and update the audit
+record; merely setting `ready` or changing a hash does not implement the source.
+Names/categories/provider codes/unit declarations remain owned by this CSV, not
+duplicated into scheduling policies.
+
+### Normalization semantics
+
+`source_unit` is the scale actually delivered by the collector or manual input;
+`normalized_unit` is the scale consumed by formulas and displayed by the site.
+Raw values must be retained separately from normalized values. For derived rows,
+the formula consumes already-normalized inputs and directly yields the declared
+output unit; never apply an input conversion again to the calculated output.
+
+| Rule | Example |
+| --- | --- |
+| Millions → Billions | `3,000,000 / 1,000 = 3,000` |
+| Billions → Billions | `25,000` remains `25,000` |
+| Reserve/assets percent | `100 * 3,000 / 25,000 = 12` |
+| SOFR − EFFR, `%` output | `4.10 - 4.00 = 0.10` percentage points |
+| Provider `chg`, `%` → `bp` | A returned difference of `0.10` becomes `10` bp once |
+
+The bank-assets definition stays in billions and ON RRP stays daily/billions.
+The `bank-loans` typo `Biliions` is corrected; the production conversion resolver
+also documents that spelling as a legacy alias. Unknown conversions fail rather
+than pass through. Policy code names the Treasury `chg` request explicitly;
+`notes=units=chg` is documentation, never executable configuration. Formula text
+is matched to a known calculation definition, never evaluated with `eval`.
+
+The manual repo input is the daily accepted overnight amount, summed across all
+operation sessions/collateral types, in billions. Its date is the New York
+operation date. It is a flow, not an outstanding balance; see the source review
+for term, holiday, zero, and incomplete-day handling. Manual CSV import arrives
+in Slice 2; adding CSV observations is not supported yet.
+
+The [version 2 contract](../docs/production-contract.md) and
+`scripts/contracts.py` define production artifact validation independently of
+the existing demo. Snapshot assembly, production build selection, and frontend
+adoption remain later slices; no new production build command exists yet.

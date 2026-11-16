@@ -1,6 +1,6 @@
 # Real-data integration development plan
 
-Updated: November 16, 2026. Status: planned; no production collector or real-data deployment is enabled.
+Updated: November 16, 2026. Status: Slice 1 implemented; no production collector or real-data deployment is enabled.
 
 ## 1. Goal and first release
 
@@ -45,7 +45,7 @@ Use Python 3.10+ and standard-library modules initially. If a dependency becomes
 | `treasury-yield-chg` | Request `DGS10` with `units=chg`; current registry specifies `%` → `bp`, so multiply the returned difference by 100 once | Yield 4.00% → 4.10% gives API change 0.10, then normalized change 10 bp |
 | `reverse-repo` | Use the updated `RRPONTSYD` mapping; daily billions → billions | No weekly resampling or amount conversion by default |
 
-The reserve/assets CSV formula currently omits `100`; correct it in the source-definition implementation slice before activation. Confirm reserve and bank-asset population coverage and seasonal-adjustment conventions in the explanation; common units alone do not establish identical coverage. Normalize legacy spellings such as `Biliions` through a documented alias or a registry correction before activation.
+Slice 1 corrected the reserve/assets CSV formula to include `100` and corrected the `Biliions` spelling. The source review records the reserve/bank-asset coverage and seasonal-adjustment mismatch; resolve and disclose it before activation. Common units alone do not establish identical coverage.
 
 FRED supports `units=chg` (difference) and `units=pch` (relative percent change). Use `chg` for the agreed Treasury yield measure. The current `notes=units=chg` records intent; implement an explicit request policy keyed by series ID rather than executing or parsing arbitrary notes. Retain `automatic` ownership for this provider-transformed series. Record both the original provider units and applied transformation in provenance. [FRED API: transformations](https://fred.stlouisfed.org/docs/api/fred/series_observations.html#units).
 
@@ -94,11 +94,25 @@ Implement the slices in order, with each slice independently reviewable. Do not 
 
 ### Slice 1 — Source review and policy foundation
 
-- [ ] Populate and verify explicit provider series IDs for pilot automatic sources; URLs remain readable references.
-- [ ] Review definitions, units, frequency, coverage/seasonality, publication lag, history, revisions, and public redistribution conditions for each activated source.
-- [ ] Fix the reserve/assets formula and document normalization semantics in the registry guide. Preserve the updated bank-assets and ON RRP definitions.
-- [ ] Implement policy validation and the version 2 contract; keep the current registry validator usable for incomplete future entries.
-- [ ] Resolve the pilot manual series's exact measure, source reference, source unit, and observation-date convention.
+- [x] Populate and verify explicit provider series IDs for pilot automatic sources; URLs remain readable references.
+- [x] Review definitions, units, frequency, coverage/seasonality, publication lag, history, revisions, and public redistribution conditions for pilot sources (activation remains gated).
+- [x] Fix the reserve/assets formula and document normalization semantics in the registry guide. Preserve the updated bank-assets and ON RRP definitions.
+- [x] Implement policy validation and the version 2 contract; keep the current registry validator usable for incomplete future entries.
+- [x] Resolve the pilot manual series's exact measure, source reference, source unit, and observation-date convention.
+
+Implemented November 16, 2026: [source review](source-review.md),
+[contract reference](production-contract.md), `scripts/policies.py`,
+`scripts/contracts.py`, and offline regression tests. The maintainer confirmed
+daily accepted overnight repo amounts summed across sessions/collateral types.
+`python3 scripts/policies.py` checks all five pilot specifications. The activation
+set is empty; `--check-activation` fails until executable paths arrive in later
+slices. No credentials are read, no production observations generated, and no
+publication workflow enabled by this slice.
+
+Verification: 34 Python tests and 10 JavaScript regression checks passed; the
+demo build and registry/policy validation passed. The JavaScript suite ran through
+the available Node runtime because the local shell has no `node` executable.
+Demo observations stayed unchanged; generated catalog metadata reflects the CSV.
 
 Exit check: pilot specifications are complete; unknown conversions, ambiguous transforms, missing implementations, or conflicting ownership cannot be activated. No live credentials are needed for this slice.
 
@@ -186,6 +200,7 @@ Before first publication, record the activated IDs, policy version, snapshot/art
 
 ```sh
 python3 scripts/registry.py
+python3 scripts/policies.py
 python3 -m unittest discover -s tests -p 'test_*.py'
 node --test tests/data.test.mjs
 git diff --check

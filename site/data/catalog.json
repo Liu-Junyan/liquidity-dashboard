@@ -93,7 +93,7 @@
       "frequency": "weekly",
       "nativeFrequency": "weekly",
       "source": {
-        "name": "FRED",
+        "name": "FRED · WALCL",
         "url": "https://fred.stlouisfed.org/series/WALCL",
         "status": "configured"
       },
@@ -128,7 +128,7 @@
       "categoryId": "category-1",
       "name": "准备金占商业银行总资产比例",
       "role": "",
-      "explanation": "准备金占商业银行总资产比例的合成示例，尚未接入登记的数据源。 登记计算式：reserve-balances/bank-total-assets。当前演示数值不执行此公式。",
+      "explanation": "准备金占商业银行总资产比例的合成示例，尚未接入登记的数据源。 登记计算式：100 * reserve-balances / bank-total-assets。当前演示数值不执行此公式。",
       "unit": {
         "kind": "ratio",
         "label": "%",
@@ -179,10 +179,10 @@
         "precision": 1
       },
       "frequency": "weekly",
-      "nativeFrequency": "weekly",
+      "nativeFrequency": "daily",
       "source": {
         "name": "FRED",
-        "url": "https://fred.stlouisfed.org/series/WLRRAL",
+        "url": "https://fred.stlouisfed.org/series/rrpontsyd",
         "status": "configured"
       },
       "comparisonRule": "greater",
@@ -214,9 +214,9 @@
       "id": "fed-repo",
       "seriesId": "fed-repo",
       "categoryId": "category-1",
-      "name": "美联储正回购用量",
+      "name": "美联储隔夜正回购接受量",
       "role": "",
-      "explanation": "美联储正回购用量的合成示例，尚未接入登记的数据源。",
+      "explanation": "美联储隔夜正回购接受量的合成示例，尚未接入登记的数据源。 按纽约操作日期汇总全部隔夜场次及抵押品接受量（含小额测试）；不含定期回购、逆回购及FIMA；为每日流量而非未偿余额。",
       "unit": {
         "kind": "amount",
         "label": "十亿美元",

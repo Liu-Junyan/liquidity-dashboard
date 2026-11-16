@@ -29,6 +29,7 @@ jobs:
       - name: Verify data and calculations
         run: |
           python scripts/registry.py
+          python scripts/policies.py
           python -m unittest discover -s tests -p 'test_*.py'
           node --test tests/data.test.mjs
       - uses: actions/upload-pages-artifact@v4

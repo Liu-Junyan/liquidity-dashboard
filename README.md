@@ -22,6 +22,7 @@ To reproduce project-subdirectory hosting, serve the repository root instead and
 ```sh
 python3 scripts/build.py
 python3 scripts/registry.py
+python3 scripts/policies.py
 python3 -m unittest discover -s tests -p 'test_*.py'
 node --test tests/data.test.mjs
 ```
@@ -30,7 +31,9 @@ JavaScript checks use Node 22+ and built-in modules; `npm install` is unnecessar
 
 ## Source specifications
 
-Edit [data/registry.csv](data/registry.csv), then run `python3 scripts/build.py`. The build regenerates the catalog and demo observations from the CSV, including additions, renames, removals, and `unavailable` exclusions. No separate catalog edit is needed. [The registry guide](data/README.md) explains visibility rules and the 16 columns. `python3 scripts/registry.py --output data/registry.json` optionally exports the complete registry, including hidden entries. Real collection, manual import, formula execution, and native-frequency data migration remain future work.
+Edit [data/registry.csv](data/registry.csv), then run `python3 scripts/build.py`. The build regenerates the catalog and demo observations from the CSV, including additions, renames, removals, and `unavailable` exclusions. No separate catalog edit is needed. [The registry guide](data/README.md) explains visibility rules and the 16 columns. `python3 scripts/registry.py --output data/registry.json` optionally exports the complete registry, including hidden entries.
+
+Real-data Slice 1 is implemented: [pilot source reviews](docs/source-review.md), explicit FRED IDs, normalization/calculation policies, activation gates, and the [version 2 artifact contract](docs/production-contract.md). Run `python3 scripts/policies.py` to validate the reviewed specifications offline. No series is activated yet; `--check-activation` intentionally fails until executable import/collection paths exist. The `.env` FRED key is not read by this slice. Real collection, manual import, formula execution, snapshot assembly, and native-frequency frontend migration remain later work.
 
 ## Deployment
 

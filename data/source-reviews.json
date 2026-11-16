@@ -1,0 +1,42 @@
+{
+  "fed-assets": {
+    "specHash": "02659bb25c76511455dfdf9f47de2bbb54d4564df2d8ebf43bb1fecb965db6f3",
+    "reviewedOn": "2026-11-16",
+    "reference": "docs/source-review.md#fed-assets",
+    "explanation": "美联储合并资产负债表总资产（扣除合并抵销），每周三时点值；原始百万美元除以1000后展示为十亿美元，非周平均。",
+    "dateRule": "wednesday-level",
+    "redistribution": "Public-domain Board data; cite Board and FRED."
+  },
+  "sofr": {
+    "specHash": "8177b078c8e2568cb02757a2b656e1b92221667a091b291575abf3af7c031f36",
+    "reviewedOn": "2026-11-16",
+    "reference": "docs/source-review.md#sofr",
+    "explanation": "纽约联储发布的美国国债抵押隔夜回购融资利率，按交易量加权中位数计算；使用交易日而非发布日，百分比水平保持原值。",
+    "dateRule": "source-business-date",
+    "redistribution": "NY Fed terms apply; attribution and applicable reference-rate notices required. See source review."
+  },
+  "effr": {
+    "specHash": "d575afcd30030699d44a92ba4276aa89e2c288d0e983c8ebaf014fd468c1be24",
+    "reviewedOn": "2026-11-16",
+    "reference": "docs/source-review.md#effr",
+    "explanation": "纽约联储发布的有效联邦基金利率；当前口径为无抵押隔夜联邦基金交易的成交量加权中位数。历史方法存在变更，日期为交易日。",
+    "dateRule": "source-business-date",
+    "redistribution": "NY Fed terms apply; attribution and applicable reference-rate notices required. See source review."
+  },
+  "fed-repo": {
+    "specHash": "e6aeeb73a85e1f3aa58c818b1d5aa8121a2f41c3c08b7a9cee3309e9e448159b",
+    "reviewedOn": "2026-11-16",
+    "reference": "docs/source-review.md#fed-repo",
+    "explanation": "纽约联储按操作日公布的隔夜正回购接受量，汇总各场次及抵押品类别（包括小额测试），单位为十亿美元；排除定期回购、逆回购和FIMA，为每日流量而非未偿余额。",
+    "dateRule": "ny-operation-date-overnight-total",
+    "redistribution": "NY Fed terms apply; attribution and applicable reference-rate notices required. See source review."
+  },
+  "sofr-effr-spread": {
+    "specHash": "39d93190bb4177ee36c9484cc67a92327fa5f1ae641ef3495f6dfd05c18e19bd",
+    "reviewedOn": "2026-11-16",
+    "reference": "docs/source-review.md#sofr-effr-spread",
+    "explanation": "相同观察日的SOFR减EFFR。先规范化输入单位；输出为百分点（沿用%标签），4.10减4.00为0.10；缺少任一输入时为空，不跨日填充。",
+    "dateRule": "exact-date-union",
+    "redistribution": "NY Fed terms apply; attribution and applicable reference-rate notices required. See source review."
+  }
+}
