@@ -277,6 +277,8 @@ Original prototype verification (before the article alignment): four Python cont
 
 #### Mixed-source data implementation guide (future real-data milestone)
 
+Follow the [real-data development plan](real-data-development-plan.md) for the implementation sequence, current source/calculation decisions, production contract, and release checks. This guide remains the requirements reference; the plan turns those requirements into reviewable development slices.
+
 This guide specifies the real-data milestone. The editable source-registry scaffold and specification validation/export are now implemented as described below. Collectors, manual observation import, executable transformation rules, snapshot assembly, and the production frontend contract remain future work. Dashboard selection is now generated from the registry, while observations remain synthetic and the real-data pipeline is not yet active.
 
 Use **automatic collection + manual inputs → validation and normalization → derived indicators → versioned snapshot → static build → GitHub Pages**. The browser reads generated local JSON, never provider APIs or editable input files. Git-backed files are sufficient initially; no database or browser-based administration interface is required.

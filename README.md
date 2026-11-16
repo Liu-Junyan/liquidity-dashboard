@@ -36,7 +36,7 @@ Edit [data/registry.csv](data/registry.csv), then run `python3 scripts/build.py`
 
 In GitHub repository **Settings → Pages → Build and deployment**, choose **GitHub Actions**. Push to `main` or manually run **Build and deploy dashboard**. Pull requests run checks/builds without deploying. The workflow publishes `dist/` using the Pages environment. This checkout has no configured Git remote; no live deployment has been performed.
 
-See [the implementation handoff](docs/implementation-brief.md#6-implemented-prototype-and-design-handoff) for data contracts, UI labels, verification, and the real-data migration plan.
+See [the real-data development plan](docs/real-data-development-plan.md) for implementation slices, normalized-unit formulas, FRED transformations, acceptance checks, and production rollout. [The implementation handoff](docs/implementation-brief.md#6-implemented-prototype-and-design-handoff) retains the prototype design, verification history, and mixed-source requirements.
 
 ## Structure
 
