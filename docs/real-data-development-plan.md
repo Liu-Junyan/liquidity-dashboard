@@ -55,7 +55,7 @@ The latest registry's Treasury output is bp. If percent-scale output is preferre
 
 ### Native dates and derived inputs
 
-- Preserve each source's dates, native frequency, and available history. Observation dates, publication dates, and collection times have separate meanings.
+- Preserve each source's dates and native frequency within the collection window (FRED: `2010-01-01` onward). Observation dates, publication dates, and collection times have separate meanings.
 - Join derived inputs on equal observation dates by default, after normalization. Missing inputs and zero denominators yield null. Recompute the complete derived history after every refresh.
 - Do not forward-fill inputs or interpolate. A different alignment needs a named per-indicator rule and an age limit in code.
 - Preserve explicit missing values and true zeroes. Do not add weekend or holiday observations to native data. Identify unexpected missing periods using source-specific calendars where needed.
@@ -158,36 +158,46 @@ Exit check: a manual addition and a documented correction validate as candidate 
 
 ### Slice 3 — FRED collection, normalization, and derivation
 
-Decision, November 17: fetch the **full current FRED history on every run** and
+Decision, November 17: fetch the **entire current FRED history from 2010-01-01 onward on every run** and
 replace the prior series only after the complete response validates. Recompute
 all derived history from the resulting inputs. No ALFRED/vintage queries,
 point-in-time dataset, revision ledger, incremental merge, or affected-date
 recomputation is needed. Revision reporting is only three counts (added, changed,
 removed) against the prior file; Git supplies ordinary file history and rollback.
+Use one observations request per series with `limit=100000` and `offset=0`;
+pagination is unnecessary for this scope and is not implemented. A response that
+exceeds the limit or returns fewer observations than its reported count fails
+collection. Series introduced after 2010 retain their actual inception dates.
 
 - [x] Implement metadata review checks and JSON observations collection for `WALCL`, `SOFR`, `EFFR`, and `RPONTTLD`. Read only `FRED_API_KEY` from the environment or ignored local `.env`; never record credential-bearing URLs.
-- [x] Fetch complete available histories every time, including pagination, response-count checks, and metadata history-bound checks. Unexpected empty/truncated responses fail collection; provider missing markers become null. Keep source-scale values before project normalization.
+- [x] Fetch the complete 2010-onward window every time in a single response, with response-count and cutoff-aware metadata-bound checks. Unexpected empty/truncated or over-limit responses fail collection; provider missing markers become null. Keep source-scale values before project normalization.
 - [x] Add bounded retries/timeouts for transient failures and source-specific freshness diagnostics. Do not change providers after a failure.
 - [x] Normalize units and implement the pilot spread. Cover reserve/assets and FRED `chg` with illustrative offline inputs, without activating those future series.
 - [x] Retain a series's previous valid input on collection failure. A first-time failed series has no history. Report revision/removal counts, unchanged responses, and failures distinctly.
 
 Implemented in `scripts/collect.py`, `scripts/providers/fred.py`,
-`scripts/normalize.py`, and `scripts/derive.py`; policy version 3. Run
+`scripts/normalize.py`, and `scripts/derive.py`; policy version 4. Run
 `python3 scripts/collect.py` to refresh candidate files under `data/automatic/`.
 Normalization and derivation are recomputed in memory; production snapshot assembly
 and publication remain in Slices 4–5. `--check-activation` now verifies executable
 pilot paths successfully, but `ACTIVE_SERIES` remains empty.
 
-The live November 17 download validated 1,248 WALCL, 2,249 SOFR, 6,880 EFFR, and
+The initial live November 17 download, before the 2010 cutoff, validated 1,248 WALCL, 2,249 SOFR, 6,880 EFFR, and
 7,011 RPONTTLD observations. Bounds and first values match the published FRED
 tables; see the [reconciliation record](source-review.md#slice-3-live-reconciliation).
-Offline tests cover pagination, metadata drift, malformed/truncated responses,
+Offline tests cover single-response completeness, the 2010 cutoff, later inception,
+over-limit rejection, metadata drift, malformed/truncated responses,
 retries, source compatibility, full replacement and revision propagation,
 unchanged checks, partial failure, source ownership, and normalization/formulas.
 Verification: all 81 Python tests and 18 JavaScript regression checks passed;
 registry/policy checks and demo/manual-preview builds passed. A second live
 refresh returned unchanged observations for all four sources, advancing check
 times while preserving change times. Demo files remained unchanged.
+
+After simplifying to one observations response and applying the 2010 cutoff,
+all 83 Python tests passed. A live refresh saved 880 WALCL, 2,249 SOFR, 4,401 EFFR,
+and 4,402 RPONTTLD observations, with no revised values in the overlapping history.
+Pre-2010 removals are the intended collection-window change, not provider revisions.
 
 Freshness is a conservative calendar-day warning: 14 days for WALCL and 7 for
 each daily pilot, measured from the latest numeric observation. It tolerates
@@ -265,7 +275,7 @@ Use existing Python unittest and Node test runners. Add tests for behaviors that
 | Normalization | Millions → billions; ratio → percent; percent-point difference → bp once; identity conversions |
 | Transformations | `chg` request is explicit and distinct from `pch`; missing source periods are not silently replaced by previous valid values |
 | Manual integrity | Two-column CSVs; additions; commit-documented revisions/nulling/removals; missing baselines; duplicate dates; missing/invalid registry source references; ownership rejection |
-| Automatic history | Pagination, provider missing markers, true zeroes, revisions, unchanged responses, truncated/empty failure, bounded retries |
+| Automatic history | Single-response counts, 2010 cutoff/later inception, over-limit rejection, provider missing markers, true zeroes, revisions, unchanged responses, truncated/empty failure, bounded retries |
 | Derived history | Same-date joins, null inputs, zero denominator, dependency order, revision propagation, stale retained inputs with compatible dates |
 | Production UI | Empty/all-null/single-point/short histories; mixed frequencies; holidays; ranges without points; correct comparison labels and sample counts |
 | Publication | Snapshot-ID mismatch rejected; partial failure retained; invalid manual/assembled data blocked; concurrent changes handled; rollback verified |

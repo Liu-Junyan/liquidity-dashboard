@@ -66,16 +66,17 @@ JavaScript checks use Node 22+ and built-in modules; `npm install` is unnecessar
 Edit [data/registry.csv](data/registry.csv), then run `python3 scripts/build.py`. The build regenerates the catalog and demo observations from the CSV, including additions, renames, removals, and `unavailable` exclusions. No separate catalog edit is needed. [The registry guide](data/README.md) explains visibility rules and the 16 columns. `python3 scripts/registry.py --output data/registry.json` optionally exports the complete registry, including hidden entries.
 
 Real-data Slices 1–3 are implemented: [pilot source reviews](docs/source-review.md),
-manual CSV validation, full-history FRED collection, normalization, and same-date
+manual CSV validation, FRED collection from 2010 onward, normalization, and same-date
 calculations. `python3 scripts/policies.py --check-activation` validates the five
 pilot specifications and executable paths offline; no series is activated for
 production yet. Snapshot assembly, production frontend support, and publication
 remain later slices.
 
-Run `python3 scripts/collect.py` to download complete current histories for WALCL,
+Run `python3 scripts/collect.py` to download current histories since `2010-01-01` for WALCL,
 SOFR, EFFR, and RPONTTLD into `data/automatic/`. It reads `FRED_API_KEY` from the
 environment or ignored `.env` (only this setting name is accepted), validates
-each complete response, then replaces its candidate input. Failed downloads retain
+each complete response, then replaces its candidate input. Each series uses one
+observations request, with no pagination. Failed downloads retain
 compatible previous history; derived histories are fully recomputed. No vintage
 tracking or incremental merging is used. See the [collection guide](data/README.md#fred-collection-slice-3).
 

@@ -264,20 +264,33 @@ then `FRED_API_KEY` in the ignored repository `.env`. Only this setting name is 
 The file is parsed as text, never executed. Use an Actions secret when scheduling
 is implemented; do not commit credentials. Other commands/tests need no key.
 
-Each run fetches the complete current history, validates provider metadata,
-pagination/counts, history bounds, dates, and finite numbers, then replaces the
-source's file at `data/automatic/<series-id>.json`. There are no vintage requests
+Each run fetches the entire current history from `2010-01-01` onward, using one
+metadata request and one observations request per FRED series. The shared cutoff
+is `FRED_OBSERVATION_START` in `scripts/policies.py`; later-starting series retain
+their actual inception dates. The collector validates provider metadata, response
+counts, history bounds, dates, and finite numbers, then replaces the source's file
+at `data/automatic/<series-id>.json`. There are no vintage requests
 or incremental merges. `.` becomes null; zero stays zero. Dates are neither
 resampled nor filled. Requests use a 20-second timeout and at most three attempts
 for network failures, HTTP 429 and transient server errors (1/2-second backoff).
 Error messages omit response bodies, request URLs, and credentials.
+
+Pagination is not implemented. The observations request uses `limit=100000` and
+`offset=0`; the returned array must match the reported count. Empty, truncated,
+or over-limit responses fail collection and preserve compatible previous inputs.
+Metadata keeps the provider's original inception date, which can precede 2010.
+Stored observations cannot precede the cutoff or inception and must reach the
+metadata end date. If inception is within the requested window, its first date
+must be present; otherwise the count check establishes response completeness.
+The first date need not equal January 1, since that may not be a source date.
+The cutoff applies to FRED downloads, not maintainer-owned manual inputs.
 
 Automatic files are candidate inputs, not website assets. Their input schema
 version is 1, independently of production snapshot schema version 2. Each contains:
 
 - Source identity/specification hash, source and normalized units, explicit FRED
   transformation, reviewed provider metadata, and sanitized request parameters.
-- Complete **source-scale** `observations`, plus `sourceHash`. Values returned for
+- Complete **source-scale** `observations` within the requested window, plus `sourceHash`. Values returned for
   a provider `chg` request are already differences, before project bp scaling.
 - `outcome`: latest stored date, last attempt, successful check, and data-change
   times, with `updated`, `unchanged`, `retained`, or first-time `failed` status.
@@ -304,7 +317,7 @@ atomically replaces each automatic file. It cannot write manual inputs. This is
 not atomic promotion of a publishable snapshot; that remains Slice 4, and writer
 serialization remains Slice 5. Run only one local collector at a time.
 Production activation, scheduled collection, website assembly and deployment
-remain disabled. Full-history replacement incorporates FRED corrections on the
+remain disabled. Replacing the entire requested window incorporates FRED corrections on the
 next run; Git retains ordinary file history for rollback, without vintage tracking.
 
 ### Normalization semantics

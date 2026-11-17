@@ -111,10 +111,10 @@ cannot follow check time. No operational timestamp can follow snapshot generatio
 
 ## Assembly responsibilities in later slices
 
-Slice 3 now stores full current FRED inputs in `data/automatic/<series-id>.json`.
+Slice 3 stores current FRED inputs from `2010-01-01` onward in `data/automatic/<series-id>.json`.
 The separate input format and deterministic raw/normalized hash serialization are
 documented in the [collection guide](../data/README.md#fred-collection-slice-3).
-Every successful refresh replaces a complete source history and recalculates all
+Every successful refresh replaces the complete requested window and recalculates all
 derived history; no vintage or incremental revision processing is implemented.
 
 Contract validation is one gate, not proof of source correctness. Before calling

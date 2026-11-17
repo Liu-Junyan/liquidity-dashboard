@@ -56,15 +56,16 @@ class FredTests(unittest.TestCase):
         self.entry = self.registry['series']['sofr']
 
     def fetch(self, transport, entry=None, policy=None):
-        return FredClient('secret-test-key', opener=transport, page_size=2).fetch(
+        return FredClient('secret-test-key', opener=transport).fetch(
             entry or self.entry, policy or POLICIES['sofr'])
 
-    def test_full_history_pagination_missing_zero_and_sanitized_provenance(self):
+    def test_single_request_since_2010_missing_zero_and_sanitized_provenance(self):
         transport = Transport()
         result = self.fetch(transport)
         self.assertEqual(result['observations'], points((12, 4.1), (13, None), (16, 0)))
-        self.assertEqual([call.get('offset') for call in transport.calls], [None, '0', '2'])
-        self.assertEqual(result['requestParameters']['observation_start'], '1776-07-04')
+        self.assertEqual([call.get('offset') for call in transport.calls], [None, '0'])
+        self.assertEqual(result['requestParameters']['observation_start'], '2010-01-01')
+        self.assertEqual(result['requestParameters']['limit'], 100000)
         self.assertNotIn('secret-test-key', json.dumps(result))
         self.assertFalse(any('vintage_dates' in call or 'realtime_start' in call for call in transport.calls))
 
@@ -74,9 +75,10 @@ class FredTests(unittest.TestCase):
                 if 'observations' in response:
                     response[field] = value
             return change
-        cases = [('count', 0), ('observations', []), ('offset', 99), ('units', 'pch'),
+        cases = [('count', 0), ('count', 4), ('observations', []), ('offset', 99), ('units', 'pch'),
                  ('observations', [{'date': '2026-11-12', 'value': 'NaN'},
-                                   {'date': '2026-11-13', 'value': '0'}])]
+                                   {'date': '2026-11-13', 'value': '0'},
+                                   {'date': '2026-11-16', 'value': '0'}])]
         for field, value in cases:
             with self.subTest(field=field), self.assertRaises(CollectionError):
                 self.fetch(Transport(mutate=mutate(field, value)))
@@ -86,15 +88,32 @@ class FredTests(unittest.TestCase):
             with self.subTest(rows=rows), self.assertRaises(CollectionError):
                 self.fetch(Transport(rows=rows))
 
-    def test_cross_page_changes_and_metadata_truncation_fail(self):
-        for field, value in [('count', 4), ('realtime_end', '2026-11-18')]:
-            def change(response, params):
-                if params.get('offset') == '2':
-                    response[field] = value
-            with self.subTest(field=field), self.assertRaises(CollectionError):
-                self.fetch(Transport(mutate=change))
+    def test_over_limit_response_fails_without_requesting_another_batch(self):
+        def change(response, params):
+            if 'observations' in response:
+                response['count'] = 100001
+        transport = Transport(mutate=change)
+        with self.assertRaisesRegex(CollectionError, 'single-response limit'):
+            self.fetch(transport)
+        self.assertEqual(len(transport.calls), 2)  # Metadata plus one observations request.
+
+    def test_history_bounds_respect_cutoff_and_later_inception(self):
+        # A later inception (e.g. SOFR in 2018) still needs an exact first date.
         with self.assertRaisesRegex(CollectionError, 'metadata bounds'):
-            self.fetch(Transport(metadata={'observation_start': '2000-01-01'}))
+            self.fetch(Transport(metadata={'observation_start': '2018-04-03'}))
+        with self.assertRaisesRegex(CollectionError, 'metadata bounds'):
+            self.fetch(Transport(metadata={'observation_end': '2026-11-17'}))
+        with self.assertRaisesRegex(CollectionError, 'metadata bounds'):
+            self.fetch(Transport(rows=[('2009-12-31', '1'), ('2010-01-04', '2')]))
+        # No synthetic Jan 1 observation is needed when the source begins later.
+        result = self.fetch(Transport(rows=[('2010-01-04', '2')],
+                                      metadata={'observation_start': '2000-01-03'}))
+        self.assertEqual(result['observations'], [{'date': '2010-01-04', 'value': 2}])
+        entry = self.registry['series']['fed-assets']
+        result = self.fetch(Transport(rows=[('2010-01-06', '2000000')], metadata={
+            'observation_start': '2002-12-18', 'units': 'Millions of U.S. Dollars',
+            'frequency_short': 'W', 'frequency': 'Weekly, As of Wednesday'}), entry, POLICIES['fed-assets'])
+        self.assertEqual(result['observations'][0]['date'], '2010-01-06')
 
     def test_metadata_review_and_weekly_date_rule(self):
         for metadata in [{'id': 'OTHER'}, {'units': 'Basis Points'}, {'frequency_short': 'M'},
@@ -209,6 +228,19 @@ class CollectionTests(unittest.TestCase):
         self.assertEqual(first_failure['derived']['sofr-effr-spread']['missingInputs'], ['effr'])
         self.assertTrue(all(point['value'] is None for point in
                             first_failure['derived']['sofr-effr-spread']['observations']))
+
+    def test_cutoff_cache_keeps_original_metadata_and_survives_failure(self):
+        first = self.run_collect()
+        old = first['automatic']
+        for record in old.values():
+            record['metadata']['observation_start'] = '2000-01-03'
+            record['requestParameters']['observation_start'] = '2010-01-01'
+        result = self.run_collect(CandidateClient(failures={'SOFR', 'EFFR'}),
+                                  previous=old, now=self.next_time)
+        for identifier, record in result['automatic'].items():
+            self.assertEqual(record['outcome']['status'], 'retained')
+            self.assertEqual(record['observations'], old[identifier]['observations'])
+            self.assertEqual(record['metadata']['observation_start'], '2000-01-03')
 
     def test_incompatible_source_cannot_be_retained_and_corrupt_cache_fails(self):
         first = self.run_collect()

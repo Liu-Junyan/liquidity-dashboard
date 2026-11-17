@@ -1,4 +1,4 @@
-"""Fetch FRED's complete current history; no vintages or incremental merges."""
+"""Fetch current FRED history since 2010 in one observations request per series."""
 import json
 import math
 import time
@@ -8,7 +8,9 @@ from urllib.parse import urlencode
 from urllib.request import HTTPRedirectHandler, build_opener
 
 from ..contracts import iso_date, validate_points, validate_request
-from ..policies import canonical_unit
+from ..policies import FRED_OBSERVATION_START, canonical_unit
+
+OBSERVATION_LIMIT = 100000
 
 
 class CollectionError(ValueError):
@@ -21,14 +23,13 @@ class NoRedirect(HTTPRedirectHandler):
 
 
 class FredClient:
-    def __init__(self, api_key, *, timeout=20, attempts=3, page_size=100000,
+    def __init__(self, api_key, *, timeout=20, attempts=3,
                  opener=None, sleep=time.sleep):
         if not api_key:
             raise ValueError('FRED_API_KEY is required')
-        if not 1 <= attempts <= 5 or not 0 < timeout <= 60 or not 1 <= page_size <= 100000:
+        if not 1 <= attempts <= 5 or not 0 < timeout <= 60:
             raise ValueError('Invalid FRED request limits')
         self.api_key, self.timeout, self.attempts = api_key, timeout, attempts
-        self.page_size = page_size
         self.open = opener or build_opener(NoRedirect()).open
         self.sleep = sleep
 
@@ -61,7 +62,7 @@ class FredClient:
             self.sleep(2 ** attempt)
 
     def fetch(self, entry, policy):
-        """Review live metadata, then validate every page before returning values."""
+        """Review metadata, then fetch and validate the entire requested window."""
         params = {'series_id': entry['provider_series_id'], 'file_type': 'json'}
         try:
             metadata = self.request('series', params)['seriess']
@@ -69,38 +70,30 @@ class FredClient:
                 raise CollectionError('FRED metadata must identify exactly one series')
             metadata = validate_metadata(metadata[0], entry, policy)
             params |= {'units': policy.request_units, 'sort_order': 'asc',
-                       'observation_start': '1776-07-04', 'observation_end': '9999-12-31',
-                       'limit': self.page_size, 'offset': 0}
-            points, count, realtime = [], None, None
-            while count is None or len(points) < count:
-                page = self.request('series/observations', params | {'offset': len(points)})
-                if type(page['count']) is not int or not 0 < page['count'] <= 1000000:
-                    raise CollectionError('FRED returned an empty or excessive history')
-                if count is None:
-                    count = page['count']
-                    realtime = (page['realtime_start'], page['realtime_end'])
-                    for day in realtime:
-                        iso_date(day)
-                if (page['count'] != count or page['offset'] != len(points)
-                        or page['limit'] != self.page_size or page['units'] != policy.request_units
-                        or page['sort_order'] != 'asc'
-                        or (page['realtime_start'], page['realtime_end']) != realtime):
-                    raise CollectionError('FRED pagination or transformation mismatch')
-                rows = page['observations']
-                if not isinstance(rows, list) or len(rows) != min(self.page_size, count - len(points)):
-                    raise CollectionError('FRED history is truncated')
-                for row in rows:
-                    raw = row['value']
-                    if not isinstance(raw, str):
-                        raise CollectionError('FRED observation value must be a string')
-                    value = None if raw == '.' else float(raw)
-                    if value is not None and not math.isfinite(value):
-                        raise CollectionError('FRED observation is not finite')
-                    points.append({'date': row['date'], 'value': value})
+                       'observation_start': FRED_OBSERVATION_START, 'observation_end': '9999-12-31',
+                       'limit': OBSERVATION_LIMIT, 'offset': 0}
+            response = self.request('series/observations', params)
+            count, rows = response['count'], response['observations']
+            if type(count) is not int or count <= 0:
+                raise CollectionError('FRED returned an empty or invalid history count')
+            if count > OBSERVATION_LIMIT:
+                raise CollectionError('FRED history exceeds the single-response limit; pagination is not supported')
+            if not isinstance(rows, list) or len(rows) != count:
+                raise CollectionError('FRED history is truncated')
+            if (response['offset'] != 0 or response['units'] != policy.request_units
+                    or response['sort_order'] != 'asc'):
+                raise CollectionError('FRED response offset or transformation mismatch')
+            points = []
+            for row in rows:
+                raw = row['value']
+                if not isinstance(raw, str):
+                    raise CollectionError('FRED observation value must be a string')
+                value = None if raw == '.' else float(raw)
+                if value is not None and not math.isfinite(value):
+                    raise CollectionError('FRED observation is not finite')
+                points.append({'date': row['date'], 'value': value})
             validate_points(points)
-            if (points[0]['date'] != metadata['observation_start']
-                    or points[-1]['date'] != metadata['observation_end']):
-                raise CollectionError('FRED history does not match metadata bounds; retry full refresh')
+            validate_history_bounds(points, metadata, FRED_OBSERVATION_START)
             if policy.date_rule == 'wednesday-level' and any(
                     iso_date(point['date']).weekday() != 2 for point in points):
                 raise CollectionError('FRED weekly observation date changed')
@@ -109,6 +102,21 @@ class FredClient:
             raise
         except (ValueError, KeyError, TypeError, OverflowError):
             raise CollectionError('FRED metadata or observations failed validation') from None
+
+
+def validate_history_bounds(points, metadata, requested_start):
+    """Metadata describes all history, while observations may begin at a cutoff.
+
+    Do not require an observation on the cutoff (it may not be a source date).
+    When inception is inside the window, its first observation must be present.
+    """
+    source_start = iso_date(metadata['observation_start'])
+    cutoff = iso_date(requested_start)
+    first = iso_date(points[0]['date'])
+    if (first < max(source_start, cutoff)
+            or points[-1]['date'] != metadata['observation_end']
+            or (source_start >= cutoff and first != source_start)):
+        raise CollectionError('FRED history does not match requested/metadata bounds; retry full refresh')
 
 
 def validate_metadata(metadata, entry, policy):

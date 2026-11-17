@@ -19,7 +19,8 @@ else:
     from registry import DEFAULT_REGISTRY, load_registry
 
 ROOT = Path(__file__).resolve().parents[1]
-POLICY_VERSION = '3'
+POLICY_VERSION = '4'
+FRED_OBSERVATION_START = '2010-01-01'
 ACTIVE_SERIES = frozenset()
 PILOT_SERIES = frozenset({'fed-assets', 'sofr', 'effr', 'sofr-effr-spread', 'fed-repo'})
 # Conservative calendar-day diagnostics, not release-time guarantees or rejection

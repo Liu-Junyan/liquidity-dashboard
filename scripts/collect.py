@@ -1,4 +1,4 @@
-"""Refresh complete FRED pilot histories without publishing or enabling production.
+"""Refresh FRED pilot histories since 2010 without publishing or enabling production.
 
 Run python3 scripts/collect.py. FRED_API_KEY comes from the environment or the
 ignored local .env. Only the FRED_API_KEY setting is accepted.
@@ -22,7 +22,7 @@ from scripts.import_manual import validate_owner
 from scripts.normalize import content_hash, normalize
 from scripts.policies import (FRESHNESS_DAYS, PILOT_SERIES, POLICIES, POLICY_VERSION,
                               specification_hash, validate_policies)
-from scripts.providers.fred import CollectionError, FredClient
+from scripts.providers.fred import CollectionError, FredClient, validate_history_bounds
 from scripts.registry import ROOT, load_registry
 
 
@@ -88,10 +88,10 @@ def validate_cached(record):
                     or record['sourceHash'] != content_hash(points)
                     or outcome['latestObservationDate'] != points[-1]['date']
                     or not utc_time(outcome['lastDataChange']) <= utc_time(outcome['lastSuccessfulCheck']) <= attempt
-                    or record['metadata']['id'] != record['providerSeriesId']
-                    or record['metadata']['observation_start'] != points[0]['date']
-                    or record['metadata']['observation_end'] != points[-1]['date']):
+                    or record['metadata']['id'] != record['providerSeriesId']):
                 raise ValueError('Invalid automatic input history, hash, or timestamps')
+            validate_history_bounds(points, record['metadata'],
+                                    record['requestParameters'].get('observation_start', '1776-07-04'))
             success = utc_time(outcome['lastSuccessfulCheck'])
             if ((outcome['status'] in {'updated', 'unchanged'} and success != attempt)
                     or (outcome['status'] == 'retained' and success >= attempt)):

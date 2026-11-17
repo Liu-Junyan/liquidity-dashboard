@@ -7,6 +7,11 @@ reviewed scientific fields, date rule, and Chinese explanation. A changed source
 unit, formula, frequency, or measurement note requires a new review and hash; a
 display rename does not. Do not update hashes just to silence a validation failure.
 
+Collection-window update, November 17, 2026: all FRED downloads now request
+`2010-01-01` onward in one observations response. Historical inception dates below
+describe the provider's coverage, not necessarily the first stored observation.
+This changes the download window, not source definitions or measurement units.
+
 ## fed-assets
 
 - **Identity:** FRED `WALCL`, Federal Reserve Board H.4.1 consolidated Reserve Bank
@@ -147,7 +152,7 @@ entry automatically starts collecting. Only the explicit `scripts/collect.py`
 command reads the environment/local `.env` key and makes FRED requests.
 
 Slice 3 compares live provider IDs, frequency, source units, and adjustment
-metadata with this review and retrieves complete histories with count/bounds
+metadata with this review and retrieves the full 2010-onward window with count/bounds
 checks. Conservative freshness diagnostics allow 14 calendar days for WALCL and
 7 for each daily source, using the latest numeric date. They tolerate normal
 release lags/holidays, warn without rejecting complete histories, and do not infer
@@ -158,7 +163,7 @@ including source notices, browser checks, and rollback verification.
 ## Slice 3 live reconciliation
 
 On November 17, 2026, `python3 scripts/collect.py` downloaded and validated the
-following full histories. Counts include explicit missing observations. History
+following full histories before the 2010 cutoff was introduced. Counts include explicit missing observations. History
 bounds and first observations were compared with the public FRED tables linked
 below; this is sample reconciliation, not an independent audit of every value.
 
@@ -176,3 +181,9 @@ all four sources, preserving values and change times while advancing successful
 check times. Offline tests additionally verify revision/removal propagation and
 partial-failure retention. These candidate files do not activate production or
 replace any demo/preview website data.
+
+After applying the shared 2010 cutoff, another live refresh saved 880 WALCL,
+2,249 SOFR, 4,401 EFFR, and 4,402 RPONTTLD observations. SOFR's later inception
+was preserved. The refresh removed only pre-2010 observations; all overlapping
+values were unchanged. The original metadata inception dates remain in the
+input files, alongside `requestParameters.observation_start: "2010-01-01"`.

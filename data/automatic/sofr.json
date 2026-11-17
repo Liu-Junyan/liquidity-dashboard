@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "policyVersion": "3",
+  "policyVersion": "4",
   "seriesId": "sofr",
   "specHash": "8177b078c8e2568cb02757a2b656e1b92221667a091b291575abf3af7c031f36",
   "provider": "FRED",
@@ -9020,7 +9020,7 @@
     "file_type": "json",
     "units": "lin",
     "sort_order": "asc",
-    "observation_start": "1776-07-04",
+    "observation_start": "2010-01-01",
     "observation_end": "9999-12-31",
     "limit": 100000,
     "offset": 0
@@ -9035,8 +9035,8 @@
   "outcome": {
     "status": "unchanged",
     "latestObservationDate": "2026-11-13",
-    "lastAttempt": "2026-11-17T05:26:54.763885Z",
-    "lastSuccessfulCheck": "2026-11-17T05:26:54.763885Z",
+    "lastAttempt": "2026-11-17T05:54:45.289045Z",
+    "lastSuccessfulCheck": "2026-11-17T05:54:45.289045Z",
     "lastDataChange": "2026-11-17T05:25:08.245604Z"
   },
   "freshness": {
