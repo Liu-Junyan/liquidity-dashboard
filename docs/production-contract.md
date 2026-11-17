@@ -161,5 +161,24 @@ target date returns `—`. Summary matching never alters observations or derived
 
 Promotion uses atomic directory exchange on macOS/Linux. Validation and staging
 finish first; failed exchanges preserve the old directory. Local writers must run
-serially until Slice 5 adds workflow locking. The build publishes no credentials,
+serially; Slice 5 holds one Actions lock through collection and deployment. The build publishes no credentials,
 source workbooks, manual CSVs, or automatic response files into `dist/`.
+
+## Slice 5 release identity
+
+The publication job requires `modifiedSourceFiles: []`. It commits automatic
+inputs, the complete snapshot, and `data/publication.json` together. The publication
+record has schema version 1 and carries `baseCommit`, `mode`, `snapshotId`,
+`restoredFrom` (nullable), and exact file-byte SHA-256 `artifactHashes`. It is a Git
+release record, separate from the three-document schema-v2 snapshot.
+
+After committing, the production build adds `dist/data/release.json` containing
+`artifactCommit`, `sourceInputCommit`, `snapshotId`, and nullable `restoredFrom`.
+Snapshot files must be byte-identical to the selected committed files. The public
+artifact has an explicit file allowlist; extra files and symlinks block upload.
+
+Rollback creates a new artifact commit on current `main`, restoring historic
+automatic inputs and snapshot bytes without collection. The snapshot retains its
+original source commit and ID; the public release record identifies the new
+artifact commit and historic rollback target. Current build code must still
+validate that snapshot. See the [publication runbook](publication.md).

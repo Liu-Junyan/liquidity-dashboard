@@ -383,3 +383,18 @@ hash the complete documents excluding the ID itself. Source-file hashes and
 base `sourceInputCommit`; commit those changes and reassemble before release.
 A future reviewed manual activation requires committed, audited CSVs and an explicit
 month/quarter start/end or fixed-day policy; local uncommitted CSV edits are rejected.
+
+### Publication and rollback (Slice 5)
+
+GitHub Actions uses the same assembler for saved-input pushes and daily/on-demand
+FRED refreshes. Manual edits are audited without requiring a network request.
+Automatic inputs and snapshots are committed together; one production lock covers
+collection through deployment. Data-update PRs are available for protected branches.
+`data/publication.json` records the candidate's base commit and artifact hashes;
+the deployed `data/release.json` identifies the exact artifact commit.
+
+To roll back, run the workflow on `main` with mode `rollback` and a full prior
+artifact SHA. This restores both automatic inputs and snapshot files without
+collection, preserving the historic snapshot ID. It creates a new commit instead
+of rewriting history. See the [publication runbook](../docs/publication.md) for
+setup, failure handling, rollback verification and resuming collection.

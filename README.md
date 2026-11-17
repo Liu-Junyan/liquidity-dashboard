@@ -39,8 +39,8 @@ definitions must be resolved before production activation.
 
 This builds an explicitly unreviewed preview into ignored `dist-preview/`, including
 matching catalog/observations and an audit manifest. It does not modify `site/data/`,
-`dist/`, manual inputs, or activation policies. GitHub Pages still publishes only
-the demo `dist/`; production remains gated. No automatic collection or full
+`dist/`, manual inputs, or activation policies. The Slice 5 workflow publishes
+the reviewed production pilot; this preview stays local. No automatic collection or full
 production snapshot assembly is required for this preview.
 
 ## Checks
@@ -65,13 +65,14 @@ JavaScript checks use Node 22+ and built-in modules; `npm install` is unnecessar
 
 Edit [data/registry.csv](data/registry.csv), then run `python3 scripts/build.py`. The build regenerates the catalog and demo observations from the CSV, including additions, renames, removals, and `unavailable` exclusions. No separate catalog edit is needed. [The registry guide](data/README.md) explains visibility rules and the 16 columns. `python3 scripts/registry.py --output data/registry.json` optionally exports the complete registry, including hidden entries.
 
-Real-data Slices 1–4 are implemented locally: source review, manual input audits,
+Real-data Slices 1–5 are implemented locally: source review, manual input audits,
 FRED collection, normalization, derivation, validated snapshot assembly, and the
 production frontend. The five pilot definitions are activated for local assembly,
 producing three displayed charts (Fed assets, Fed overnight repo, and SOFR−EFFR).
-SOFR/EFFR remain internal inputs. Scheduling and production deployment remain Slice 5.
+SOFR/EFFR remain internal inputs. Slice 5 adds scheduled/on-demand publication and rollback;
+the first hosted production run remains to be verified after merge.
 Desktop Chrome rendering and dialog keyboard behavior have been verified.
-Mobile visual acceptance remains pending.
+Mobile UI polish is deferred at the maintainer's request.
 
 Run `python3 scripts/collect.py` to download current histories since `2010-01-01` for WALCL,
 SOFR, EFFR, and RPONTTLD into `data/automatic/`. It reads `FRED_API_KEY` from the
@@ -105,13 +106,13 @@ Open `http://127.0.0.1:8000/`. Assembly is offline and needs no API key. It crea
 derivations before copying the selected snapshot to `dist/`. Both snapshot promotion
 and production output replacement use atomic directory exchange on macOS/Linux.
 Failures preserve the prior output; `site/data/` remains the synthetic demo.
-Run one local writer at a time until Slice 5 adds workflow serialization.
+Run one local writer at a time; GitHub production jobs share one publication lock.
 
 The manifest identifies the source commit, exact source-file hashes, and any
 uncommitted source changes. Commit source changes and reassemble before a release.
 Source notices name **Junyan Liu** as publisher. Unconnected indicators display
 `待接入`; SIFMA remains in its separate, explicitly unreviewed local preview.
-No production publication or scheduling is enabled by these commands.
+These local commands do not publish; the Slice 5 workflow handles publication.
 
 Builds version the JavaScript module graph and styles by content, and JSON requests
 revalidate cached data. This prevents old demo scripts from reading a new production
@@ -127,7 +128,27 @@ This prepares manual inputs without activating production data.
 
 ## Deployment
 
-In GitHub repository **Settings → Pages → Build and deployment**, choose **GitHub Actions**. Push to `main` or manually run **Build and deploy dashboard**. Pull requests run checks/builds without deploying. The workflow publishes `dist/` using the Pages environment. This checkout has no configured Git remote; no live deployment has been performed.
+The remote is `https://github.com/Liu-Junyan/liquidity-dashboard.git`. The maintainer
+has configured **GitHub Actions** as the Pages source and added `FRED_API_KEY` as an
+Actions secret. The Slice 5 workflow publishes the reviewed production snapshot
+from one exact artifact commit. Pushes use saved inputs; scheduled collection runs
+daily at **15:17 Asia/Shanghai**. Pull requests run offline checks without secrets
+or deployment. Branch-protected repositories can use data-update PRs.
+
+In **Actions → Build and deploy dashboard → Run workflow**, select `main` and choose
+`refresh`, `publish` (no collection), or `rollback` (an earlier full artifact SHA).
+See the [publication and rollback runbook](docs/publication.md) for branch rules,
+failure handling, artifact identity, and first-release acceptance. The first hosted
+production deployment and live rollback remain pending verification.
+
+Run all offline Python and JavaScript checks locally with:
+
+```sh
+python3 scripts/check.py
+```
+
+This restores checked-in demo data, builds all three modes, and leaves the local
+production build in `dist/`. Python dependencies and Node 22+ are required.
 
 See [the real-data development plan](docs/real-data-development-plan.md) for implementation slices, normalized-unit formulas, FRED transformations, acceptance checks, and production rollout. [The implementation handoff](docs/implementation-brief.md#6-implemented-prototype-and-design-handoff) retains the prototype design, verification history, and mixed-source requirements.
 
@@ -145,6 +166,7 @@ See [the real-data development plan](docs/real-data-development-plan.md) for imp
 - `scripts/`: fixture generation, validation, static build, and Excel input extraction.
 - `data/sources/wind/`: versioned Wind workbooks, outside the published website.
 - `requirements.txt`: pinned Python dependency for Excel extraction and its tests.
-- `.github/workflows/pages.yml`: validation and GitHub Pages deployment.
+- `scripts/check.py`, `scripts/release.py`, `scripts/publish.py`: offline verification, release validation, and serialized publication.
+- `.github/workflows/pages.yml`: offline PR checks and production collection/publication/rollback.
 
 Apache ECharts is distributed under its bundled [Apache 2.0 license](site/assets/vendor/echarts-LICENSE.txt). No remote fonts, data calls, analytics, or CDN dependencies are required at runtime.

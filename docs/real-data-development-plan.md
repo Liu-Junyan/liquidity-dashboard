@@ -1,6 +1,6 @@
 # Real-data integration development plan
 
-Updated: November 17, 2026. Status: Slices 1–4 implemented locally; Slice 4 mobile visual acceptance remains pending. Pilot snapshot assembly is activated; scheduling and real-data deployment remain disabled.
+Updated: November 17, 2026. Status: Slices 1–5 implemented locally. Slice 5 configures scheduled production publication and rollback; first hosted deployment and live rollback acceptance remain pending after merge. Mobile UI polish is deferred at the maintainer's request.
 
 ## 1. Goal and first release
 
@@ -24,10 +24,10 @@ Completion means these pilot series work through collection, normalization, deri
 | --- | --- | --- |
 | `data/registry.csv` and `scripts/registry.py` | Membership, specifications, dependency checks, optional JSON export | Add production completeness checks for activated series without requiring all draft sources to be finished |
 | `scripts/catalog.py` | Separate demo and reviewed production metadata | Extend reviewed sources in Slice 6 |
-| `scripts/build.py` | Demo, manual preview and validated production snapshot modes | Slice 5 will publish an exact artifact revision |
+| `scripts/build.py` | Demo, manual preview and validated production snapshot modes | Slice 5 publisher builds an exact artifact revision |
 | `site/assets/data.js` | Native-frequency comparisons, labels and valid sample counts | Retain these checks as new sources activate |
-| `site/assets/app.js` and `charts.js` | Mode-specific labels, source notices, safe empty/short-history rendering | Mobile visual acceptance remains pending |
-| `.github/workflows/pages.yml` | Builds fixtures on pushes, pull requests, and manual runs | Add collection and snapshot publication after local production validation works |
+| `site/assets/app.js` and `charts.js` | Mode-specific labels, source notices, safe empty/short-history rendering | Mobile polish deferred by maintainer |
+| `.github/workflows/pages.yml` | Offline PR checks; saved-input pushes; daily/manual refresh, production publication and rollback | Verify first hosted release after merge |
 
 Use Python 3.10+; prefer standard-library modules where they keep the implementation simple. Excel extraction uses `openpyxl`, pinned in `requirements.txt`, to avoid maintaining an XLSX parser. GitHub Actions installs these dependencies before tests. Use the environment specified in AGENTS.md for local dependencies. Keep routine tests offline. Do not add extra maintainer-filled registry columns for scheduling, matching, or aggregation policies.
 
@@ -262,17 +262,44 @@ versions the complete JavaScript import graph and styles; JSON requests revalida
 cached responses. An ordinary reload, visible charts, statistics, expanded details,
 and Escape-to-close were verified in Chrome. Cache regression tests brought the
 passing suite to 99 Python tests and 26 JavaScript checks. Mobile visual acceptance remains
-**pending**. No production schedule or deployment changed.
+**pending** at completion of Slice 4. On November 17 the maintainer deferred mobile
+UI work and requested Slice 5 implementation. Slice 4 itself changed no deployment.
 
 ### Slice 5 — Automated publication and rollback
 
-- [ ] Extend CI so pull requests run offline validation and both contracts' tests without secrets or deployment. Manual input changes assemble from last validated automatic inputs without requiring a successful network request.
-- [ ] Add daily and on-demand collection on the default branch. A proposed daily schedule is `17 7 * * *` UTC (15:17 Asia/Shanghai), after the previous US business day's releases; this is a daily research refresh, not a release-time guarantee. Scheduled jobs can be delayed. [GitHub Actions scheduling](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
-- [ ] Serialize all production writers and publication runs in one shared concurrency group; do not cancel a writer midway through promotion. Refresh the default-branch checkout after obtaining the lock. If inputs advance before the snapshot commit, reassemble from the newer inputs rather than force-pushing stale output.
-- [ ] Commit validated automatic inputs and snapshot together, then build and deploy from that exact artifact commit. Permit repository writes only in the trusted publication job, subject to branch rules; keep pull requests read-only. If direct writes are disallowed, use a data-update PR and publish after merge.
-- [ ] Prevent generated commits from starting recursive collection. Verify this for the token/trigger strategy actually used. Publish in the same authorized workflow rather than assuming a generated commit will trigger another workflow.
-- [ ] Deploy the complete Pages artifact as one unit. Fatal validation/build errors leave the previous deployment intact. A recoverable individual source failure may publish retained history, with failures reported in the workflow summary.
-- [ ] Document and exercise restoring an earlier committed snapshot and redeploying it without fresh collection. Exclude credentials, private manual exports, and unsupported redistribution from public artifacts.
+- [x] Extend CI so pull requests run offline validation and both contracts' tests without secrets or deployment. Manual input changes assemble from last validated automatic inputs without requiring a successful network request.
+- [x] Add daily and on-demand collection on the default branch. The daily schedule is `17 7 * * *` UTC (15:17 Asia/Shanghai), after the previous US business day's releases; this is a daily research refresh, not a release-time guarantee. Scheduled jobs can be delayed. [GitHub Actions scheduling](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
+- [x] Serialize all production writers and publication runs in one shared concurrency group; do not cancel a writer midway through promotion. Refresh the default-branch checkout after obtaining the lock. If inputs advance before the snapshot commit, reassemble from the newer inputs rather than force-pushing stale output.
+- [x] Commit validated automatic inputs and snapshot together, then build and deploy from that exact artifact commit. Permit repository writes only in the trusted publication job, subject to branch rules; keep pull requests read-only. If direct writes are disallowed, use a data-update PR and publish after merge.
+- [x] Configure only the built-in `GITHUB_TOKEN` for generated pushes; publish in the same workflow. GitHub documents that these pushes do not trigger another push workflow. Hosted verification of this token/trigger strategy remains part of release acceptance.
+- [x] Upload the complete Pages artifact as one unit. Fatal validation/build errors block upload. Recoverable source failures may publish retained history, with warnings reported in the workflow summary. Hosted deployment acceptance remains pending.
+- [x] Document and exercise restoring an earlier committed snapshot without fresh collection using temporary Git remotes. Exclude credentials, manual exports, and unreviewed observations from Pages artifacts. Live redeployment acceptance remains pending.
+- [ ] Observe first production deployment, on-demand/scheduled execution, and a live rollback/recovery; verify generated commits do not start recursive runs.
+
+Implementation: `scripts/check.py` runs offline checks for all three build modes;
+`scripts/release.py` prepares, validates and stamps exact artifacts;
+`scripts/publish.py` uses disposable worktrees, bounded reassembly on concurrent
+input changes, normal fast-forward pushes and a data-PR fallback. One Actions job
+holds the production lock through deployment. Rollback restores saved automatic
+inputs and exact snapshot bytes in a new commit on current `main`.
+The [publication runbook](publication.md) covers setup, modes, PR delivery, error
+handling, artifact identities and rollback. Local integration tests exercise real
+Git races, protected-branch fallback, merge/squash adoption, exact rollback,
+fatal preservation, retained histories and public artifact exclusions.
+
+The maintainer reports the FRED secret and Pages Actions source are configured.
+The GitHub repository exists and is public. Existing source workbooks remain
+versioned by the earlier maintainer decision; excluding them from Pages does not
+remove them from repository history. NY Fed terms/notices were rechecked for the
+pilot on November 17, 2026; no additional series are activated.
+
+Verification on November 17: 117 Python tests and 26 JavaScript checks passed;
+actionlint 1.7.12 reported no workflow errors. An end-to-end publication rehearsal
+used a disposable clone with the saved real inputs and a local bare remote, ran
+the complete offline suite, committed the candidate, and built/stamped the exact
+remote artifact revision without an API key. The source checkout stayed clean in
+that rehearsal. No implementation commit was pushed to GitHub and no live
+deployment was performed during local implementation.
 
 Exit check: the first production milestone is published successfully; scheduled, on-demand, and manual-input paths converge on the same assembler. A concurrent-input scenario cannot publish an older snapshot over a newer one, and rollback works from Git history.
 

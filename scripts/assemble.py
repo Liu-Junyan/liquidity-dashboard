@@ -214,7 +214,7 @@ def main():
     except (ValueError, OSError, KeyError, TypeError) as error:
         parser.exit(1, f'Assembly failed: {error}\n')
     print(f'Assembled {documents[0]["snapshotId"]} to {output}')
-    print('Local production snapshot only. Scheduling and publication remain disabled.')
+    print('Local snapshot only; this command does not collect, commit or deploy.')
     if documents[2]['modifiedSourceFiles']:
         print('Local source changes recorded in manifest; commit source before a release assembly.')
 

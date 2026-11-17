@@ -4,61 +4,112 @@ on:
   push:
     branches: [main]
   pull_request:
+  schedule:
+    # Daily research refresh at 15:17 Asia/Shanghai; Actions may run late.
+    - cron: '17 7 * * *'
   workflow_dispatch:
+    inputs:
+      mode:
+        description: Refresh FRED, publish saved inputs, or restore a committed snapshot
+        type: choice
+        options: [refresh, publish, rollback]
+        default: refresh
+      rollback_commit:
+        description: Full artifact commit SHA from main (rollback only)
+        type: string
+        default: ''
 
 permissions:
   contents: read
 
-concurrency:
-  group: pages-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  build:
+  validate:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    concurrency:
+      group: checks-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
         with:
-          # Audit each input commit, including changes hidden by later commits.
           fetch-depth: 0
-          # A synthetic PR merge has no maintainer-authored correction message.
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Install Python dependencies
-        run: python -m pip install -r requirements.txt
-      - name: Build dashboard from registry
-        run: python scripts/build.py --mode demo
-      - name: Verify data and calculations
-        run: |
-          python scripts/registry.py
-          python scripts/policies.py
-          python scripts/import_manual.py
-          python -m unittest discover -s tests -p 'test_*.py'
-          node --test tests/data.test.mjs
-          python scripts/build.py --mode preview
-          node --test tests/preview.test.mjs
-      - uses: actions/upload-pages-artifact@v4
-        with:
-          path: dist
+      - run: python -m pip install -r requirements.txt
+      - name: Offline contracts, manual audit, demo, preview and production checks
+        run: python scripts/check.py
 
-  deploy:
-    if: github.event_name != 'pull_request'
-    needs: build
+  publish:
+    if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    # Hold this lock through collection, commit, artifact upload AND deploy.
+    # Pending runs may be replaced; each reads the latest branch on start.
+    concurrency:
+      group: production-pages
+      cancel-in-progress: false
     permissions:
+      contents: write
+      pull-requests: write
       pages: write
       id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with:
+          # Checkout happens after the lock, not at the triggering SHA.
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+          # Only the built-in token: its pushes cannot trigger recursive runs.
+          token: ${{ github.token }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: python -m pip install -r requirements.txt
+      - name: Prepare, validate and commit the exact production artifact
+        id: candidate
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          GH_TOKEN: ${{ github.token }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          PUBLICATION_MODE: ${{ github.event_name == 'schedule' && 'refresh' || github.event_name == 'workflow_dispatch' && inputs.mode || 'publish' }}
+          ROLLBACK_COMMIT: ${{ inputs.rollback_commit }}
+          DELIVERY: ${{ vars.DATA_UPDATE_DELIVERY || 'auto' }}
+        run: |
+          args=(--push --branch "$DEFAULT_BRANCH" --mode "$PUBLICATION_MODE" --delivery "$DELIVERY")
+          if [ -n "$ROLLBACK_COMMIT" ]; then
+            args+=(--rollback "$ROLLBACK_COMMIT")
+          fi
+          python scripts/publish.py "${args[@]}"
       - name: Configure GitHub Pages
+        if: steps.candidate.outputs.deploy == 'true'
         uses: actions/configure-pages@v5
-      - name: Deploy
+      - name: Upload the complete validated artifact
+        if: steps.candidate.outputs.deploy == 'true'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+      - name: Deploy the exact artifact revision
+        if: steps.candidate.outputs.deploy == 'true'
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Record deployment outcome
+        if: always()
+        env:
+          DEPLOY_OUTCOME: ${{ steps.deployment.outcome }}
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+          ARTIFACT_COMMIT: ${{ steps.candidate.outputs.artifact }}
+        run: |
+          printf '\nPages deployment: %s\n\nArtifact commit: `%s`\n\n%s\n' "$DEPLOY_OUTCOME" "$ARTIFACT_COMMIT" "$PAGE_URL" >> "$GITHUB_STEP_SUMMARY"
