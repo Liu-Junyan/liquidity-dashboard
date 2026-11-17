@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "mode": "publish",
+  "baseCommit": "9597d6b4b94ebdad3de640f67196b808fc7beb5d",
+  "snapshotId": "production-89ccd1225b7631d7a01386fd45a90a345d4ac11d59420601a6f411cc6822cceb",
+  "restoredFrom": null,
+  "artifactHashes": {
+    "data/automatic/effr.json": "1a329675d07cf4d358bb5ba09dc99949b03e45f496bbece1870efbcb0d903279",
+    "data/automatic/fed-assets.json": "0740c27424e54cc8a74568fed9c0f960e062ab081136a194f0e8e17924eecb5a",
+    "data/automatic/fed-repo.json": "a28b486eba850e4170fd7485e7bfb0348572b807d2df21edefebc0df90104a68",
+    "data/automatic/sofr.json": "7a5de6cc7f5e14306838afff65453b4c0933baa428bf7508ccd9501bd3aa609a",
+    "data/snapshot/catalog.json": "a9b3d3bcc9f221f3f6480d4a61b25986145406f21911416691e0b2f03adc01f7",
+    "data/snapshot/manifest.json": "cb796594070bcf6e14c4920e7fcec73df6c82247e10c1643b7390652a6f0b9da",
+    "data/snapshot/observations.json": "67c58c56d807ee9e85416262e31217e86419d4188918d6445a87325d5d8fd6e4"
+  }
+}

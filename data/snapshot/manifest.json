@@ -1,16 +1,17 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-17T06:26:42.066508Z",
-  "sourceInputCommit": "ded4f4307f41235364ff5057ecefc74098790215",
+  "generatedAt": "2026-11-17T07:22:16.576082Z",
+  "sourceInputCommit": "9597d6b4b94ebdad3de640f67196b808fc7beb5d",
   "sourceFileHashes": {
     "data/categories.json": "41b46e91bcbdfef69a4471b6fbdd3af84d6a1aa3ad01e1c09f57d9c20f89620c",
     "data/registry.csv": "ae70e082d89d138cf504d14b9278dd5597b7ec7d5e94dc6ed99fa369e25fe267",
     "data/source-reviews.json": "1e3b8aff40b8b29093d1068b40a0b00dbf6f08976b057cbadba3783a9f145c26",
     "scripts/artifacts.py": "ae83fd0771cc6a4e44e110960249e7c9d816246d629513165ccfa4fd86ab591a",
-    "scripts/assemble.py": "85f3d8bbe0229f6b2511e467528dcb868d37e22485b87470c8f0c75953f51c5e",
+    "scripts/assemble.py": "3b9d43f8af9fbf599996508d91dcbf727a1aec355fcbac0d576a16cd2d1f2063",
     "scripts/assets.py": "f7a16d925aa2bd22e58cfb8f57fd813207a005e67fa7e88fd1463aba54b3dc7a",
     "scripts/build.py": "65656abfab6686bb7391ff612b62e3cc058f0b87eaf642360dfbb4198a5e9891",
     "scripts/catalog.py": "fe9931c0a4c1e431d5428e7df2dd1b3fb98efb975ef5c26ad3de6c9380bc30cd",
+    "scripts/check.py": "dec3194523a8e9792313aebe73d2f0e56bce6ba6bb50cc91cc735191423b855e",
     "scripts/collect.py": "1b2ae424315ae2c212614acfe65aca4bcedeacc099d223a5332b312a14ca615b",
     "scripts/contracts.py": "35f01985eec10e7fbf9f6ab8b969e405502b58ce641c7f17b352d14463771880",
     "scripts/derive.py": "885b6e40b160dd1fe7c709efb6b433ec4e956ee9879a005768b4a98355ba7ffb",
@@ -23,21 +24,11 @@
     "scripts/preview.py": "e3b018c85122de65dc7e2850d1af10780cfd004fdc164e1f741242c1f3a48668",
     "scripts/providers/__init__.py": "78e5397c274726362e57c18eeda036d2a7a90ff8221cf8cb407b6df93f17c4c5",
     "scripts/providers/fred.py": "8a990d2acb4f19685c3a5912180b65d8f9cfea2b660cf49b95ef6bf0bc4d5c69",
-    "scripts/registry.py": "cb598e9e3222f62a25c0d328e5c4a1142b3f32f8e69131804aa7de01885b7e29"
+    "scripts/publish.py": "8ec9de68fb5d88e94e688f02bc5215f1a4c2ac9cfb52a06ae0790cab151aa216",
+    "scripts/registry.py": "cb598e9e3222f62a25c0d328e5c4a1142b3f32f8e69131804aa7de01885b7e29",
+    "scripts/release.py": "dff900668e46ffafe11a917e0e05b7a8c150bac61dc343d71331ca93af6e9c51"
   },
-  "modifiedSourceFiles": [
-    "scripts/artifacts.py",
-    "scripts/assemble.py",
-    "scripts/assets.py",
-    "scripts/build.py",
-    "scripts/catalog.py",
-    "scripts/collect.py",
-    "scripts/contracts.py",
-    "scripts/notices.py",
-    "scripts/policies.py",
-    "scripts/preview.py",
-    "scripts/providers/fred.py"
-  ],
+  "modifiedSourceFiles": [],
   "policyVersion": "4",
   "inputHashes": {
     "effr": "b961787daafe42e5eb61645a1af91d9d75806b518834d5509c5f6ccba09a484f",
@@ -47977,5 +47968,5 @@
       }
     }
   },
-  "snapshotId": "production-50e7bf082b6b1f96bf2e768c5804c0c692a8417dbca4048fb619fd96675fe413"
+  "snapshotId": "production-89ccd1225b7631d7a01386fd45a90a345d4ac11d59420601a6f411cc6822cceb"
 }
