@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "policyVersion": "4",
+  "policyVersion": "5",
   "seriesId": "sofr",
   "specHash": "8177b078c8e2568cb02757a2b656e1b92221667a091b291575abf3af7c031f36",
   "provider": "FRED",
@@ -9035,8 +9035,8 @@
   "outcome": {
     "status": "unchanged",
     "latestObservationDate": "2026-11-13",
-    "lastAttempt": "2026-11-17T05:54:45.289045Z",
-    "lastSuccessfulCheck": "2026-11-17T05:54:45.289045Z",
+    "lastAttempt": "2026-11-17T07:49:52.018793Z",
+    "lastSuccessfulCheck": "2026-11-17T07:49:52.018793Z",
     "lastDataChange": "2026-11-17T05:25:08.245604Z"
   },
   "freshness": {

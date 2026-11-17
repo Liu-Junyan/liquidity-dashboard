@@ -113,8 +113,10 @@ def build_production_catalog(registry, categories, histories, reviews, generated
             'availability': 'nonnumeric' if nonnumeric else
                             'numeric' if any(p['value'] is not None for p in points) else 'empty',
             'sources': sources,
-            'source': {'name': ('项目计算 · NY Fed / FRED · SOFR − EFFR' if identifier == 'sofr-effr-spread'
-                               else f'{entry["provider"]} · {entry["provider_series_id"]}' if active else '待接入'),
+            'source': {'name': ('项目计算 · NY Fed / FRED · SOFR − EFFR' if active and identifier == 'sofr-effr-spread'
+                               else f'项目计算 · FRED · {entry["formula"]}' if active and entry['update_method'] == 'derived'
+                               else ' · '.join(filter(None, [entry['provider'], entry['provider_series_id']]))
+                               if active else '待接入'),
                        'url': sources[0] if sources and sources[0].startswith('https://') else None},
             'notices': notices,
         })

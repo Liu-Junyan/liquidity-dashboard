@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "policyVersion": "4",
+  "policyVersion": "5",
   "seriesId": "fed-repo",
   "specHash": "268efab12fa0004407c6f00f86e81ef3c57dde4610ef39b8ba2e2a751f182947",
   "provider": "FRED",
@@ -17640,15 +17640,15 @@
   "sourceHash": "4501722cab9de5cf8e2ee8ea091087e5ff75aefc8a037811c9472bc9943d3a61",
   "revisionSummary": {
     "added": 0,
-    "removed": 2609,
+    "removed": 0,
     "revised": 0
   },
   "error": null,
   "outcome": {
-    "status": "updated",
+    "status": "unchanged",
     "latestObservationDate": "2026-11-16",
-    "lastAttempt": "2026-11-17T05:54:45.289045Z",
-    "lastSuccessfulCheck": "2026-11-17T05:54:45.289045Z",
+    "lastAttempt": "2026-11-17T07:49:52.018793Z",
+    "lastSuccessfulCheck": "2026-11-17T07:49:52.018793Z",
     "lastDataChange": "2026-11-17T05:54:45.289045Z"
   },
   "freshness": {

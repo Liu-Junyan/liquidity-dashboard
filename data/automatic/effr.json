@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "policyVersion": "4",
+  "policyVersion": "5",
   "seriesId": "effr",
   "specHash": "d575afcd30030699d44a92ba4276aa89e2c288d0e983c8ebaf014fd468c1be24",
   "provider": "FRED",
@@ -17636,15 +17636,15 @@
   "sourceHash": "b961787daafe42e5eb61645a1af91d9d75806b518834d5509c5f6ccba09a484f",
   "revisionSummary": {
     "added": 0,
-    "removed": 2479,
+    "removed": 0,
     "revised": 0
   },
   "error": null,
   "outcome": {
-    "status": "updated",
+    "status": "unchanged",
     "latestObservationDate": "2026-11-13",
-    "lastAttempt": "2026-11-17T05:54:45.289045Z",
-    "lastSuccessfulCheck": "2026-11-17T05:54:45.289045Z",
+    "lastAttempt": "2026-11-17T07:49:52.018793Z",
+    "lastSuccessfulCheck": "2026-11-17T07:49:52.018793Z",
     "lastDataChange": "2026-11-17T05:54:45.289045Z"
   },
   "freshness": {

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "policyVersion": "4",
+  "policyVersion": "5",
   "seriesId": "fed-assets",
   "specHash": "02659bb25c76511455dfdf9f47de2bbb54d4564df2d8ebf43bb1fecb965db6f3",
   "provider": "FRED",
@@ -3552,15 +3552,15 @@
   "sourceHash": "f4e0214b2e3721ba8837b8a46b88d6693f4e88bed07343efb3336af8a6eabf84",
   "revisionSummary": {
     "added": 0,
-    "removed": 368,
+    "removed": 0,
     "revised": 0
   },
   "error": null,
   "outcome": {
-    "status": "updated",
+    "status": "unchanged",
     "latestObservationDate": "2026-11-11",
-    "lastAttempt": "2026-11-17T05:54:45.289045Z",
-    "lastSuccessfulCheck": "2026-11-17T05:54:45.289045Z",
+    "lastAttempt": "2026-11-17T07:49:52.018793Z",
+    "lastSuccessfulCheck": "2026-11-17T07:49:52.018793Z",
     "lastDataChange": "2026-11-17T05:54:45.289045Z"
   },
   "freshness": {

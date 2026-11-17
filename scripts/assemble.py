@@ -1,4 +1,4 @@
-"""Assemble the activated pilot from saved inputs, offline; never deploy or collect."""
+"""Assemble activated series from saved inputs, offline; never deploy or collect."""
 import argparse
 import calendar
 import copy
@@ -94,7 +94,7 @@ def source_state(repo, commit):
 
 def validate_source_dates(points, rule):
     dates = [iso_date(point['date']) for point in points]
-    if rule == 'wednesday-level':
+    if rule in {'wednesday-level', 'wednesday-ending'}:
         require(all(day.weekday() == 2 for day in dates), 'Invalid weekly observation date')
     elif rule in {'month-start', 'quarter-start'}:
         require(all(day.day == 1 and (rule != 'quarter-start' or day.month in {1, 4, 7, 10})

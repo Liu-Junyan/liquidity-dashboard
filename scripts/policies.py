@@ -1,6 +1,6 @@
 """Reviewed production specifications and fail-closed activation gates.
 
-Run this file to check pilot specifications offline. Implementations are registered
+Run this file to check active specifications offline. Implementations are registered
 only when their executable paths exist; production activation remains separate.
 """
 import argparse
@@ -19,23 +19,36 @@ else:
     from registry import DEFAULT_REGISTRY, load_registry
 
 ROOT = Path(__file__).resolve().parents[1]
-POLICY_VERSION = '4'
+POLICY_VERSION = '5'
 FRED_OBSERVATION_START = '2010-01-01'
 PILOT_SERIES = frozenset({'fed-assets', 'sofr', 'effr', 'sofr-effr-spread', 'fed-repo'})
-# Local snapshot activation. Collection/deployment scheduling remains Slice 5.
-ACTIVE_SERIES = PILOT_SERIES
+# ICE spreads and VIX remain inactive at the maintainer's request (2026-11-17).
+ACTIVE_SERIES = PILOT_SERIES | frozenset({
+    'sofr99', 'sofr-tail-spread', 'reserve-balances', 'bank-total-assets',
+    'reserve-assets-ratio', 'treasury-account', 'reverse-repo', 'discount-window',
+    'swap-line', 'fima-repo', 'bank-loans', 'lending-standards', 'treasury-yield-chg',
+    'bond-issuance', 'treasury-bond-issuance', 'corporate-bond-issuance',
+})
 # Conservative calendar-day diagnostics, not release-time guarantees or rejection
 # rules. These tolerate weekends, holidays and ordinary provider ingestion lag.
 FRESHNESS_DAYS = {'fed-assets': 14, 'sofr': 7, 'effr': 7, 'fed-repo': 7}
+FRESHNESS_DAYS.update({
+    'sofr99': 7, 'reverse-repo': 7, 'treasury-yield-chg': 7,
+    'reserve-balances': 14, 'treasury-account': 14, 'discount-window': 14,
+    'swap-line': 14, 'fima-repo': 14, 'bank-total-assets': 21, 'bank-loans': 21,
+    # Quarter-start labels predate publication; allow a full quarter plus lag.
+    'lending-standards': 150,
+})
 
 
 def executable_implementations():
     # Lazy imports keep policies and the shared validators independently usable.
-    from scripts.derive import difference
+    from scripts.derive import difference, reserve_ratio, tail_difference
     from scripts.normalize import normalize
     from scripts.providers.fred import FredClient
     from scripts.import_manual import import_manual
     return {'fred-observations': FredClient.fetch, 'same-date-difference': difference,
+            'same-date-reserve-ratio': reserve_ratio, 'same-date-tail-difference': tail_difference,
             'manual-csv': import_manual,
             **{f'normalize:{name}': normalize for name in
                ('identity', 'millions-to-billions', 'percentage-points-to-bp')}}
@@ -48,6 +61,7 @@ class SeriesPolicy:
     date_rule: str
     request_units: str | None = None
     calculation: str | None = None
+    seasonal_adjustment: str = 'NSA'
 
 
 POLICIES = {
@@ -57,11 +71,34 @@ POLICIES = {
     'fed-repo': SeriesPolicy('automatic', 'fred-observations', 'source-business-date', 'lin'),
     'sofr-effr-spread': SeriesPolicy('derived', 'same-date-difference', 'exact-date-union',
                                      calculation='sofr-effr'),
+    'sofr99': SeriesPolicy('automatic', 'fred-observations', 'source-business-date', 'lin'),
+    'sofr-tail-spread': SeriesPolicy('derived', 'same-date-tail-difference', 'exact-date-union',
+                                   calculation='sofr99-sofr'),
+    'reserve-balances': SeriesPolicy('automatic', 'fred-observations', 'wednesday-level', 'lin'),
+    'bank-total-assets': SeriesPolicy('automatic', 'fred-observations', 'wednesday-ending', 'lin',
+                                     seasonal_adjustment='SA'),
+    'reserve-assets-ratio': SeriesPolicy('derived', 'same-date-reserve-ratio', 'exact-date-union',
+                                       calculation='100*reserve-balances/bank-total-assets'),
+    'treasury-account': SeriesPolicy('automatic', 'fred-observations', 'wednesday-level', 'lin'),
+    'reverse-repo': SeriesPolicy('automatic', 'fred-observations', 'source-business-date', 'lin'),
+    'discount-window': SeriesPolicy('automatic', 'fred-observations', 'wednesday-level', 'lin'),
+    'swap-line': SeriesPolicy('automatic', 'fred-observations', 'wednesday-level', 'lin'),
+    'fima-repo': SeriesPolicy('automatic', 'fred-observations', 'wednesday-ending', 'lin'),
+    'bank-loans': SeriesPolicy('automatic', 'fred-observations', 'wednesday-ending', 'lin',
+                              seasonal_adjustment='SA'),
+    'lending-standards': SeriesPolicy('automatic', 'fred-observations', 'quarter-start', 'lin'),
+    'treasury-yield-chg': SeriesPolicy('automatic', 'fred-observations', 'source-business-date', 'chg'),
+    'bond-issuance': SeriesPolicy('manual', 'manual-csv', 'month-end'),
+    'treasury-bond-issuance': SeriesPolicy('manual', 'manual-csv', 'month-end'),
+    'corporate-bond-issuance': SeriesPolicy('manual', 'manual-csv', 'month-end'),
 }
-# No arbitrary registry notes or formulas are executed. Future yield collection
+COLLECTION_SERIES = frozenset(key for key in ACTIVE_SERIES if POLICIES[key].method != 'manual')
+
+# No arbitrary registry notes or formulas are executed. Yield collection
 # must explicitly use this chg policy, never infer a transform from notes.
 REQUEST_TRANSFORMS = {'treasury-yield-chg': 'chg'}
 CALCULATIONS = {
+    'sofr-tail-spread': (frozenset({'sofr99', 'sofr'}), 'sofr99-sofr'),
     'sofr-effr-spread': (frozenset({'sofr', 'effr'}), 'sofr-effr'),
     'reserve-assets-ratio': (frozenset({'reserve-balances', 'bank-total-assets'}),
                              '100*reserve-balances/bank-total-assets'),
@@ -177,6 +214,10 @@ def validate_policies(registry, selected=PILOT_SERIES, *, policies=None, reviews
                 raise ValueError(f'{identifier}: incomplete source review: {field}')
         if review['dateRule'] != policy.date_rule:
             raise ValueError(f'{identifier}: date policy needs review')
+        if policy.method == 'automatic' and (
+                policy.seasonal_adjustment not in {'NSA', 'SA'}
+                or review.get('seasonalAdjustment', 'NSA') != policy.seasonal_adjustment):
+            raise ValueError(f'{identifier}: seasonal adjustment policy needs review')
         if require_implementations:
             for capability in (policy.implementation, f'normalize:{conversion}'):
                 if not callable(implementations.get(capability)):
@@ -199,15 +240,15 @@ def validate_activation(registry, selected=ACTIVE_SERIES, **kwargs):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--input', type=Path, default=DEFAULT_REGISTRY)
-    parser.add_argument('--check-activation', action='store_true', help='Require pilot executable paths; does not activate production')
+    parser.add_argument('--check-activation', action='store_true', help='Require active executable paths; does not publish')
     args = parser.parse_args()
     try:
         registry = load_registry(args.input)
-        order = validate_policies(registry, require_implementations=args.check_activation)
+        order = validate_policies(registry, ACTIVE_SERIES, require_implementations=args.check_activation)
         validate_activation(registry)
     except (ValueError, OSError) as error:
         parser.exit(1, f'Policy validation failed: {error}\n')
-    print(f'Validated {len(order)} pilot specifications; {len(ACTIVE_SERIES)} activated series. No data collected.')
+    print(f'Validated {len(order)} production specifications; {len(ACTIVE_SERIES)} activated series. No data collected.')
 
 
 if __name__ == '__main__':

@@ -398,3 +398,23 @@ artifact SHA. This restores both automatic inputs and snapshot files without
 collection, preserving the historic snapshot ID. It creates a new commit instead
 of rewriting history. See the [publication runbook](../docs/publication.md) for
 setup, failure handling, rollback verification and resuming collection.
+
+## Slice 6 coverage and manual publication
+
+The [reviewed expansion](../docs/source-review-slice-6.md) activates 15 automatic
+inputs, three manual issuance inputs and three calculations. `collect.py` now
+refreshes all active automatic inputs; ICE spreads and VIX are not fetched.
+`treasury-yield-chg` requests FRED `chg` and normalizes once to bp, remaining hidden.
+H.8 assets/loans retain seasonal adjustment; SLOOS retains quarter-start labels.
+
+The issuance source references now identify Wind EDB G1132499 (total), G1132494
+(Treasury) and G1132496 (corporate). The maintainer confirmed monthly gross
+issuance across all maturities, with Treasury/corporate included in total, and
+public redistribution permission. Never sum the three overlapping series.
+
+For subsequent Wind refreshes, preserve source missing values as blank instead of
+exporting them as zero. All current 570 saved observations are positive. The CSV
+importer cannot detect missing values already converted to zero upstream.
+Commit the workbook, exported CSVs and reviewed registry changes before assembly.
+The manual audit reads committed input definitions; it intentionally rejects an
+uncommitted specification change even if the CSV values have not changed.

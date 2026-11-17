@@ -1,5 +1,9 @@
 # Pilot source review
 
+Historical Slices 1–5 record. The [Slice 6 review](source-review-slice-6.md)
+supersedes the future-source activation status below, including reserve/assets
+and Treasury yield change. Pilot definitions and notices remain valid.
+
 Reviewed November 16, 2026 against the linked primary sources. This review completes
 Slice 1 specifications, not collection or release certification. `data/registry.csv`
 owns source identity and units. `data/source-reviews.json` records a hash of the

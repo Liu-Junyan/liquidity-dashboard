@@ -38,5 +38,144 @@
     "explanation": "相同观察日的SOFR减EFFR。先规范化输入单位；输出为百分点（沿用%标签），4.10减4.00为0.10；缺少任一输入时为空，不跨日填充。",
     "dateRule": "exact-date-union",
     "redistribution": "NY Fed terms apply; attribution and applicable reference-rate notices required. See source review."
+  },
+  "bond-issuance": {
+    "specHash": "195c7d5e8ad9620328c7424400fe2b94e69fd4d464f31f0370743bf6fc6d84f5",
+    "reviewedOn": "2026-11-17",
+    "reference": "docs/source-review-slice-6.md#bond-issuance",
+    "explanation": "SIFMA经Wind EDB G1132499提供的总债券月度发行额，十亿美元原值。维护者确认口径为全期限、总发行额（非净额、非年初累计）；月末为观察期标签。国债与公司债已包含在总量中，三项不可相加。保存工作簿与CSV同步更新；缺失保留为空。",
+    "dateRule": "month-end",
+    "redistribution": "Maintainer confirmed public redistribution permission for Wind/SIFMA on 2026-11-17. Cite SIFMA and Wind."
+  },
+  "corporate-bond-issuance": {
+    "specHash": "76d8332840f5946d3bf4122534d1ce2c9f628c14c8b6e05e9429f6b43bfc30db",
+    "reviewedOn": "2026-11-17",
+    "reference": "docs/source-review-slice-6.md#corporate-bond-issuance",
+    "explanation": "SIFMA经Wind EDB G1132496提供的公司债月度发行额，十亿美元原值。维护者确认口径为全期限、总发行额（非净额、非年初累计）；月末为观察期标签。国债与公司债已包含在总量中，三项不可相加。保存工作簿与CSV同步更新；缺失保留为空。",
+    "dateRule": "month-end",
+    "redistribution": "Maintainer confirmed public redistribution permission for Wind/SIFMA on 2026-11-17. Cite SIFMA and Wind."
+  },
+  "lending-standards": {
+    "specHash": "f304471e29e8aa83dc235012caa03bfdb048a8660576227da2b49a353dd46bef",
+    "reviewedOn": "2026-11-17",
+    "reference": "docs/source-review-slice-6.md#lending-standards",
+    "explanation": "SLOOS美国国内银行对大中型企业工商贷款收紧标准的净百分比；正值为净收紧，负值为净放松，未季调。来源以季度首日标记调查期，不代表该日已发布；按季度及上年同季比较。",
+    "dateRule": "quarter-start",
+    "redistribution": "Public-domain Board source; cite Board and FRED; identify project calculations.",
+    "seasonalAdjustment": "NSA"
+  },
+  "swap-line": {
+    "specHash": "5fca1a9a869c13a2a3d8eac3a8685aee38082b3566a670ea0ccc7a8b8cfc1508",
+    "reviewedOn": "2026-11-17",
+    "reference": "docs/source-review-slice-6.md#swap-line",
+    "explanation": "H.4.1央行流动性互换未偿余额，未季调、周三时点值、百万美元；不是当周新增交易额。",
+    "dateRule": "wednesday-level",
+    "redistribution": "Public-domain Board source; cite Board and FRED; identify project calculations.",
+    "seasonalAdjustment": "NSA"
+  },
+  "treasury-yield-chg": {
+    "specHash": "59927a15af131c04b8b0b77002b3ff9e36b7ac7c259a5cf7a0272d1ead8b0d0e",
+    "reviewedOn": "2026-11-17",
+    "reference": "docs/source-review-slice-6.md#treasury-yield-chg",
+    "explanation": "FRED DGS10十年期固定期限美债投资收益率，明确请求units=chg；将返回的百分点变化乘100一次得到bp。保留来源缺失值，不自行跳过假日补算；为收益率变动而非债券价格变动。",
+    "dateRule": "source-business-date",
+    "redistribution": "Public-domain Board source; cite Board and FRED; identify project calculations.",
+    "seasonalAdjustment": "NSA"
+  },
+  "sofr99": {
+    "specHash": "a89f444081c6358d91200be49bd4619cc15bb0bacd89af89e7102aa0134f9cd7",
+    "reviewedOn": "2026-11-17",
+    "reference": "docs/source-review-slice-6.md#sofr99",
+    "explanation": "纽约联储SOFR交易分布的第99百分位利率，非99%置信区间；按交易日记录，百分比原值。",
+    "dateRule": "source-business-date",
+    "redistribution": "NY Fed terms apply; original-source/FRED attribution and applicable reference-rate notices required.",
+    "seasonalAdjustment": "NSA"
+  },
+  "bank-total-assets": {
+    "specHash": "33b70ce57aad536c9964578067883bcd3ae0919742ab14206ffb558a5eaa6481",
+    "reviewedOn": "2026-11-17",
+    "reference": "docs/source-review-slice-6.md#bank-total-assets",
+    "explanation": "H.8美国商业银行总资产，季调、截至周三的周度数据，十亿美元；与H.4.1准备金覆盖范围及季调口径不同。",
+    "dateRule": "wednesday-ending",
+    "redistribution": "Public-domain Board source; cite Board and FRED; identify project calculations.",
+    "seasonalAdjustment": "SA"
+  },
+  "discount-window": {
+    "specHash": "33c2f82126e52450d70bae0d29b4ebffcba550214f458441b606f873a8df621c",
+    "reviewedOn": "2026-11-17",
+    "reference": "docs/source-review-slice-6.md#discount-window",
+    "explanation": "H.4.1一级信贷余额，未季调、周三时点值、百万美元；不包含二级或季节性信贷，不能解释为贴现窗口全部工具用量。",
+    "dateRule": "wednesday-level",
+    "redistribution": "Public-domain Board source; cite Board and FRED; identify project calculations.",
+    "seasonalAdjustment": "NSA"
+  },
+  "reserve-assets-ratio": {
+    "specHash": "9c2c7bd89775419ef4fff071c4df32bf6d5eaa75dac0b48054f451e47601be36",
+    "reviewedOn": "2026-11-17",
+    "reference": "docs/source-review-slice-6.md#reserve-assets-ratio",
+    "explanation": "同日H.4.1未季调准备金（先由百万转十亿美元）除以H.8季调商业银行总资产，再乘100。两者覆盖范围与季调口径不同，仅为跨口径研究比值，不是同一银行总体的资产占比；缺值或分母为零时为空，不填充。",
+    "dateRule": "exact-date-union",
+    "redistribution": "Public-domain Board source; cite Board and FRED; identify project calculations."
+  },
+  "treasury-account": {
+    "specHash": "57983ec6dc46b685407bf8231539688545c70ce09d570e06b67c76bb4f46f178",
+    "reviewedOn": "2026-11-17",
+    "reference": "docs/source-review-slice-6.md#treasury-account",
+    "explanation": "H.4.1美国财政部一般账户余额，未季调、周三时点值；百万美元除以1000为十亿美元，非每日余额。",
+    "dateRule": "wednesday-level",
+    "redistribution": "Public-domain Board source; cite Board and FRED; identify project calculations.",
+    "seasonalAdjustment": "NSA"
+  },
+  "fima-repo": {
+    "specHash": "0cc2a51c6a895c2175faede2940a3eb3e34eab392414b9b9dbf16023c3cbb1ae",
+    "reviewedOn": "2026-11-17",
+    "reference": "docs/source-review-slice-6.md#fima-repo",
+    "explanation": "H.4.1外国官方回购协议余额，未季调、周三时点值、百万美元；使用来源周三日期，不是周平均或交易流量。",
+    "dateRule": "wednesday-ending",
+    "redistribution": "Public-domain Board source; cite Board and FRED; identify project calculations.",
+    "seasonalAdjustment": "NSA"
+  },
+  "bank-loans": {
+    "specHash": "e98a5c29f5b8a3508dd1bf124ff9b591f4f0b7039114ac95c6ddaf2b9c2ad62b",
+    "reviewedOn": "2026-11-17",
+    "reference": "docs/source-review-slice-6.md#bank-loans",
+    "explanation": "H.8美国商业银行信贷中的贷款和租赁总额，季调、截至周三的周度数据，十亿美元；不是仅商业及工业贷款。",
+    "dateRule": "wednesday-ending",
+    "redistribution": "Public-domain Board source; cite Board and FRED; identify project calculations.",
+    "seasonalAdjustment": "SA"
+  },
+  "reverse-repo": {
+    "specHash": "97c815ef9274b6748ef007ccb91d195ee6e54827319c0cd185a421ccd7303d54",
+    "reviewedOn": "2026-11-17",
+    "reference": "docs/source-review-slice-6.md#reverse-repo",
+    "explanation": "纽约联储临时公开市场操作中的美国国债抵押隔夜逆回购每日交易总额；原始单位为十亿美元，保持来源日期及零值，缺失不视为零；不含其他抵押品或期限。",
+    "dateRule": "source-business-date",
+    "redistribution": "NY Fed terms apply; original-source/FRED attribution and applicable reference-rate notices required.",
+    "seasonalAdjustment": "NSA"
+  },
+  "reserve-balances": {
+    "specHash": "ac8ca89cac12825b94ebe4059cd313a643360a9cdf273bd6f66931967279e023",
+    "reviewedOn": "2026-11-17",
+    "reference": "docs/source-review-slice-6.md#reserve-balances",
+    "explanation": "H.4.1存款机构在联储的准备金余额，未季调、周三时点值；百万美元除以1000为十亿美元。",
+    "dateRule": "wednesday-level",
+    "redistribution": "Public-domain Board source; cite Board and FRED; identify project calculations.",
+    "seasonalAdjustment": "NSA"
+  },
+  "treasury-bond-issuance": {
+    "specHash": "9f91a2af4f178ff00c38316b44c4af0893c08c3e95d52a96ebd5bec7840a5805",
+    "reviewedOn": "2026-11-17",
+    "reference": "docs/source-review-slice-6.md#treasury-bond-issuance",
+    "explanation": "SIFMA经Wind EDB G1132494提供的美国国债月度发行额，十亿美元原值。维护者确认口径为全期限、总发行额（非净额、非年初累计）；月末为观察期标签。国债与公司债已包含在总量中，三项不可相加。保存工作簿与CSV同步更新；缺失保留为空。",
+    "dateRule": "month-end",
+    "redistribution": "Maintainer confirmed public redistribution permission for Wind/SIFMA on 2026-11-17. Cite SIFMA and Wind."
+  },
+  "sofr-tail-spread": {
+    "specHash": "c3b4d7dfdfc543919a7b0c169374f259e8b236453e3d6ca2790e0d5a73ae5da9",
+    "reviewedOn": "2026-11-17",
+    "reference": "docs/source-review-slice-6.md#sofr-tail-spread",
+    "explanation": "同日SOFR第99百分位减SOFR中位数，反映融资利率分布尾部；输出为百分点（沿用%标签），不乘100；缺少任一输入时为空，不跨日填充。",
+    "dateRule": "exact-date-union",
+    "redistribution": "NY Fed terms apply; original-source/FRED attribution and applicable reference-rate notices required."
   }
 }

@@ -1,4 +1,4 @@
-"""Refresh FRED pilot histories since 2010 without assembling or publishing.
+"""Refresh active FRED histories since 2010 without assembling or publishing.
 
 Run python3 scripts/collect.py. FRED_API_KEY comes from the environment or the
 ignored local .env. Only the FRED_API_KEY setting is accepted.
@@ -20,7 +20,7 @@ from scripts.contracts import iso_date, utc_time, validate_points, validate_refe
 from scripts.derive import derive
 from scripts.import_manual import validate_owner
 from scripts.normalize import content_hash, normalize
-from scripts.policies import (FRESHNESS_DAYS, PILOT_SERIES, POLICIES, POLICY_VERSION,
+from scripts.policies import (FRESHNESS_DAYS, COLLECTION_SERIES, POLICIES, POLICY_VERSION,
                               specification_hash, validate_policies)
 from scripts.providers.fred import CollectionError, FredClient, validate_history_bounds
 from scripts.registry import ROOT, load_registry
@@ -103,7 +103,7 @@ def validate_cached(record):
         raise ValueError('Malformed automatic input') from None
 
 
-def collect(registry, client, *, previous=None, selected=PILOT_SERIES, now=None):
+def collect(registry, client, *, previous=None, selected=COLLECTION_SERIES, now=None):
     """Build an in-memory candidate. Failures retain only compatible history."""
     order = validate_policies(registry, selected, require_implementations=True)
     now = now or datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
@@ -161,7 +161,7 @@ def collect(registry, client, *, previous=None, selected=PILOT_SERIES, now=None)
     return {'automatic': records, 'normalized': normalized, 'derived': derived}
 
 
-def refresh(repo, client, *, selected=PILOT_SERIES, now=None):
+def refresh(repo, client, *, selected=COLLECTION_SERIES, now=None):
     """Stage the candidate, then atomically replace each automatic input file.
 
     This is not a publishable snapshot. Slice 4 assembles/promotes that as one unit.
@@ -195,7 +195,7 @@ def refresh(repo, client, *, selected=PILOT_SERIES, now=None):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--series', nargs='+', choices=sorted(PILOT_SERIES), default=sorted(PILOT_SERIES),
+    parser.add_argument('--series', nargs='+', choices=sorted(COLLECTION_SERIES), default=sorted(COLLECTION_SERIES),
                         help='Candidate series; derived series require their inputs explicitly')
     args = parser.parse_args()
     try:

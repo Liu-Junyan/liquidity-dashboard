@@ -1,0 +1,324 @@
+{
+  "schemaVersion": 1,
+  "policyVersion": "5",
+  "seriesId": "lending-standards",
+  "specHash": "f304471e29e8aa83dc235012caa03bfdb048a8660576227da2b49a353dd46bef",
+  "provider": "FRED",
+  "providerSeriesId": "DRTSCILM",
+  "sourceUnit": "%",
+  "normalizedUnit": "%",
+  "sourceReference": "https://fred.stlouisfed.org/series/DRTSCILM",
+  "transformation": "lin",
+  "observations": [
+    {
+      "date": "2010-01-01",
+      "value": -5.5
+    },
+    {
+      "date": "2010-04-01",
+      "value": -7.1
+    },
+    {
+      "date": "2010-07-01",
+      "value": -8.8
+    },
+    {
+      "date": "2010-10-01",
+      "value": -10.5
+    },
+    {
+      "date": "2011-01-01",
+      "value": -10.5
+    },
+    {
+      "date": "2011-04-01",
+      "value": -16.4
+    },
+    {
+      "date": "2011-07-01",
+      "value": -21.8
+    },
+    {
+      "date": "2011-10-01",
+      "value": -5.9
+    },
+    {
+      "date": "2012-01-01",
+      "value": 5.4
+    },
+    {
+      "date": "2012-04-01",
+      "value": -6.9
+    },
+    {
+      "date": "2012-07-01",
+      "value": -9.5
+    },
+    {
+      "date": "2012-10-01",
+      "value": -7.6
+    },
+    {
+      "date": "2013-01-01",
+      "value": -7.4
+    },
+    {
+      "date": "2013-04-01",
+      "value": -19.1
+    },
+    {
+      "date": "2013-07-01",
+      "value": -18.1
+    },
+    {
+      "date": "2013-10-01",
+      "value": -8.3
+    },
+    {
+      "date": "2014-01-01",
+      "value": -13.7
+    },
+    {
+      "date": "2014-04-01",
+      "value": -11.1
+    },
+    {
+      "date": "2014-07-01",
+      "value": -10.7
+    },
+    {
+      "date": "2014-10-01",
+      "value": -10.5
+    },
+    {
+      "date": "2015-01-01",
+      "value": -5.5
+    },
+    {
+      "date": "2015-04-01",
+      "value": -5.3
+    },
+    {
+      "date": "2015-07-01",
+      "value": -7.0
+    },
+    {
+      "date": "2015-10-01",
+      "value": 7.4
+    },
+    {
+      "date": "2016-01-01",
+      "value": 8.2
+    },
+    {
+      "date": "2016-04-01",
+      "value": 11.6
+    },
+    {
+      "date": "2016-07-01",
+      "value": 8.5
+    },
+    {
+      "date": "2016-10-01",
+      "value": 1.5
+    },
+    {
+      "date": "2017-01-01",
+      "value": 1.4
+    },
+    {
+      "date": "2017-04-01",
+      "value": -2.8
+    },
+    {
+      "date": "2017-07-01",
+      "value": -3.9
+    },
+    {
+      "date": "2017-10-01",
+      "value": -8.5
+    },
+    {
+      "date": "2018-01-01",
+      "value": -10.0
+    },
+    {
+      "date": "2018-04-01",
+      "value": -11.3
+    },
+    {
+      "date": "2018-07-01",
+      "value": -15.9
+    },
+    {
+      "date": "2018-10-01",
+      "value": -15.9
+    },
+    {
+      "date": "2019-01-01",
+      "value": 2.8
+    },
+    {
+      "date": "2019-04-01",
+      "value": -4.2
+    },
+    {
+      "date": "2019-07-01",
+      "value": -2.8
+    },
+    {
+      "date": "2019-10-01",
+      "value": 5.4
+    },
+    {
+      "date": "2020-01-01",
+      "value": 0.0
+    },
+    {
+      "date": "2020-04-01",
+      "value": 41.5
+    },
+    {
+      "date": "2020-07-01",
+      "value": 71.2
+    },
+    {
+      "date": "2020-10-01",
+      "value": 37.7
+    },
+    {
+      "date": "2021-01-01",
+      "value": 5.5
+    },
+    {
+      "date": "2021-04-01",
+      "value": -15.1
+    },
+    {
+      "date": "2021-07-01",
+      "value": -32.4
+    },
+    {
+      "date": "2021-10-01",
+      "value": -18.2
+    },
+    {
+      "date": "2022-01-01",
+      "value": -14.5
+    },
+    {
+      "date": "2022-04-01",
+      "value": -1.5
+    },
+    {
+      "date": "2022-07-01",
+      "value": 24.2
+    },
+    {
+      "date": "2022-10-01",
+      "value": 39.1
+    },
+    {
+      "date": "2023-01-01",
+      "value": 44.8
+    },
+    {
+      "date": "2023-04-01",
+      "value": 46.0
+    },
+    {
+      "date": "2023-07-01",
+      "value": 50.8
+    },
+    {
+      "date": "2023-10-01",
+      "value": 33.9
+    },
+    {
+      "date": "2024-01-01",
+      "value": 14.5
+    },
+    {
+      "date": "2024-04-01",
+      "value": 15.6
+    },
+    {
+      "date": "2024-07-01",
+      "value": 7.9
+    },
+    {
+      "date": "2024-10-01",
+      "value": 0.0
+    },
+    {
+      "date": "2025-01-01",
+      "value": 6.2
+    },
+    {
+      "date": "2025-04-01",
+      "value": 18.5
+    },
+    {
+      "date": "2025-07-01",
+      "value": 9.5
+    },
+    {
+      "date": "2025-10-01",
+      "value": 6.5
+    },
+    {
+      "date": "2026-01-01",
+      "value": 5.3
+    },
+    {
+      "date": "2026-04-01",
+      "value": 8.1
+    },
+    {
+      "date": "2026-07-01",
+      "value": 0.0
+    },
+    {
+      "date": "2026-10-01",
+      "value": 1.7
+    }
+  ],
+  "metadata": {
+    "id": "DRTSCILM",
+    "units": "Percent",
+    "frequency_short": "Q",
+    "seasonal_adjustment_short": "NSA",
+    "observation_start": "1990-04-01",
+    "observation_end": "2026-10-01"
+  },
+  "requestParameters": {
+    "series_id": "DRTSCILM",
+    "file_type": "json",
+    "units": "lin",
+    "sort_order": "asc",
+    "observation_start": "2010-01-01",
+    "observation_end": "9999-12-31",
+    "limit": 100000,
+    "offset": 0
+  },
+  "sourceHash": "226bce049a52e917c76ac945a399ef8004b2babd623e03f6a316a1a0f5fdfaa4",
+  "revisionSummary": {
+    "added": 68,
+    "removed": 0,
+    "revised": 0
+  },
+  "error": null,
+  "outcome": {
+    "status": "updated",
+    "latestObservationDate": "2026-10-01",
+    "lastAttempt": "2026-11-17T07:49:52.018793Z",
+    "lastSuccessfulCheck": "2026-11-17T07:49:52.018793Z",
+    "lastDataChange": "2026-11-17T07:49:52.018793Z"
+  },
+  "freshness": {
+    "latestNumericDate": "2026-10-01",
+    "ageDays": 47,
+    "maxAgeDays": 150,
+    "status": "current"
+  }
+}

@@ -1,6 +1,6 @@
 # Real-data integration development plan
 
-Updated: November 17, 2026. Status: Slices 1–5 implemented locally. Slice 5 configures scheduled production publication and rollback; first hosted deployment and live rollback acceptance remain pending after merge. Mobile UI polish is deferred at the maintainer's request.
+Updated: November 17, 2026. Status: Slices 1–6 implemented locally within reviewed/authorized scope. Slice 6 activates 21 series (16 displayed); ICE spreads/VIX remain inactive, Treasury bid–ask is deferred, and iFind/price-impact definitions remain pending. Slice 5 configures scheduled production publication and rollback; first hosted deployment and live rollback acceptance remain pending after merge. Mobile UI polish is deferred at the maintainer's request.
 
 ## 1. Goal and first release
 
@@ -305,14 +305,39 @@ Exit check: the first production milestone is published successfully; scheduled,
 
 ### Slice 6 — Expand coverage
 
-- [ ] Add remaining reviewed FRED sources, including reserves/assets, daily ON RRP, credit spreads, facility usage, bank loans, VIX, and quarterly lending standards. Apply each source's actual conventions rather than inheriting the pilot's defaults.
-- [ ] Select and review the first real manual series; verify addition, documented correction/removal, snapshot assembly, and publication using the Slice 2 importer. No manual definition may reuse the superseded `fed-repo` ownership.
-- [ ] Add SIFMA monthly inputs after defining the specific tables, measures, and potential overlap among aggregate/Treasury/corporate issuance entries. Add iFind exports only with traceable identifiers, adjustment conventions, and permitted publication scope.
-- [ ] Verify the Treasury bid–ask source and instrument definition; the current provider label alone is insufficient.
-- [ ] Activate Treasury yield change with the explicit `chg` request and current bp normalization once reviewed. Defer price impact until FINRA coverage, volume units, matching dates, sign/absolute-value convention, and the proxy's interpretation are defined. A yield-change/aggregate-volume ratio must not be presented as a directly measured market-impact coefficient without methodological support.
-- [ ] Leave cross-currency basis, CDS, ETFs, depth, positioning, and leverage unavailable until their individual definitions and sources are confirmed.
+- [x] Activate reviewed FRED reserves/assets, TGA, daily ON RRP, primary credit,
+  swap lines, FIMA repo, bank loans, quarterly lending standards, SOFR99 and its
+  tail spread. Match source-specific seasonal adjustment, Wednesday date labels,
+  quarter starts and freshness allowances. Disclose reserve/assets coverage mismatch.
+- [x] Activate all three real SIFMA monthly inputs using the audited importer.
+  Maintainer confirmed monthly gross issuance, all maturities, components included
+  in total, and public redistribution permission. Embedded Wind IDs are recovered
+  and documented; workbook/CSV values reconcile and aggregate YTD matches SIFMA.
+  Publication tests cover addition, documented correction/removal and rejected
+  undocumented changes, using temporary Git remotes.
+- [x] Activate hidden Treasury yield change with explicit `chg` and ×100 to bp once.
+- [x] Keep ICE credit spreads and VIX inactive at the maintainer's request;
+  redistribution permission is not available. Keep Treasury bid–ask deferred.
+- [x] Leave cross-currency basis, CDS, ETFs, depth, positioning and leverage unavailable.
+- [ ] Add iFind exports when source identifiers/descriptions, date and adjustment
+  conventions and files are available. Permission is confirmed; definitions are not.
+- [ ] Define FINRA coverage/units and the price-impact proxy methodology before activation.
 
-Exit check per new series: source review, historical sample reconciliation, normalization and date tests, provenance, failure handling, and UI rendering pass before activation. Full coverage is not a prerequisite for the pilot release.
+Implementation and evidence: [Slice 6 source review](source-review-slice-6.md).
+Policy version 5 contains 21 activated series (15 automatic, three manual, three
+calculated), with 16 displayed charts and five hidden inputs. Version 4 snapshots
+remain readable for exact rollback. Full live refresh validated all automatic
+histories; no unlicensed series were fetched. The legacy local preview still
+bypasses production review gates and must not be used as a publication artifact.
+
+Before release, commit the definitions and inputs together so manual assembly can
+bind to their audited revision, then run the full offline checks and publish from
+that commit. Hosted deployment/rollback acceptance remains the Slice 5 release
+follow-up; local implementation does not claim it has occurred.
+
+Exit check per new series: source review, historical sample reconciliation,
+normalization and date tests, provenance, failure handling, and UI rendering.
+Full coverage remains subject to the explicit deferred items above.
 
 ## 6. Verification and release record
 
@@ -340,7 +365,6 @@ git diff --check
 ```
 
 Run `python3 scripts/build.py --mode demo` for the existing demo build, and
-`python3 scripts/import_manual.py` for committed input validation. The production
-command above currently enforces the snapshot/frontend boundary without writing
-outputs. Git snapshots preserve versions captured by this project, not a
+`python3 scripts/import_manual.py` for committed input validation. Production assembly writes a validated snapshot; the production build copies it
+to the output directory after validation. Git snapshots preserve versions captured by this project, not a
 reconstructed point-in-time publication-vintage dataset.

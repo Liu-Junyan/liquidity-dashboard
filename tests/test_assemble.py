@@ -24,18 +24,22 @@ class SavedInputClient:
         self.failed = failed
 
     def fetch(self, entry, policy):
-        identifier = {'WALCL': 'fed-assets', 'SOFR': 'sofr', 'EFFR': 'effr', 'RPONTTLD': 'fed-repo'}[entry['provider_series_id']]
+        identifier = entry['indicator_id']
         if identifier in self.failed:
             raise CollectionError('Illustrative offline outage')
-        weekly = identifier == 'fed-assets'
+        weekly = entry['native_frequency'] == 'weekly'
+        quarterly = entry['native_frequency'] == 'quarterly'
         days = ['2026-11-04', '2026-11-11'] if weekly else ['2026-11-12', '2026-11-13', '2026-11-16']
         values = [6000000, 7000000] if weekly else [4.1, 4.0, None] if identifier == 'sofr' else [4, 4, None] if identifier == 'effr' else [0, 1, None]
+        if quarterly:
+            days, values = ['2026-07-01', '2026-10-01'], [-5, 0]
+        units = {'Millions': 'Millions of U.S. Dollars', 'Billions': 'Billions of US Dollars', '%': 'Percent'}
         return {'observations': [dict(date=day, value=value) for day, value in zip(days, values)],
-                'metadata': {'id': entry['provider_series_id'], 'units': 'Millions of U.S. Dollars' if weekly else
-                             'Billions of US Dollars' if identifier == 'fed-repo' else 'Percent',
-                             'frequency_short': 'W' if weekly else 'D', 'seasonal_adjustment_short': 'NSA',
+                'metadata': {'id': entry['provider_series_id'], 'units': units[entry['source_unit']],
+                             'frequency_short': 'W' if weekly else 'Q' if quarterly else 'D',
+                             'seasonal_adjustment_short': policy.seasonal_adjustment,
                              'observation_start': days[0], 'observation_end': days[-1]},
-                'requestParameters': {'series_id': entry['provider_series_id'], 'units': 'lin',
+                'requestParameters': {'series_id': entry['provider_series_id'], 'units': policy.request_units,
                                       'observation_start': '2010-01-01'}}
 
 
@@ -47,9 +51,11 @@ class AssemblyTests(unittest.TestCase):
         (self.root / 'data/automatic').mkdir(parents=True)
         for name in ('registry.csv', 'categories.json', 'source-reviews.json'):
             shutil.copy(ROOT / 'data' / name, self.root / 'data' / name)
+        shutil.copytree(ROOT / 'data/manual', self.root / 'data/manual')
         self.git('init', '-q')
         self.git('config', 'user.email', 'offline@example.test')
         self.git('config', 'user.name', 'Offline test')
+        self.git('commit', '--allow-empty', '-qm', 'Empty trusted baseline')
         self.git('add', 'data')
         self.git('commit', '-qm', 'Initial specifications')
         self.registry = load_registry(self.root / 'data/registry.csv')
@@ -213,7 +219,10 @@ class AssemblyTests(unittest.TestCase):
             'dateRule': 'month-end', 'redistribution': 'Offline fixture'}
         review_path.write_text(json.dumps(reviews))
         manual_path = self.root / f'data/manual/{identifier}.csv'
-        manual_path.parent.mkdir()
+        manual_path.parent.mkdir(exist_ok=True)
+        self.git('rm', '-q', str(manual_path.relative_to(self.root)))
+        self.git('commit', '-qm', 'Remove prior input for isolated manual fixture\n\n'
+                 'Manual-Reason: bond-issuance 2011-01-01..2026-12-31: replace with offline fixture')
         manual_path.write_text('date,value\n2026-09-30,0\n2026-10-31,12\n')
         self.git('add', 'data/registry.csv', 'data/source-reviews.json', 'data/manual')
         self.git('commit', '-qm', 'Add illustrative manual input')

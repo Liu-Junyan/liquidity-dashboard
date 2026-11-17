@@ -50,6 +50,13 @@ class ProductionContractTests(unittest.TestCase):
     def validate(self):
         validate_snapshot(self.catalog, self.observations, self.manifest)
 
+    def test_pilot_policy_version_remains_readable_for_rollback(self):
+        self.manifest['policyVersion'] = '4'
+        self.validate()
+        self.manifest['policyVersion'] = 'unknown'
+        with self.assertRaisesRegex(ValueError, 'policy version'):
+            self.validate()
+
     def test_mixed_frequency_short_history_null_zero_and_hidden_input(self):
         self.validate()
         self.assertNotIn('hidden-input', self.observations['series'])

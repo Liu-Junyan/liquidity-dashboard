@@ -16,6 +16,47 @@ SOFR_NOTICE = (
 
 
 def notices_for(identifier, year):
+    board_sources = {
+        'reserve-balances': ('WRBWFRBL', 'H.4.1, Reserve Balances with Federal Reserve Banks: Wednesday Level'),
+        'bank-total-assets': ('TLAACBW027SBOG', 'H.8, Total Assets, All Commercial Banks; seasonally adjusted'),
+        'treasury-account': ('WDTGAL', 'H.4.1, U.S. Treasury, General Account: Wednesday Level'),
+        'discount-window': ('WLCFLPCL', 'H.4.1, Loans: Primary Credit: Wednesday Level'),
+        'swap-line': ('SWPT', 'H.4.1, Central Bank Liquidity Swaps: Wednesday Level'),
+        'fima-repo': ('H41RESPPALGTRFNWW', 'H.4.1, Repurchase Agreements - Foreign Official: Wednesday Level'),
+        'bank-loans': ('TOTLL', 'H.8, Loans and Leases in Bank Credit, All Commercial Banks; seasonally adjusted'),
+        'lending-standards': ('DRTSCILM', 'SLOOS, Net Percentage of Domestic Banks Tightening Standards '
+                             'for Commercial and Industrial Loans to Large and Middle-Market Firms'),
+        'treasury-yield-chg': ('DGS10', 'H.15, Market Yield on U.S. Treasury Securities at 10-Year Constant '
+                               'Maturity, Quoted on an Investment Basis; FRED chg × 100 to bp'),
+    }
+    if identifier in board_sources:
+        code, title = board_sources[identifier]
+        return [{'text': f'Source: Board of Governors of the Federal Reserve System (US), {title} '
+                 f'({code}); distributed by FRED.', 'url': f'https://fred.stlouisfed.org/series/{code}'}]
+    if identifier == 'reserve-assets-ratio':
+        return (notices_for('reserve-balances', year) + notices_for('bank-total-assets', year) +
+                [{'text': f'Project calculation by {PUBLISHER}: 100 × normalized WRBWFRBL / TLAACBW027SBOG. '
+                   '覆盖范围和季调口径不同，非同一银行总体的资产占比。',
+                  'url': 'https://www.federalreserve.gov/releases/h8/about.htm'}])
+    if identifier in {'bond-issuance', 'treasury-bond-issuance', 'corporate-bond-issuance'}:
+        return [{'text': 'Source: SIFMA, US Fixed Income Securities Statistics, supplied through Wind; '
+                 'monthly gross issuance in USD billions. Redistribution permission confirmed by maintainer '
+                 'on 2026-11-17. 国债和公司债包含在总量中，不可重复加总。',
+                 'url': 'https://www.sifma.org/research/statistics/us-fixed-income-securities-statistics'}]
+    if identifier == 'reverse-repo':
+        return [{'text': f'© {year} Federal Reserve Bank of New York. Source: Overnight Reverse Repurchase '
+                 'Agreements: Treasury Securities Sold by the Federal Reserve in the Temporary Open Market '
+                 'Operations (RRPONTSYD); distributed by FRED. 十亿美元原值。',
+                 'url': 'https://fred.stlouisfed.org/series/RRPONTSYD'},
+                {'text': 'New York Fed content is subject to its Terms of Use.', 'url': TERMS}]
+    if identifier in {'sofr99', 'sofr-tail-spread'}:
+        return [{'text': f'© {year} Federal Reserve Bank of New York. Source: SOFR and Secured Overnight '
+                 'Financing Rate: 99th Percentile (SOFR99); distributed by FRED. '
+                 f'SOFR99−SOFR is a project calculation by {PUBLISHER}, in percentage points.',
+                 'url': 'https://fred.stlouisfed.org/series/SOFR99'},
+                {'text': REFERENCE_NOTICE, 'url': TERMS},
+                {'text': NON_AFFILIATION, 'url': TERMS},
+                {'text': SOFR_NOTICE, 'url': 'https://www.newyorkfed.org/markets/reference-rates/sofr'}]
     if identifier == 'fed-assets':
         return [{'text': 'Source: Board of Governors of the Federal Reserve System (US), H.4.1, '
                  'Assets: Total Assets: Total Assets (Less Eliminations from Consolidation): Wednesday Level '

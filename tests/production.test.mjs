@@ -14,6 +14,25 @@ const daily = display.indicators.find(item => item.seriesId === 'sofr-effr-sprea
 const weekly = display.indicators.find(item => item.seriesId === 'fed-assets');
 const point = (date, value) => ({date, value});
 
+test('expanded production preserves quarterly and manual policies and deferred gaps', () => {
+  const lending = display.indicators.find(item => item.seriesId === 'lending-standards');
+  assert.equal(lending.observationDateRule, 'quarter-start');
+  assert.equal(comparisonLabel(lending, 1), '较上季度变化');
+  assert.equal(changeAt([point('2026-07-01', -5), point('2026-10-01', 0)], 1, lending), 5);
+  const issuance = display.indicators.find(item => item.seriesId === 'bond-issuance');
+  assert.equal(issuance.observationDateRule, 'month-end');
+  assert.match(issuance.source.name, /G1132499/);
+  assert.equal(changeAt([point('2024-02-29', 100), point('2024-03-31', 120)], 1, issuance), 20);
+  const ratio = catalog.indicators.find(item => item.seriesId === 'reserve-assets-ratio');
+  assert.match(ratio.explanation, /季调/);
+  assert.match(ratio.source.name, /项目计算/);
+  for (const key of ['vix', 'credit-spreads-ig', 'credit-spreads-hy', 'bid-ask-spread', 'price-impact']) {
+    assert.equal(catalog.indicators.find(item => item.seriesId === key).inputAvailable, false);
+    assert.deepEqual(payload.series[key], []);
+  }
+  assert.ok(!Object.hasOwn(payload.series, 'treasury-yield-chg'));
+});
+
 test('daily comparison uses calendar weeks, seven-day limit, explicit nulls and zero', () => {
   const latest = point('2026-11-16', 5); // Four weeks earlier: Monday October 19.
   assert.equal(changeAt([point('2026-10-16', 0), latest], 4, daily), 5);
@@ -131,7 +150,8 @@ try {
     assert.match(node('#charts').innerHTML, /数据来源：NY Fed \/ FRED · 项目计算<\/p>/);
     assert.doesNotMatch(node('#charts').innerHTML, /source-notices|DTCC Solutions/);
     assert.match(node('#charts').innerHTML, /近4周变化/);
-    assert.ok(labels.every(label => !/合成|演示|SIFMA/.test(label.textContent)));
+    assert.ok(labels.every(label => !/合成|演示|SIFMA 数据预览|定义待复核/.test(label.textContent)));
+    assert.match(labels.find(label => label.dataset.i18n === 'methodologyBody').textContent, /SIFMA/);
     assert.doesNotMatch(node('#dialog-content').innerHTML, /最近检查|人工录入时间|自动更新|人工维护|生成时间/);
     assert.equal(node('#collection-time').hidden, true);
     const chart = charts.get(node('#expanded-chart'));
@@ -150,7 +170,7 @@ try {
     assert.ok(chart.xAxis.min < chart.xAxis.max);
     location.hash = '#indicator=sofr-effr-spread&range=ytd'; handlers.hashchange();
     assert.match(node('#expanded-chart').textContent, /所选区间/);
-    location.hash = '#indicator=bond-issuance&range=all'; handlers.hashchange();
+    location.hash = '#indicator=dollar-index&range=all'; handlers.hashchange();
     assert.match(node('#dialog-content').innerHTML, /待接入/);
     assert.match(node('#expanded-chart').textContent, /待接入/);
     let prevented = false;

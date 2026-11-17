@@ -10,12 +10,17 @@ def difference(values):
     return values['sofr'] - values['effr']
 
 
+def tail_difference(values):
+    return values['sofr99'] - values['sofr']
+
+
 def reserve_ratio(values):
     denominator = values['bank-total-assets']
     return 100 * values['reserve-balances'] / denominator if denominator else None
 
 
-FUNCTIONS = {'sofr-effr-spread': difference, 'reserve-assets-ratio': reserve_ratio}
+FUNCTIONS = {'sofr-effr-spread': difference, 'reserve-assets-ratio': reserve_ratio,
+             'sofr-tail-spread': tail_difference}
 
 
 def derive(registry, inputs, selected):

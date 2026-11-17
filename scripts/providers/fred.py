@@ -94,9 +94,13 @@ class FredClient:
                 points.append({'date': row['date'], 'value': value})
             validate_points(points)
             validate_history_bounds(points, metadata, FRED_OBSERVATION_START)
-            if policy.date_rule == 'wednesday-level' and any(
+            if policy.date_rule in {'wednesday-level', 'wednesday-ending'} and any(
                     iso_date(point['date']).weekday() != 2 for point in points):
                 raise CollectionError('FRED weekly observation date changed')
+            if policy.date_rule == 'quarter-start' and any(
+                    iso_date(point['date']).day != 1 or iso_date(point['date']).month not in {1, 4, 7, 10}
+                    for point in points):
+                raise CollectionError('FRED quarterly observation date changed')
             return {'observations': points, 'metadata': metadata, 'requestParameters': params}
         except CollectionError:
             raise
@@ -121,18 +125,20 @@ def validate_history_bounds(points, metadata, requested_start):
 
 def validate_metadata(metadata, entry, policy, *, cached=False):
     units = {'millions': 'Millions of U.S. Dollars', 'billions': 'Billions of US Dollars',
-             '%': 'Percent'}
+             '%': 'Percent', 'none': 'Index'}
     # FRED uses both "US" and "U.S." in otherwise identical dollar unit labels.
     def unit_label(value):
         return value.replace('U.S.', 'US')
     expected = units.get(canonical_unit(entry['source_unit']))
-    frequency = {'daily': 'D', 'weekly': 'W'}.get(entry['native_frequency'])
+    frequency = {'daily': 'D', 'weekly': 'W', 'quarterly': 'Q'}.get(entry['native_frequency'])
     if (entry['provider'] != 'FRED' or metadata['id'] != entry['provider_series_id']
             or expected is None or unit_label(metadata['units']) != unit_label(expected)
             or frequency is None or metadata['frequency_short'] != frequency
-            or metadata['seasonal_adjustment_short'] != 'NSA'):
+            or metadata['seasonal_adjustment_short'] != policy.seasonal_adjustment):
         raise CollectionError('FRED source units, frequency, identity, or seasonal adjustment changed')
-    if not cached and policy.date_rule == 'wednesday-level' and metadata['frequency'] != 'Weekly, As of Wednesday':
+    weekly_labels = {'wednesday-level': 'Weekly, As of Wednesday',
+                     'wednesday-ending': 'Weekly, Ending Wednesday'}
+    if not cached and policy.date_rule in weekly_labels and metadata['frequency'] != weekly_labels[policy.date_rule]:
         raise CollectionError('FRED weekly date convention changed')
     if iso_date(metadata['observation_start']) > iso_date(metadata['observation_end']):
         raise CollectionError('Invalid FRED metadata history bounds')
