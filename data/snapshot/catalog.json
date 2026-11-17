@@ -4,7 +4,7 @@
     "mode": "production",
     "isDemo": false,
     "publisher": "Junyan Liu",
-    "generatedAt": "2026-11-17T07:22:16.576082Z",
+    "generatedAt": "2026-11-17T08:13:17.578061Z",
     "observationStart": "2010-01-01",
     "observationEnd": "2026-11-16"
   },
@@ -126,18 +126,46 @@
         "explicitMissing": "null",
         "valueScale": 1
       },
-      "observationDateRule": null,
+      "observationDateRule": "exact-date-union",
       "isDemo": false,
-      "inputAvailable": false,
+      "inputAvailable": true,
       "role": "",
-      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
-      "availability": "empty",
-      "sources": [],
+      "explanation": "同日SOFR第99百分位减SOFR中位数，反映融资利率分布尾部；输出为百分点（沿用%标签），不乘100；缺少任一输入时为空，不跨日填充。",
+      "availability": "numeric",
+      "sources": [
+        "https://fred.stlouisfed.org/series/SOFR99",
+        "https://fred.stlouisfed.org/series/SOFR"
+      ],
       "source": {
-        "name": "待接入",
-        "url": null
+        "name": "项目计算 · FRED · sofr99-sofr",
+        "url": "https://fred.stlouisfed.org/series/SOFR99"
       },
-      "notices": []
+      "notices": [
+        {
+          "text": "© 2026 Federal Reserve Bank of New York. Source: SOFR and Secured Overnight Financing Rate: 99th Percentile (SOFR99); distributed by FRED. SOFR99−SOFR is a project calculation by Junyan Liu, in percentage points.",
+          "url": "https://fred.stlouisfed.org/series/SOFR99"
+        },
+        {
+          "text": "The SOFR and EFFR data and related information are subject to the Terms of Use posted at newyorkfed.org. The New York Fed is not responsible for publication of the SOFR and EFFR data and related information by Junyan Liu, does not endorse any particular republication, and has no liability for your use.",
+          "url": "https://www.newyorkfed.org/privacy/termsofuse"
+        },
+        {
+          "text": "Junyan Liu is not affiliated with the New York Fed. The New York Fed does not sanction, endorse, or recommend any products or services offered by Junyan Liu.",
+          "url": "https://www.newyorkfed.org/privacy/termsofuse"
+        },
+        {
+          "text": "The Secured Overnight Financing Rate (SOFR) Data are calculated using data provided under a license granted to the New York Fed by DTCC Solutions LLC (“Solutions”), an affiliate of The Depository Trust & Clearing Corporation. Solutions, its affiliates, and third parties from which they obtained data have no liability for the content of this material.",
+          "url": "https://www.newyorkfed.org/markets/reference-rates/sofr"
+        },
+        {
+          "text": "FRED citation: SOFR99; retrieved 2026-11-17 (UTC).",
+          "url": "https://fred.stlouisfed.org/series/SOFR99"
+        },
+        {
+          "text": "FRED citation: SOFR; retrieved 2026-11-17 (UTC).",
+          "url": "https://fred.stlouisfed.org/series/SOFR"
+        }
+      ]
     },
     {
       "id": "fed-assets",
@@ -205,24 +233,35 @@
         "match": "exact-date",
         "valueScale": 1
       },
-      "observationDateRule": null,
+      "observationDateRule": "wednesday-level",
       "isDemo": false,
-      "inputAvailable": false,
+      "inputAvailable": true,
       "role": "",
-      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
-      "availability": "empty",
-      "sources": [],
+      "explanation": "H.4.1存款机构在联储的准备金余额，未季调、周三时点值；百万美元除以1000为十亿美元。",
+      "availability": "numeric",
+      "sources": [
+        "https://fred.stlouisfed.org/series/WRBWFRBL"
+      ],
       "source": {
-        "name": "待接入",
-        "url": null
+        "name": "FRED · WRBWFRBL",
+        "url": "https://fred.stlouisfed.org/series/WRBWFRBL"
       },
-      "notices": []
+      "notices": [
+        {
+          "text": "Source: Board of Governors of the Federal Reserve System (US), H.4.1, Reserve Balances with Federal Reserve Banks: Wednesday Level (WRBWFRBL); distributed by FRED.",
+          "url": "https://fred.stlouisfed.org/series/WRBWFRBL"
+        },
+        {
+          "text": "FRED citation: WRBWFRBL; retrieved 2026-11-17 (UTC).",
+          "url": "https://fred.stlouisfed.org/series/WRBWFRBL"
+        }
+      ]
     },
     {
       "id": "reserve-assets-ratio",
       "seriesId": "reserve-assets-ratio",
       "categoryId": "category-1",
-      "name": "准备金占商业银行总资产比例",
+      "name": "准备金/商业银行资产（跨口径比值）",
       "unit": "%",
       "displayUnit": {
         "kind": "ratio",
@@ -239,18 +278,42 @@
         "match": "exact-date",
         "valueScale": 1
       },
-      "observationDateRule": null,
+      "observationDateRule": "exact-date-union",
       "isDemo": false,
-      "inputAvailable": false,
+      "inputAvailable": true,
       "role": "",
-      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
-      "availability": "empty",
-      "sources": [],
+      "explanation": "同日H.4.1未季调准备金（先由百万转十亿美元）除以H.8季调商业银行总资产，再乘100。两者覆盖范围与季调口径不同，仅为跨口径研究比值，不是同一银行总体的资产占比；缺值或分母为零时为空，不填充。",
+      "availability": "numeric",
+      "sources": [
+        "https://fred.stlouisfed.org/series/TLAACBW027SBOG",
+        "https://fred.stlouisfed.org/series/WRBWFRBL"
+      ],
       "source": {
-        "name": "待接入",
-        "url": null
+        "name": "项目计算 · FRED · 100 * reserve-balances / bank-total-assets",
+        "url": "https://fred.stlouisfed.org/series/TLAACBW027SBOG"
       },
-      "notices": []
+      "notices": [
+        {
+          "text": "Source: Board of Governors of the Federal Reserve System (US), H.4.1, Reserve Balances with Federal Reserve Banks: Wednesday Level (WRBWFRBL); distributed by FRED.",
+          "url": "https://fred.stlouisfed.org/series/WRBWFRBL"
+        },
+        {
+          "text": "Source: Board of Governors of the Federal Reserve System (US), H.8, Total Assets, All Commercial Banks; seasonally adjusted (TLAACBW027SBOG); distributed by FRED.",
+          "url": "https://fred.stlouisfed.org/series/TLAACBW027SBOG"
+        },
+        {
+          "text": "Project calculation by Junyan Liu: 100 × normalized WRBWFRBL / TLAACBW027SBOG. 覆盖范围和季调口径不同，非同一银行总体的资产占比。",
+          "url": "https://www.federalreserve.gov/releases/h8/about.htm"
+        },
+        {
+          "text": "FRED citation: TLAACBW027SBOG; retrieved 2026-11-17 (UTC).",
+          "url": "https://fred.stlouisfed.org/series/TLAACBW027SBOG"
+        },
+        {
+          "text": "FRED citation: WRBWFRBL; retrieved 2026-11-17 (UTC).",
+          "url": "https://fred.stlouisfed.org/series/WRBWFRBL"
+        }
+      ]
     },
     {
       "id": "treasury-account",
@@ -273,18 +336,29 @@
         "match": "exact-date",
         "valueScale": 1
       },
-      "observationDateRule": null,
+      "observationDateRule": "wednesday-level",
       "isDemo": false,
-      "inputAvailable": false,
+      "inputAvailable": true,
       "role": "",
-      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
-      "availability": "empty",
-      "sources": [],
+      "explanation": "H.4.1美国财政部一般账户余额，未季调、周三时点值；百万美元除以1000为十亿美元，非每日余额。",
+      "availability": "numeric",
+      "sources": [
+        "https://fred.stlouisfed.org/series/WDTGAL"
+      ],
       "source": {
-        "name": "待接入",
-        "url": null
+        "name": "FRED · WDTGAL",
+        "url": "https://fred.stlouisfed.org/series/WDTGAL"
       },
-      "notices": []
+      "notices": [
+        {
+          "text": "Source: Board of Governors of the Federal Reserve System (US), H.4.1, U.S. Treasury, General Account: Wednesday Level (WDTGAL); distributed by FRED.",
+          "url": "https://fred.stlouisfed.org/series/WDTGAL"
+        },
+        {
+          "text": "FRED citation: WDTGAL; retrieved 2026-11-17 (UTC).",
+          "url": "https://fred.stlouisfed.org/series/WDTGAL"
+        }
+      ]
     },
     {
       "id": "reverse-repo",
@@ -309,18 +383,33 @@
         "explicitMissing": "null",
         "valueScale": 1
       },
-      "observationDateRule": null,
+      "observationDateRule": "source-business-date",
       "isDemo": false,
-      "inputAvailable": false,
+      "inputAvailable": true,
       "role": "",
-      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
-      "availability": "empty",
-      "sources": [],
+      "explanation": "纽约联储临时公开市场操作中的美国国债抵押隔夜逆回购每日交易总额；原始单位为十亿美元，保持来源日期及零值，缺失不视为零；不含其他抵押品或期限。",
+      "availability": "numeric",
+      "sources": [
+        "https://fred.stlouisfed.org/series/RRPONTSYD"
+      ],
       "source": {
-        "name": "待接入",
-        "url": null
+        "name": "FRED · RRPONTSYD",
+        "url": "https://fred.stlouisfed.org/series/RRPONTSYD"
       },
-      "notices": []
+      "notices": [
+        {
+          "text": "© 2026 Federal Reserve Bank of New York. Source: Overnight Reverse Repurchase Agreements: Treasury Securities Sold by the Federal Reserve in the Temporary Open Market Operations (RRPONTSYD); distributed by FRED. 十亿美元原值。",
+          "url": "https://fred.stlouisfed.org/series/RRPONTSYD"
+        },
+        {
+          "text": "New York Fed content is subject to its Terms of Use.",
+          "url": "https://www.newyorkfed.org/privacy/termsofuse"
+        },
+        {
+          "text": "FRED citation: RRPONTSYD; retrieved 2026-11-17 (UTC).",
+          "url": "https://fred.stlouisfed.org/series/RRPONTSYD"
+        }
+      ]
     },
     {
       "id": "discount-window",
@@ -343,18 +432,29 @@
         "match": "exact-date",
         "valueScale": 1
       },
-      "observationDateRule": null,
+      "observationDateRule": "wednesday-level",
       "isDemo": false,
-      "inputAvailable": false,
+      "inputAvailable": true,
       "role": "",
-      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
-      "availability": "empty",
-      "sources": [],
+      "explanation": "H.4.1一级信贷余额，未季调、周三时点值、百万美元；不包含二级或季节性信贷，不能解释为贴现窗口全部工具用量。",
+      "availability": "numeric",
+      "sources": [
+        "https://fred.stlouisfed.org/series/WLCFLPCL"
+      ],
       "source": {
-        "name": "待接入",
-        "url": null
+        "name": "FRED · WLCFLPCL",
+        "url": "https://fred.stlouisfed.org/series/WLCFLPCL"
       },
-      "notices": []
+      "notices": [
+        {
+          "text": "Source: Board of Governors of the Federal Reserve System (US), H.4.1, Loans: Primary Credit: Wednesday Level (WLCFLPCL); distributed by FRED.",
+          "url": "https://fred.stlouisfed.org/series/WLCFLPCL"
+        },
+        {
+          "text": "FRED citation: WLCFLPCL; retrieved 2026-11-17 (UTC).",
+          "url": "https://fred.stlouisfed.org/series/WLCFLPCL"
+        }
+      ]
     },
     {
       "id": "fed-repo",
@@ -464,18 +564,29 @@
         "match": "exact-date",
         "valueScale": 1
       },
-      "observationDateRule": null,
+      "observationDateRule": "wednesday-level",
       "isDemo": false,
-      "inputAvailable": false,
+      "inputAvailable": true,
       "role": "",
-      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
-      "availability": "empty",
-      "sources": [],
+      "explanation": "H.4.1央行流动性互换未偿余额，未季调、周三时点值、百万美元；不是当周新增交易额。",
+      "availability": "numeric",
+      "sources": [
+        "https://fred.stlouisfed.org/series/SWPT"
+      ],
       "source": {
-        "name": "待接入",
-        "url": null
+        "name": "FRED · SWPT",
+        "url": "https://fred.stlouisfed.org/series/SWPT"
       },
-      "notices": []
+      "notices": [
+        {
+          "text": "Source: Board of Governors of the Federal Reserve System (US), H.4.1, Central Bank Liquidity Swaps: Wednesday Level (SWPT); distributed by FRED.",
+          "url": "https://fred.stlouisfed.org/series/SWPT"
+        },
+        {
+          "text": "FRED citation: SWPT; retrieved 2026-11-17 (UTC).",
+          "url": "https://fred.stlouisfed.org/series/SWPT"
+        }
+      ]
     },
     {
       "id": "fima-repo",
@@ -498,18 +609,29 @@
         "match": "exact-date",
         "valueScale": 1
       },
-      "observationDateRule": null,
+      "observationDateRule": "wednesday-ending",
       "isDemo": false,
-      "inputAvailable": false,
+      "inputAvailable": true,
       "role": "",
-      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
-      "availability": "empty",
-      "sources": [],
+      "explanation": "H.4.1外国官方回购协议余额，未季调、周三时点值、百万美元；使用来源周三日期，不是周平均或交易流量。",
+      "availability": "numeric",
+      "sources": [
+        "https://fred.stlouisfed.org/series/H41RESPPALGTRFNWW"
+      ],
       "source": {
-        "name": "待接入",
-        "url": null
+        "name": "FRED · H41RESPPALGTRFNWW",
+        "url": "https://fred.stlouisfed.org/series/H41RESPPALGTRFNWW"
       },
-      "notices": []
+      "notices": [
+        {
+          "text": "Source: Board of Governors of the Federal Reserve System (US), H.4.1, Repurchase Agreements - Foreign Official: Wednesday Level (H41RESPPALGTRFNWW); distributed by FRED.",
+          "url": "https://fred.stlouisfed.org/series/H41RESPPALGTRFNWW"
+        },
+        {
+          "text": "FRED citation: H41RESPPALGTRFNWW; retrieved 2026-11-17 (UTC).",
+          "url": "https://fred.stlouisfed.org/series/H41RESPPALGTRFNWW"
+        }
+      ]
     },
     {
       "id": "credit-spreads-ig",
@@ -604,18 +726,25 @@
         "match": "source-period-date",
         "valueScale": 1
       },
-      "observationDateRule": null,
+      "observationDateRule": "month-end",
       "isDemo": false,
-      "inputAvailable": false,
+      "inputAvailable": true,
       "role": "",
-      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
-      "availability": "empty",
-      "sources": [],
+      "explanation": "SIFMA经Wind EDB G1132499提供的总债券月度发行额，十亿美元原值。维护者确认口径为全期限、总发行额（非净额、非年初累计）；月末为观察期标签。国债与公司债已包含在总量中，三项不可相加。保存工作簿与CSV同步更新；缺失保留为空。",
+      "availability": "numeric",
+      "sources": [
+        "data/sources/wind/bond-issuance.xlsx; sheet bond-issuance; column bond-issuance; Wind EDB G1132499; SIFMA US Fixed Income Securities Statistics"
+      ],
       "source": {
-        "name": "待接入",
+        "name": "SIFMA · G1132499",
         "url": null
       },
-      "notices": []
+      "notices": [
+        {
+          "text": "Source: SIFMA, US Fixed Income Securities Statistics, supplied through Wind; monthly gross issuance in USD billions. Redistribution permission confirmed by maintainer on 2026-11-17. 国债和公司债包含在总量中，不可重复加总。",
+          "url": "https://www.sifma.org/research/statistics/us-fixed-income-securities-statistics"
+        }
+      ]
     },
     {
       "id": "treasury-bond-issuance",
@@ -638,18 +767,25 @@
         "match": "source-period-date",
         "valueScale": 1
       },
-      "observationDateRule": null,
+      "observationDateRule": "month-end",
       "isDemo": false,
-      "inputAvailable": false,
+      "inputAvailable": true,
       "role": "",
-      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
-      "availability": "empty",
-      "sources": [],
+      "explanation": "SIFMA经Wind EDB G1132494提供的美国国债月度发行额，十亿美元原值。维护者确认口径为全期限、总发行额（非净额、非年初累计）；月末为观察期标签。国债与公司债已包含在总量中，三项不可相加。保存工作簿与CSV同步更新；缺失保留为空。",
+      "availability": "numeric",
+      "sources": [
+        "data/sources/wind/bond-issuance.xlsx; sheet bond-issuance; column treasury-bond-issuance; Wind EDB G1132494; SIFMA US Fixed Income Securities Statistics"
+      ],
       "source": {
-        "name": "待接入",
+        "name": "SIFMA · G1132494",
         "url": null
       },
-      "notices": []
+      "notices": [
+        {
+          "text": "Source: SIFMA, US Fixed Income Securities Statistics, supplied through Wind; monthly gross issuance in USD billions. Redistribution permission confirmed by maintainer on 2026-11-17. 国债和公司债包含在总量中，不可重复加总。",
+          "url": "https://www.sifma.org/research/statistics/us-fixed-income-securities-statistics"
+        }
+      ]
     },
     {
       "id": "corporate-bond-issuance",
@@ -672,18 +808,25 @@
         "match": "source-period-date",
         "valueScale": 1
       },
-      "observationDateRule": null,
+      "observationDateRule": "month-end",
       "isDemo": false,
-      "inputAvailable": false,
+      "inputAvailable": true,
       "role": "",
-      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
-      "availability": "empty",
-      "sources": [],
+      "explanation": "SIFMA经Wind EDB G1132496提供的公司债月度发行额，十亿美元原值。维护者确认口径为全期限、总发行额（非净额、非年初累计）；月末为观察期标签。国债与公司债已包含在总量中，三项不可相加。保存工作簿与CSV同步更新；缺失保留为空。",
+      "availability": "numeric",
+      "sources": [
+        "data/sources/wind/bond-issuance.xlsx; sheet bond-issuance; column corporate-bond-issuance; Wind EDB G1132496; SIFMA US Fixed Income Securities Statistics"
+      ],
       "source": {
-        "name": "待接入",
+        "name": "SIFMA · G1132496",
         "url": null
       },
-      "notices": []
+      "notices": [
+        {
+          "text": "Source: SIFMA, US Fixed Income Securities Statistics, supplied through Wind; monthly gross issuance in USD billions. Redistribution permission confirmed by maintainer on 2026-11-17. 国债和公司债包含在总量中，不可重复加总。",
+          "url": "https://www.sifma.org/research/statistics/us-fixed-income-securities-statistics"
+        }
+      ]
     },
     {
       "id": "lending-standards",
@@ -706,18 +849,29 @@
         "match": "source-period-date",
         "valueScale": 1
       },
-      "observationDateRule": null,
+      "observationDateRule": "quarter-start",
       "isDemo": false,
-      "inputAvailable": false,
+      "inputAvailable": true,
       "role": "",
-      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
-      "availability": "empty",
-      "sources": [],
+      "explanation": "SLOOS美国国内银行对大中型企业工商贷款收紧标准的净百分比；正值为净收紧，负值为净放松，未季调。来源以季度首日标记调查期，不代表该日已发布；按季度及上年同季比较。",
+      "availability": "numeric",
+      "sources": [
+        "https://fred.stlouisfed.org/series/DRTSCILM"
+      ],
       "source": {
-        "name": "待接入",
-        "url": null
+        "name": "FRED · DRTSCILM",
+        "url": "https://fred.stlouisfed.org/series/DRTSCILM"
       },
-      "notices": []
+      "notices": [
+        {
+          "text": "Source: Board of Governors of the Federal Reserve System (US), SLOOS, Net Percentage of Domestic Banks Tightening Standards for Commercial and Industrial Loans to Large and Middle-Market Firms (DRTSCILM); distributed by FRED.",
+          "url": "https://fred.stlouisfed.org/series/DRTSCILM"
+        },
+        {
+          "text": "FRED citation: DRTSCILM; retrieved 2026-11-17 (UTC).",
+          "url": "https://fred.stlouisfed.org/series/DRTSCILM"
+        }
+      ]
     },
     {
       "id": "bank-loans",
@@ -740,18 +894,29 @@
         "match": "exact-date",
         "valueScale": 1
       },
-      "observationDateRule": null,
+      "observationDateRule": "wednesday-ending",
       "isDemo": false,
-      "inputAvailable": false,
+      "inputAvailable": true,
       "role": "",
-      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
-      "availability": "empty",
-      "sources": [],
+      "explanation": "H.8美国商业银行信贷中的贷款和租赁总额，季调、截至周三的周度数据，十亿美元；不是仅商业及工业贷款。",
+      "availability": "numeric",
+      "sources": [
+        "https://fred.stlouisfed.org/series/TOTLL"
+      ],
       "source": {
-        "name": "待接入",
-        "url": null
+        "name": "FRED · TOTLL",
+        "url": "https://fred.stlouisfed.org/series/TOTLL"
       },
-      "notices": []
+      "notices": [
+        {
+          "text": "Source: Board of Governors of the Federal Reserve System (US), H.8, Loans and Leases in Bank Credit, All Commercial Banks; seasonally adjusted (TOTLL); distributed by FRED.",
+          "url": "https://fred.stlouisfed.org/series/TOTLL"
+        },
+        {
+          "text": "FRED citation: TOTLL; retrieved 2026-11-17 (UTC).",
+          "url": "https://fred.stlouisfed.org/series/TOTLL"
+        }
+      ]
     },
     {
       "id": "vix",
@@ -898,5 +1063,5 @@
       "notices": []
     }
   ],
-  "snapshotId": "production-89ccd1225b7631d7a01386fd45a90a345d4ac11d59420601a6f411cc6822cceb"
+  "snapshotId": "production-1f8b9dabb2e35c8761d61857546280a09accc0bcc4e9a7350c4e77da0da33b39"
 }
