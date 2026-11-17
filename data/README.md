@@ -302,8 +302,8 @@ object keys, compact separators, finite numbers, and no trailing newline.
 `scripts.normalize.content_hash` also hashes normalized arrays independently for
 derived provenance. `normalize` always takes source-scale input; `derive` takes
 normalized input and recalculates the complete same-date union. Missing inputs
-and zero denominators produce null. These outputs are currently returned in
-memory; Slice 4 will assemble them into a production snapshot.
+and zero denominators produce null. The collector returns these outputs in memory; `scripts/assemble.py` independently
+recomputes them from saved inputs into a production snapshot.
 
 On failure, preserve compatible previous values and successful/change timestamps,
 advancing only the attempt time. Other sources may update. First-time failures
@@ -314,10 +314,10 @@ refetches cannot reuse incompatible history. Corrupt cached files fail validatio
 
 The collector validates the entire in-memory candidate before staging writes and
 atomically replaces each automatic file. It cannot write manual inputs. This is
-not atomic promotion of a publishable snapshot; that remains Slice 4, and writer
+separate from the assembler’s atomic snapshot promotion; writer
 serialization remains Slice 5. Run only one local collector at a time.
-Production activation, scheduled collection, website assembly and deployment
-remain disabled. Replacing the entire requested window incorporates FRED corrections on the
+The pilot is activated for local assembly. Scheduled collection and production
+deployment remain disabled. Replacing the entire requested window incorporates FRED corrections on the
 next run; Git retains ordinary file history for rollback, without vintage tracking.
 
 ### Normalization semantics
@@ -355,6 +355,31 @@ The [version 2 contract](../docs/production-contract.md) and
 the existing demo. `python3 scripts/build.py --mode production` checks for a
 snapshot at `data/snapshot/` (or `--snapshot <directory>`) and validates its contract.
 It fails without changing demo files or existing build output when the snapshot is
-missing/invalid, and remains explicitly blocked even for valid snapshots until
-Slice 4 supplies production assembly and frontend support. The default build and
+missing/invalid. A valid assembled snapshot now builds successfully. The default build and
 `--mode demo` retain the existing demo behavior.
+
+
+### Production snapshot assembly (Slice 4)
+
+Run `python3 scripts/assemble.py`, then `python3 scripts/build.py --mode production`.
+The assembler validates current registry/review/policy compatibility, cached input
+hashes, metadata, units and source dates, normalizes exactly once, and recomputes
+SOFR−EFFR on the same-date union. No network request or fixture generation occurs.
+A missing automatic file blocks assembly; a recorded first-time failed source has
+no history; a compatible retained source remains usable. Other draft indicators
+stay empty. No SIFMA series is activated by this command.
+
+The complete three-document candidate is validated before promotion with an atomic
+macOS/Linux directory exchange. A failed validation/exchange leaves the prior
+snapshot unchanged. `--output` accepts `data/snapshot` or a directory outside the
+repository, protecting source input directories from accidental replacement.
+The production build atomically replaces `dist/` and never changes `site/data/`.
+
+The manifest stores normalized source inputs (including hidden SOFR/EFFR), their
+hashes, derived dependencies, source hashes, sanitized request provenance, and
+collection outcomes. These diagnostics are not chart status badges. Snapshot IDs
+hash the complete documents excluding the ID itself. Source-file hashes and
+`modifiedSourceFiles` distinguish local code/specification edits from the recorded
+base `sourceInputCommit`; commit those changes and reassemble before release.
+A future reviewed manual activation requires committed, audited CSVs and an explicit
+month/quarter start/end or fixed-day policy; local uncommitted CSV edits are rejected.

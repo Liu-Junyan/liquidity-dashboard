@@ -1,12 +1,12 @@
 # Production snapshot contract (version 2)
 
-Slice 1 implements `scripts.contracts.validate_snapshot(catalog, observations,
-manifest)`. It validates serialized objects offline; it does not fetch, assemble,
-write, or deploy anything. The existing demo remains schema version 1. The
-production build and browser loader will render this contract together in Slice 4.
-Slice 2 adds `build.py --mode production`: it checks the snapshot directory and
-validates this contract, then fails explicitly until the Slice 4 rendering path
-exists. It never invokes fixtures or changes `site/data/` or `dist/`.
+`scripts.contracts.validate_snapshot(catalog, observations, manifest)` validates
+serialized objects offline. Slice 4 adds `scripts/assemble.py` and the stronger
+`validate_assembled_snapshot`: it verifies the complete content digest, normalized
+input hashes, displayed history/calculation consistency, display metadata and source
+notices. `build.py --mode production` validates and copies the selected snapshot to
+`dist/` without collecting data, invoking fixtures, or modifying `site/data/`.
+The existing demo remains schema version 1; scheduling/publication remain Slice 5.
 
 The local `build.py --mode preview` command is separate from this contract. Its
 schema-v2 envelope uses `dataset.mode: "manual-preview"`, `isDemo: false`, and
@@ -16,12 +16,13 @@ other visible series have empty histories. Units retain the existing frontend
 display object, and the manifest records input paths, specification hashes, and
 the source commit. It deliberately has no production activation, normalized input
 hashes, or production outcomes. `validate_snapshot` rejects it as production.
-The frontend accepts this preview envelope and the existing demo contract; it
-still rejects production envelopes until the full Slice 4 migration is complete.
+The frontend accepts the demo, preview, and production contracts with separate
+mode checks and matching snapshot identity; it never substitutes one for another.
 
 All three documents carry integer `schemaVersion: 2` and the same slug `snapshotId`.
-A producer chooses a unique ID for a complete candidate; the validator rejects
-mixed IDs/versions. Operational timestamps use ISO UTC (`T…Z` or `T…+00:00`);
+The assembler computes a SHA-256 ID over all three documents without their
+`snapshotId` fields (sorted keys, compact UTF-8 JSON). The build verifies this
+digest as well as matching IDs/versions. Operational timestamps use ISO UTC (`T…Z` or `T…+00:00`);
 observation dates use strict `YYYY-MM-DD`. Numbers are finite JSON numbers (not
 booleans or numeric strings), or explicit null. Never serialize NaN/Infinity.
 
@@ -44,7 +45,7 @@ booleans or numeric strings), or explicit null. Never serialize NaN/Infinity.
   have no data even when full-history availability is numeric.
 - IDs are unique across categories and indicators. Each displayed series has one
   owner. Unavailable rows are omitted; source-only inputs never become indicators.
-  The future assembler reconciles membership against the authoritative CSV.
+  The assembler reconciles membership against the authoritative CSV.
 - Comparison objects come from `scripts.policies.COMPARISONS`: native daily/weekly
   4/13 calendar weeks, monthly 1/12 months, quarterly 1/4 quarters, no annual or
   irregular defaults. Daily matching is on/before with a seven-day age cap and
@@ -109,7 +110,7 @@ automatic checks set the check time to the attempt time. Failed checks cannot
 advance it; retained history requires an earlier successful check. Change time
 cannot follow check time. No operational timestamp can follow snapshot generation.
 
-## Assembly responsibilities in later slices
+## Assembly responsibilities
 
 Slice 3 stores current FRED inputs from `2010-01-01` onward in `data/automatic/<series-id>.json`.
 The separate input format and deterministic raw/normalized hash serialization are
@@ -133,3 +134,32 @@ last-success time. The single-snapshot validator checks ordering and shape; only
 the collector verifies these transitions against a previous version.
 Use temporary staging and atomic promotion of the entire validated candidate.
 The production build must never invoke fixtures or overwrite `site/data/`.
+
+
+## Slice 4 display and assembly additions
+
+Production indicators also carry `displayUnit` (`kind`, `label`, `precision`),
+`isDemo: false`, `inputAvailable`, `observationDateRule`, `source`, and `notices`.
+The serialized `unit` remains the registry string; the browser adapts `displayUnit`
+to the existing rendering API. `inputAvailable` identifies activated definitions,
+independently of numeric/empty availability; failed or all-null activated histories
+must not be mislabeled as unconnected definitions. `dataset.publisher` is Junyan Liu.
+
+`normalizedInputs` preserves validated normalized input arrays in the manifest,
+including source-only inputs. Build validation hashes these and recomputes derived
+displayed histories; source-scale arrays remain in automatic/manual input files.
+`diagnostics` records source failure, freshness, and revision summaries outside charts.
+`sourceFileHashes` records exact registry, review, category and Python source bytes;
+`modifiedSourceFiles` lists differences from the base `sourceInputCommit` during
+local development. A release assembly should follow committing those source files.
+
+Monthly/quarterly activation requires a reviewed named date convention: month/quarter
+start or end, or a consistent fixed day of month. Missing target periods return `—`;
+no period fallback or interpolation is allowed. Daily comparisons use the latest
+valid point on/before the target within seven days, except an explicit null on the
+target date returns `—`. Summary matching never alters observations or derived joins.
+
+Promotion uses atomic directory exchange on macOS/Linux. Validation and staging
+finish first; failed exchanges preserve the old directory. Local writers must run
+serially until Slice 5 adds workflow locking. The build publishes no credentials,
+source workbooks, manual CSVs, or automatic response files into `dist/`.

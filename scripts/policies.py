@@ -21,8 +21,9 @@ else:
 ROOT = Path(__file__).resolve().parents[1]
 POLICY_VERSION = '4'
 FRED_OBSERVATION_START = '2010-01-01'
-ACTIVE_SERIES = frozenset()
 PILOT_SERIES = frozenset({'fed-assets', 'sofr', 'effr', 'sofr-effr-spread', 'fed-repo'})
+# Local snapshot activation. Collection/deployment scheduling remains Slice 5.
+ACTIVE_SERIES = PILOT_SERIES
 # Conservative calendar-day diagnostics, not release-time guarantees or rejection
 # rules. These tolerate weekends, holidays and ordinary provider ingestion lag.
 FRESHNESS_DAYS = {'fed-assets': 14, 'sofr': 7, 'effr': 7, 'fed-repo': 7}
@@ -33,7 +34,9 @@ def executable_implementations():
     from scripts.derive import difference
     from scripts.normalize import normalize
     from scripts.providers.fred import FredClient
+    from scripts.import_manual import import_manual
     return {'fred-observations': FredClient.fetch, 'same-date-difference': difference,
+            'manual-csv': import_manual,
             **{f'normalize:{name}': normalize for name in
                ('identity', 'millions-to-billions', 'percentage-points-to-bp')}}
 
@@ -140,6 +143,11 @@ def validate_policies(registry, selected=PILOT_SERIES, *, policies=None, reviews
             raise ValueError(f'{identifier}: activation requires a ready specification')
         if entry['native_frequency'] not in COMPARISONS:
             raise ValueError(f'{identifier}: unsupported native frequency')
+        calendar_rules = {'monthly': {'month-start', 'month-end', 'day-of-month'},
+                          'quarterly': {'quarter-start', 'quarter-end', 'day-of-month'}}
+        if (entry['native_frequency'] in calendar_rules
+                and policy.date_rule not in calendar_rules[entry['native_frequency']]):
+            raise ValueError(f'{identifier}: reviewed source period date convention required')
         conversion, _ = conversion_policy(entry)
         if policy.method == 'derived':
             expected = CALCULATIONS.get(identifier)

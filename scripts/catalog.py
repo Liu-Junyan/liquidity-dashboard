@@ -71,3 +71,56 @@ def build_catalog(registry, categories=None):
         },
         'categories': categories, 'indicators': indicators,
     }
+
+
+def build_production_catalog(registry, categories, histories, reviews, generated_at, outcomes=None):
+    """Compile reviewed native-frequency metadata, never synthetic text/values."""
+    from scripts.notices import PUBLISHER, notices_for
+    from scripts.policies import COMPARISONS
+    category_ids = {item['name']: item['id'] for item in categories}
+    indicators, observations = [], {}
+    for identifier, entry in registry['series'].items():
+        if not entry['category'] or entry['status'] == 'unavailable':
+            continue
+        if entry['category'] not in category_ids:
+            raise ValueError(f'{identifier}: unknown category')
+        active = identifier in histories
+        nonnumeric = entry['status'] == 'unquantified'
+        points = histories.get(identifier, [])
+        frequency = entry['native_frequency']
+        sources = [entry['source_reference']] if active and entry['source_reference'] else []
+        if active and entry['update_method'] == 'derived':
+            sources = [registry['series'][key]['source_reference'] for key in entry['input_series_ids']]
+        explanation = (reviews[identifier]['explanation'] if active else
+                       '观察规则待定义，暂不生成数值。' if nonnumeric else
+                       '待接入：尚未接入已复核的数据源，不生成替代数值。')
+        notices = notices_for(identifier, generated_at[:4]) if active else []
+        if active and outcomes:
+            dependencies = entry['input_series_ids'] if entry['update_method'] == 'derived' else [identifier]
+            for key in dependencies:
+                checked = outcomes[key]['lastSuccessfulCheck']
+                reference = registry['series'][key]['source_reference']
+                if checked and reference and reference.startswith('https://'):
+                    notices.append({'text': f'FRED citation: {registry["series"][key]["provider_series_id"]}; '
+                                    f'retrieved {checked[:10]} (UTC).', 'url': reference})
+        indicators.append({
+            'id': entry['indicator_id'], 'seriesId': identifier,
+            'categoryId': category_ids[entry['category']], 'name': entry['name'],
+            'unit': entry['normalized_unit'] or 'pending', 'displayUnit': display_unit(entry),
+            'nativeFrequency': frequency, 'comparisonPolicy': deepcopy(COMPARISONS[frequency or 'irregular']),
+            'observationDateRule': reviews[identifier]['dateRule'] if active else None,
+            'isDemo': False, 'inputAvailable': active, 'role': '', 'explanation': explanation,
+            'availability': 'nonnumeric' if nonnumeric else
+                            'numeric' if any(p['value'] is not None for p in points) else 'empty',
+            'sources': sources,
+            'source': {'name': ('项目计算 · NY Fed / FRED · SOFR − EFFR' if identifier == 'sofr-effr-spread'
+                               else f'{entry["provider"]} · {entry["provider_series_id"]}' if active else '待接入'),
+                       'url': sources[0] if sources and sources[0].startswith('https://') else None},
+            'notices': notices,
+        })
+        observations[entry['indicator_id']] = points
+    dates = [p['date'] for points in observations.values() for p in points]
+    return {'schemaVersion': 2, 'dataset': {
+        'mode': 'production', 'isDemo': False, 'publisher': PUBLISHER, 'generatedAt': generated_at,
+        'observationStart': min(dates) if dates else None, 'observationEnd': max(dates) if dates else None,
+    }, 'categories': deepcopy(categories), 'indicators': indicators}, observations

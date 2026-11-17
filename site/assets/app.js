@@ -1,5 +1,5 @@
 import {t, setDataMode} from './zh-CN.js';
-import {latestObservation, changeAt, inRange, formatNumber, formatDate, formatChange, parseRoute, frequencyLabel, summaryStatistics, comparisonPeriods, comparisonLabel, seriesLabel, unpackDataset} from './data.js';
+import {latestObservation, changeAt, inRange, formatNumber, formatDate, formatChange, parseRoute, frequencyLabel, summaryStatistics, comparisonPeriods, comparisonLabel, seriesLabel, unpackDataset, displayCatalog} from './data.js';
 import {drawChart, disposeCharts} from './charts.js';
 
 const $ = selector => document.querySelector(selector);
@@ -46,14 +46,19 @@ function statisticsMarkup(indicator) {
   }).join('')}</dl><p class="statistics-note">${t('statisticsNote')}</p></section>`;
 }
 function sourceMarkup(indicator) {
+  if (indicator.sources?.length > 1) return `${escape(indicator.source.name)} · ${indicator.sources.map(reference => reference.startsWith('https://') ? `<a href="${escape(reference)}" target="_blank" rel="noopener noreferrer">${escape(reference.split('/').at(-1))} ↗</a>` : escape(reference)).join(' · ')}`;
   return indicator.source.url ? `<a href="${escape(indicator.source.url)}" target="_blank" rel="noopener noreferrer">${escape(indicator.source.name)} ↗</a>` : escape(indicator.source.name);
+}
+function noticesMarkup(indicator) {
+  if (!indicator.notices?.length) return '';
+  return `<aside class="source-notices" aria-label="来源与使用说明">${indicator.notices.map(notice => `<p>${escape(notice.text)} <a href="${escape(notice.url)}" target="_blank" rel="noopener noreferrer">来源与条款 ↗</a></p>`).join('')}</aside>`;
 }
 function renderOverview() {
   $('#categories').innerHTML = categories.map((category, index) => {
     const items = catalog.indicators.filter(item => item.categoryId === category.id);
     if (!items.length) return `<button class="category-card" data-category="${category.id}" aria-pressed="false" aria-controls="charts"><span class="category-top"><span class="category-number">0${index + 1}</span><span class="category-name">${escape(category.name)}</span></span><span class="summary-label">${t('emptyCategory')}</span><span class="summary-date">0 ${t('indicatorCount')}</span></button>`;
     const primary = items.find(item => item.availability === 'numeric') ?? items[0], latest = latestObservation(observations[primary.id]);
-    return `<button class="category-card" data-category="${category.id}" aria-pressed="false" aria-controls="charts"><span class="category-top"><span class="category-number">0${index + 1}</span><span class="category-name">${escape(category.name)}</span><span class="category-arrow" aria-hidden="true">↗</span></span><span class="summary-label">${escape(primary.name)}</span><span class="summary-value">${primary.inputAvailable === false ? '待接入' : formatNumber(latest?.value, primary.unit.precision)}<small>${escape(primary.unit.label)}</small></span><span class="sparkline" id="spark-${category.id}" aria-hidden="true"></span><span class="secondary-summary">${items.filter(item => item !== primary && (item.isDemo || item.inputAvailable)).slice(0, 1).map(item => secondarySummary(item, latest?.date)).join('<br>')}</span><span class="summary-date">${t('observationDate')} ${formatDate(latest?.date)} · ${items.length} ${t('indicatorCount')}${catalog.dataset.isDemo ? ` · ${t('demoShort')}` : ''}</span></button>`;
+    return `<button class="category-card" data-category="${category.id}" aria-pressed="false" aria-controls="charts"><span class="category-top"><span class="category-number">0${index + 1}</span><span class="category-name">${escape(category.name)}</span><span class="category-arrow" aria-hidden="true">↗</span></span><span class="summary-label">${escape(primary.name)}</span><span class="summary-value">${primary.unit.kind === 'unquantified' ? '待定义' : primary.inputAvailable === false ? '待接入' : formatNumber(latest?.value, primary.unit.precision)}<small>${escape(primary.unit.label)}</small></span><span class="sparkline" id="spark-${category.id}" aria-hidden="true"></span><span class="secondary-summary">${items.filter(item => item !== primary && (item.isDemo || item.inputAvailable)).slice(0, 1).map(item => secondarySummary(item, latest?.date)).join('<br>')}</span><span class="summary-date">${t('observationDate')} ${formatDate(latest?.date)} · ${items.length} ${t('indicatorCount')}${catalog.dataset.isDemo ? ` · ${t('demoShort')}` : ''}</span></button>`;
   }).join('');
   categories.forEach(category => {
     const items = catalog.indicators.filter(item => item.categoryId === category.id);
@@ -77,7 +82,7 @@ function renderCharts() {
     parent.innerHTML = `<p class="empty-category">${t('emptyCategory')}</p>`;
     return;
   }
-  parent.innerHTML = indicators.map(indicator => `<article class="indicator-card" aria-labelledby="heading-${indicator.id}"><div class="card-heading"><h3 id="heading-${indicator.id}">${escape(indicator.name)}</h3>${indicator.isDemo ? `<span class="card-demo">${t('demoShort')}</span>` : `<span class="card-demo">${frequencyLabel(indicator.frequency)}</span>`}</div><p class="indicator-role">${escape(indicator.role ?? '')}</p>${metrics(indicator)}<div class="chart-unit">${t('unit')}：${escape(indicator.unit.label)}</div><div class="detail-chart" id="chart-${indicator.id}" role="img" aria-label="${escape(indicator.name)} · ${t(state.range)} · ${seriesLabel(indicator)}"></div><div class="card-actions"><button class="text-button" data-statistics="${indicator.id}" aria-expanded="${statisticsOpen.has(indicator.id)}" aria-controls="statistics-${indicator.id}"><span aria-hidden="true">▦</span> ${t(statisticsOpen.has(indicator.id) ? 'hideStatistics' : 'statistics')}</button><button class="text-button" data-expand="${indicator.id}">${t('expand')} <span aria-hidden="true">↗</span></button></div><div id="statistics-${indicator.id}" ${statisticsOpen.has(indicator.id) ? '' : 'hidden'}>${statisticsMarkup(indicator)}</div></article>`).join('');
+  parent.innerHTML = indicators.map(indicator => `<article class="indicator-card" aria-labelledby="heading-${indicator.id}"><div class="card-heading"><h3 id="heading-${indicator.id}">${escape(indicator.name)}</h3>${indicator.isDemo ? `<span class="card-demo">${t('demoShort')}</span>` : `<span class="card-demo">${frequencyLabel(indicator.frequency)}</span>`}</div><p class="indicator-role">${escape(indicator.role ?? '')}</p>${metrics(indicator)}<div class="chart-unit">${t('unit')}：${escape(indicator.unit.label)}</div><div class="detail-chart" id="chart-${indicator.id}" role="img" aria-label="${escape(indicator.name)} · ${t(state.range)} · ${seriesLabel(indicator)}"></div><div class="card-actions"><button class="text-button" data-statistics="${indicator.id}" aria-expanded="${statisticsOpen.has(indicator.id)}" aria-controls="statistics-${indicator.id}"><span aria-hidden="true">▦</span> ${t(statisticsOpen.has(indicator.id) ? 'hideStatistics' : 'statistics')}</button><button class="text-button" data-expand="${indicator.id}">${t('expand')} <span aria-hidden="true">↗</span></button></div><div id="statistics-${indicator.id}" ${statisticsOpen.has(indicator.id) ? '' : 'hidden'}>${statisticsMarkup(indicator)}</div>${noticesMarkup(indicator)}</article>`).join('');
   indicators.forEach(indicator => drawChart($(`#chart-${indicator.id}`), pointsFor(indicator), indicator));
 }
 function renderDialog() {
@@ -89,7 +94,7 @@ function renderDialog() {
     if (renderedIndicator && dialogTrigger?.isConnected) dialogTrigger.focus();
     return;
   }
-  $('#dialog-content').innerHTML = `<h2 id="dialog-title">${escape(indicator.name)}</h2><p class="dialog-range">${t(state.range)} · ${t('rangeDates')}：${formatDate(pointsFor(indicator)[0]?.date)} — ${formatDate(pointsFor(indicator).at(-1)?.date)}</p>${metrics(indicator)}<div class="chart-unit">${t('unit')}：${escape(indicator.unit.label)}</div><div id="expanded-chart" class="expanded-chart" role="img" aria-label="${escape(indicator.name)} · ${seriesLabel(indicator)}"></div><div class="indicator-info"><div><h3>${t('explanation')}</h3><p>${escape(indicator.explanation)}</p></div><dl><dt>${t('source')}</dt><dd>${indicator.isDemo ? t('sourceFixture') : (indicator.inputAvailable ? sourceMarkup(indicator) : '待接入')}</dd><dt>${t('frequency')}</dt><dd>${frequencyLabel(indicator.frequency)}</dd>${indicator.isDemo ? `<dt>${t('intendedSource')}</dt><dd>${sourceMarkup(indicator)}</dd><dt>${t('collectedAt')}</dt><dd>${formatDate(catalog.dataset.collectedAt, {hour: '2-digit', minute: '2-digit'})} UTC</dd>` : ''}</dl></div>`;
+  $('#dialog-content').innerHTML = `<h2 id="dialog-title">${escape(indicator.name)}</h2><p class="dialog-range">${t(state.range)} · ${t('rangeDates')}：${formatDate(pointsFor(indicator)[0]?.date)} — ${formatDate(pointsFor(indicator).at(-1)?.date)}</p>${metrics(indicator)}<div class="chart-unit">${t('unit')}：${escape(indicator.unit.label)}</div><div id="expanded-chart" class="expanded-chart" role="img" aria-label="${escape(indicator.name)} · ${seriesLabel(indicator)}"></div><div class="indicator-info"><div><h3>${t('explanation')}</h3><p>${escape(indicator.explanation)}</p></div><dl><dt>${t('source')}</dt><dd>${indicator.isDemo ? t('sourceFixture') : (indicator.inputAvailable ? sourceMarkup(indicator) : '待接入')}</dd><dt>${t('frequency')}</dt><dd>${frequencyLabel(indicator.frequency)}</dd>${indicator.isDemo ? `<dt>${t('intendedSource')}</dt><dd>${sourceMarkup(indicator)}</dd><dt>${t('collectedAt')}</dt><dd>${formatDate(catalog.dataset.collectedAt, {hour: '2-digit', minute: '2-digit'})} UTC</dd>` : ''}</dl></div>${noticesMarkup(indicator)}`;
   if (!dialog.open) dialog.showModal();
   document.body.classList.add('modal-open');
   drawChart($('#expanded-chart'), pointsFor(indicator), indicator);
@@ -133,9 +138,10 @@ dialog.addEventListener('click', event => { if (event.target === dialog) closeDi
 async function initialize() {
   status.textContent = t('loading');
   try {
-    const responses = await Promise.all(['catalog', 'observations'].map(name => fetch(new URL(`../data/${name}.json`, import.meta.url)).then(response => {if (!response.ok) throw new Error(`HTTP ${response.status}`); return response.json();})));
+    const responses = await Promise.all(['catalog', 'observations'].map(name => fetch(new URL(`../data/${name}.json`, import.meta.url), {cache: 'no-cache'}).then(response => {if (!response.ok) throw new Error(`HTTP ${response.status}`); return response.json();})));
     catalog = responses[0];
     observations = unpackDataset(catalog, responses[1]);
+    catalog = displayCatalog(catalog);
     setDataMode(catalog.dataset.mode ?? 'demo');
     translatePage();
     categories = catalog.categories.toSorted((a, b) => a.order - b.order);

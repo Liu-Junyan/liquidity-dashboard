@@ -13,11 +13,13 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 if __package__:
+    from .assets import version_assets
     from .catalog import display_unit
     from .contracts import validate_points, require
     from .import_manual import git, import_manual
     from .registry import parse_registry
 else:
+    from assets import version_assets
     from catalog import display_unit
     from contracts import validate_points, require
     from import_manual import git, import_manual
@@ -123,6 +125,7 @@ def build_preview(repo):
         for name, document in zip(('catalog', 'observations', 'manifest'), documents):
             (stage / f'data/{name}.json').write_text(
                 json.dumps(document, ensure_ascii=False, indent=2, allow_nan=False) + '\n', encoding='utf-8')
+        version_assets(stage)
         (stage / '.nojekyll').touch()
         previous = Path(temporary) / 'previous'
         if output.exists():

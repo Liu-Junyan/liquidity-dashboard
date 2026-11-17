@@ -27,5 +27,14 @@ const previewMessages = {
   footerNote: 'SIFMA 本地预览 · 来源定义待复核',
 };
 let mode = 'demo';
+const productionMessages = {
+  mastheadNote: '独立研究 · 来源观测', eyebrow: 'USD LIQUIDITY / RESEARCH MONITOR',
+  edition: '美元流动性研究', demoBadge: '来源数据 · 非实时',
+  intro: '观察美元流动性的变化。保留各来源的原生频率与观测日期，选择类别探索指标与历史趋势。',
+  weekly: '原生频率观测', syntheticSeries: '来源观测', demoShort: '来源数据',
+  methodologyBody: '本页展示经复核来源的历史观测：美联储总资产、纽约联储隔夜正回购总量，以及项目计算的 SOFR−EFFR 利差。数据经 FRED 获取，保留来源日期及缺失值，不填充、不插值。历史数据可能修订；当前历史不代表当时可获得的信息。',
+  placeholderNote: '未接入的指标显示待接入；尚无数值定义的观察项保留文字说明。日度变化匹配目标日或此前不超过7天的观测，显式缺失不回退；周度变化要求精确日期。利差为百分点，未进行基点换算。统计按原生有效观测计算，不补齐日期。',
+  footerNote: 'Junyan Liu · 独立研究 · 不构成投资建议',
+};
 export function setDataMode(value) { mode = value; }
-export const t = key => (mode === 'manual-preview' ? previewMessages[key] : undefined) ?? messages[key] ?? key;
+export const t = key => (mode === 'manual-preview' ? previewMessages[key] : mode === 'production' ? productionMessages[key] : undefined) ?? messages[key] ?? key;

@@ -18,8 +18,8 @@ class PolicyTests(unittest.TestCase):
         self.assertLess(order.index('sofr'), order.index('sofr-effr-spread'))
         self.assertLess(order.index('effr'), order.index('sofr-effr-spread'))
         self.assertIsNone(self.registry['series']['price-impact']['normalized_unit'])
-        self.assertFalse(ACTIVE_SERIES)
-        self.assertEqual(validate_activation(self.registry), [])
+        self.assertEqual(ACTIVE_SERIES, PILOT_SERIES)
+        self.assertEqual(set(validate_activation(self.registry)), PILOT_SERIES)
 
     def test_missing_executable_paths_cannot_activate(self):
         self.assertEqual(set(validate_activation(self.registry, PILOT_SERIES)), PILOT_SERIES)

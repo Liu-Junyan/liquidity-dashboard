@@ -1,4 +1,4 @@
-"""Refresh FRED pilot histories since 2010 without publishing or enabling production.
+"""Refresh FRED pilot histories since 2010 without assembling or publishing.
 
 Run python3 scripts/collect.py. FRED_API_KEY comes from the environment or the
 ignored local .env. Only the FRED_API_KEY setting is accepted.
@@ -208,7 +208,7 @@ def main():
               + (f'; {record["error"]}' if record['error'] else ''))
     for identifier, record in result['derived'].items():
         print(f'{identifier}: recomputed {len(record["observations"])} observations')
-    print('Automatic candidate inputs saved; production activation and publication remain disabled.')
+    print('Automatic candidate inputs saved; run assemble.py to build a snapshot. No publication performed.')
     if any(record['outcome']['status'] in {'failed', 'retained'} for record in result['automatic'].values()):
         parser.exit(1, 'One or more FRED requests failed; compatible previous history retained where available.\n')
 

@@ -119,7 +119,7 @@ def validate_history_bounds(points, metadata, requested_start):
         raise CollectionError('FRED history does not match requested/metadata bounds; retry full refresh')
 
 
-def validate_metadata(metadata, entry, policy):
+def validate_metadata(metadata, entry, policy, *, cached=False):
     units = {'millions': 'Millions of U.S. Dollars', 'billions': 'Billions of US Dollars',
              '%': 'Percent'}
     # FRED uses both "US" and "U.S." in otherwise identical dollar unit labels.
@@ -132,7 +132,7 @@ def validate_metadata(metadata, entry, policy):
             or frequency is None or metadata['frequency_short'] != frequency
             or metadata['seasonal_adjustment_short'] != 'NSA'):
         raise CollectionError('FRED source units, frequency, identity, or seasonal adjustment changed')
-    if policy.date_rule == 'wednesday-level' and metadata['frequency'] != 'Weekly, As of Wednesday':
+    if not cached and policy.date_rule == 'wednesday-level' and metadata['frequency'] != 'Weekly, As of Wednesday':
         raise CollectionError('FRED weekly date convention changed')
     if iso_date(metadata['observation_start']) > iso_date(metadata['observation_end']):
         raise CollectionError('Invalid FRED metadata history bounds')

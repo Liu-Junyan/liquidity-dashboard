@@ -65,12 +65,13 @@ JavaScript checks use Node 22+ and built-in modules; `npm install` is unnecessar
 
 Edit [data/registry.csv](data/registry.csv), then run `python3 scripts/build.py`. The build regenerates the catalog and demo observations from the CSV, including additions, renames, removals, and `unavailable` exclusions. No separate catalog edit is needed. [The registry guide](data/README.md) explains visibility rules and the 16 columns. `python3 scripts/registry.py --output data/registry.json` optionally exports the complete registry, including hidden entries.
 
-Real-data Slices 1–3 are implemented: [pilot source reviews](docs/source-review.md),
-manual CSV validation, FRED collection from 2010 onward, normalization, and same-date
-calculations. `python3 scripts/policies.py --check-activation` validates the five
-pilot specifications and executable paths offline; no series is activated for
-production yet. Snapshot assembly, production frontend support, and publication
-remain later slices.
+Real-data Slices 1–4 are implemented locally: source review, manual input audits,
+FRED collection, normalization, derivation, validated snapshot assembly, and the
+production frontend. The five pilot definitions are activated for local assembly,
+producing three displayed charts (Fed assets, Fed overnight repo, and SOFR−EFFR).
+SOFR/EFFR remain internal inputs. Scheduling and production deployment remain Slice 5.
+Desktop Chrome rendering and dialog keyboard behavior have been verified.
+Mobile visual acceptance remains pending.
 
 Run `python3 scripts/collect.py` to download current histories since `2010-01-01` for WALCL,
 SOFR, EFFR, and RPONTTLD into `data/automatic/`. It reads `FRED_API_KEY` from the
@@ -89,13 +90,33 @@ lines covering every affected date; additions need no reason. See the
 [manual input guide](data/README.md#manual-observation-files-slice-2-format).
 
 `python3 scripts/build.py` remains a demo build for compatibility; `--mode demo`
-makes that choice explicit. `python3 scripts/build.py --mode production` requires
-`data/snapshot/{catalog,observations,manifest}.json` (or `--snapshot /path/to/snapshot`).
-Missing or invalid snapshots fail without changing `site/data/` or `dist/`.
-Even a valid production snapshot remains blocked until Slice 4 implements production
-assembly and the complete production frontend contract. The local SIFMA preview
-uses a separate, explicitly unreviewed contract. Production mode never invokes
-fixtures or publishes the demo.
+makes that choice explicit. Build the local production dashboard from saved inputs:
+
+```sh
+python3 scripts/assemble.py
+python3 scripts/build.py --mode production
+node --test tests/production.test.mjs
+python3 -m http.server 8000 --bind 127.0.0.1 --directory dist
+```
+
+Open `http://127.0.0.1:8000/`. Assembly is offline and needs no API key. It creates
+`data/snapshot/{catalog,observations,manifest}.json`; the build accepts an alternate
+`--snapshot /path/to/snapshot`. It validates content hashes and recomputes displayed
+derivations before copying the selected snapshot to `dist/`. Both snapshot promotion
+and production output replacement use atomic directory exchange on macOS/Linux.
+Failures preserve the prior output; `site/data/` remains the synthetic demo.
+Run one local writer at a time until Slice 5 adds workflow serialization.
+
+The manifest identifies the source commit, exact source-file hashes, and any
+uncommitted source changes. Commit source changes and reassemble before a release.
+Source notices name **Junyan Liu** as publisher. Unconnected indicators display
+`待接入`; SIFMA remains in its separate, explicitly unreviewed local preview.
+No production publication or scheduling is enabled by these commands.
+
+Builds version the JavaScript module graph and styles by content, and JSON requests
+revalidate cached data. This prevents old demo scripts from reading a new production
+snapshot after a rebuild. If an already-open page predates this fix, reload it once
+with **Cmd+Shift+R** on macOS (or **Ctrl+Shift+R** on Windows/Linux).
 
 For the three SIFMA issuance inputs, `python3 scripts/export_wind_issuance.py`
 uses `openpyxl` to convert saved values from the Wind workbook into `data/manual/*.csv`.

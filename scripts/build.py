@@ -1,13 +1,17 @@
-"""Build a demo or local SIFMA preview; keep production gated without fallback."""
+"""Build demo, local SIFMA preview, or a validated production snapshot offline."""
 import argparse
 import json
 import math
 import shutil
+import sys
+import tempfile
 from datetime import date, datetime
 from pathlib import Path
 from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
+if not __package__:
+    sys.path.insert(0, str(ROOT))
 
 
 def validate(catalog, observations):
@@ -84,6 +88,8 @@ def build_demo():
     if output.exists():
         shutil.rmtree(output)
     shutil.copytree(source, output)
+    from scripts.assets import version_assets
+    version_assets(output)
     (output / '.nojekyll').touch()
     print(f'Built {len(catalog["categories"])} categories, {len(catalog["indicators"])} indicators to {output}')
 
@@ -115,10 +121,23 @@ def build(mode='demo', snapshot=None):
         from contracts import validate_snapshot
     documents = [json.loads((directory / f'{name}.json').read_text(encoding='utf-8')) for name in names]
     validate_snapshot(*documents)
-    # Schema-v1 assets cannot render schema-v2 snapshots. Do not publish a broken
-    # site or falsely relabel the demo before Slice 4 migrates the frontend.
-    raise ValueError('Production snapshot contract validated, but production rendering is not enabled: '
-                     'Slice 4 snapshot assembly and frontend migration are required. No output was changed.')
+    from scripts.assemble import validate_assembled_snapshot
+    from scripts.artifacts import replace_directory, write_documents
+    from scripts.assets import version_assets
+    validate_assembled_snapshot(*documents)
+    source, output = ROOT / 'site', ROOT / 'dist'
+    vendor = source / 'assets/vendor/echarts-5.6.0.min.js'
+    if not vendor.is_file() or vendor.stat().st_size < 100_000:
+        raise ValueError('Pinned Apache ECharts bundle is missing')
+    with tempfile.TemporaryDirectory(prefix='.production-', dir=ROOT) as temporary:
+        stage = Path(temporary) / 'site'
+        shutil.copytree(source, stage, ignore=lambda folder, names: ['data'] if Path(folder) == source else [])
+        write_documents(stage / 'data', documents)
+        version_assets(stage)
+        (stage / '.nojekyll').touch()
+        replace_directory(stage, output)
+    print(f'Built production snapshot {documents[0]["snapshotId"]} to {output}')
+    return output
 
 
 def main():

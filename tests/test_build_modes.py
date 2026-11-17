@@ -48,10 +48,10 @@ class BuildModeTests(unittest.TestCase):
             demo.assert_not_called()
         self.assertEqual(self.before, self.contents())
 
-    def test_valid_snapshot_remains_gated_until_frontend_migration(self):
+    def test_schema_only_snapshot_without_assembly_integrity_is_rejected(self):
         self.write_snapshot(example_snapshot())
         with patch.object(build, 'ROOT', self.root), patch.object(build, 'build_demo') as demo:
-            with self.assertRaisesRegex(ValueError, 'Slice 4'):
+            with self.assertRaisesRegex(ValueError, 'content digest'):
                 build.build('production', self.snapshot)
             demo.assert_not_called()
         self.assertEqual(self.before, self.contents())

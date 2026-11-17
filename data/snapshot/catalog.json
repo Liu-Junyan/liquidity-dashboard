@@ -1,0 +1,902 @@
+{
+  "schemaVersion": 2,
+  "dataset": {
+    "mode": "production",
+    "isDemo": false,
+    "publisher": "Junyan Liu",
+    "generatedAt": "2026-11-17T06:26:42.066508Z",
+    "observationStart": "2010-01-01",
+    "observationEnd": "2026-11-16"
+  },
+  "categories": [
+    {
+      "id": "category-1",
+      "order": 1,
+      "name": "货币层",
+      "description": "美元流动性之源 · 观察资金价格、准备金供给与央行工具用量。"
+    },
+    {
+      "id": "category-2",
+      "order": 2,
+      "name": "离岸层",
+      "description": "美元的全球再分配 · 观察跨币种融资价格、美元走势与官方融资工具。"
+    },
+    {
+      "id": "category-3",
+      "order": 3,
+      "name": "信用层",
+      "description": "金融体系与实体部门的联结 · 观察信用价格、融资可得性与银行信贷供给。"
+    },
+    {
+      "id": "category-4",
+      "order": 4,
+      "name": "金融市场层",
+      "description": "流动性的终点，也是反馈的起点 · 观察波动率、交易承载能力与仓位杠杆。"
+    }
+  ],
+  "indicators": [
+    {
+      "id": "sofr-effr-spread",
+      "seriesId": "sofr-effr-spread",
+      "categoryId": "category-1",
+      "name": "SOFR与EFFR利差",
+      "unit": "%",
+      "displayUnit": {
+        "kind": "ratio",
+        "label": "%",
+        "precision": 2
+      },
+      "nativeFrequency": "daily",
+      "comparisonPolicy": {
+        "periods": [
+          4,
+          13
+        ],
+        "periodUnit": "week",
+        "match": "on-or-before",
+        "maxAgeDays": 7,
+        "explicitMissing": "null",
+        "valueScale": 1
+      },
+      "observationDateRule": "exact-date-union",
+      "isDemo": false,
+      "inputAvailable": true,
+      "role": "",
+      "explanation": "相同观察日的SOFR减EFFR。先规范化输入单位；输出为百分点（沿用%标签），4.10减4.00为0.10；缺少任一输入时为空，不跨日填充。",
+      "availability": "numeric",
+      "sources": [
+        "https://fred.stlouisfed.org/series/SOFR",
+        "https://fred.stlouisfed.org/series/EFFR"
+      ],
+      "source": {
+        "name": "项目计算 · NY Fed / FRED · SOFR − EFFR",
+        "url": "https://fred.stlouisfed.org/series/SOFR"
+      },
+      "notices": [
+        {
+          "text": "© 2026 Federal Reserve Bank of New York. Content from the New York Fed subject to the Terms of Use at newyorkfed.org.",
+          "url": "https://www.newyorkfed.org/privacy/termsofuse"
+        },
+        {
+          "text": "The SOFR and EFFR data and related information are subject to the Terms of Use posted at newyorkfed.org. The New York Fed is not responsible for publication of the SOFR and EFFR data and related information by Junyan Liu, does not endorse any particular republication, and has no liability for your use.",
+          "url": "https://www.newyorkfed.org/privacy/termsofuse"
+        },
+        {
+          "text": "Junyan Liu is not affiliated with the New York Fed. The New York Fed does not sanction, endorse, or recommend any products or services offered by Junyan Liu.",
+          "url": "https://www.newyorkfed.org/privacy/termsofuse"
+        },
+        {
+          "text": "The Secured Overnight Financing Rate (SOFR) Data are calculated using data provided under a license granted to the New York Fed by DTCC Solutions LLC (“Solutions”), an affiliate of The Depository Trust & Clearing Corporation. Solutions, its affiliates, and third parties from which they obtained data have no liability for the content of this material.",
+          "url": "https://www.newyorkfed.org/markets/reference-rates/sofr"
+        },
+        {
+          "text": "Secured Overnight Financing Rate (SOFR) and Effective Federal Funds Rate (EFFR); distributed by FRED. SOFR−EFFR 为 Junyan Liu 项目计算，不是纽约联储发布的利差。",
+          "url": "https://fred.stlouisfed.org/series/SOFR"
+        },
+        {
+          "text": "FRED citation: SOFR; retrieved 2026-11-17 (UTC).",
+          "url": "https://fred.stlouisfed.org/series/SOFR"
+        },
+        {
+          "text": "FRED citation: EFFR; retrieved 2026-11-17 (UTC).",
+          "url": "https://fred.stlouisfed.org/series/EFFR"
+        }
+      ]
+    },
+    {
+      "id": "sofr-tail-spread",
+      "seriesId": "sofr-tail-spread",
+      "categoryId": "category-1",
+      "name": "SOFR99分位−SOFR",
+      "unit": "%",
+      "displayUnit": {
+        "kind": "ratio",
+        "label": "%",
+        "precision": 2
+      },
+      "nativeFrequency": "daily",
+      "comparisonPolicy": {
+        "periods": [
+          4,
+          13
+        ],
+        "periodUnit": "week",
+        "match": "on-or-before",
+        "maxAgeDays": 7,
+        "explicitMissing": "null",
+        "valueScale": 1
+      },
+      "observationDateRule": null,
+      "isDemo": false,
+      "inputAvailable": false,
+      "role": "",
+      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
+      "availability": "empty",
+      "sources": [],
+      "source": {
+        "name": "待接入",
+        "url": null
+      },
+      "notices": []
+    },
+    {
+      "id": "fed-assets",
+      "seriesId": "fed-assets",
+      "categoryId": "category-1",
+      "name": "美联储总资产",
+      "unit": "Billions",
+      "displayUnit": {
+        "kind": "amount",
+        "label": "十亿美元",
+        "precision": 1
+      },
+      "nativeFrequency": "weekly",
+      "comparisonPolicy": {
+        "periods": [
+          4,
+          13
+        ],
+        "periodUnit": "week",
+        "match": "exact-date",
+        "valueScale": 1
+      },
+      "observationDateRule": "wednesday-level",
+      "isDemo": false,
+      "inputAvailable": true,
+      "role": "",
+      "explanation": "美联储合并资产负债表总资产（扣除合并抵销），每周三时点值；原始百万美元除以1000后展示为十亿美元，非周平均。",
+      "availability": "numeric",
+      "sources": [
+        "https://fred.stlouisfed.org/series/WALCL"
+      ],
+      "source": {
+        "name": "FRED · WALCL",
+        "url": "https://fred.stlouisfed.org/series/WALCL"
+      },
+      "notices": [
+        {
+          "text": "Source: Board of Governors of the Federal Reserve System (US), H.4.1, Assets: Total Assets: Total Assets (Less Eliminations from Consolidation): Wednesday Level (WALCL); distributed by FRED. 百万美元除以1000为十亿美元。",
+          "url": "https://fred.stlouisfed.org/series/WALCL"
+        },
+        {
+          "text": "FRED citation: WALCL; retrieved 2026-11-17 (UTC).",
+          "url": "https://fred.stlouisfed.org/series/WALCL"
+        }
+      ]
+    },
+    {
+      "id": "reserve-balances",
+      "seriesId": "reserve-balances",
+      "categoryId": "category-1",
+      "name": "银行准备金",
+      "unit": "Billions",
+      "displayUnit": {
+        "kind": "amount",
+        "label": "十亿美元",
+        "precision": 1
+      },
+      "nativeFrequency": "weekly",
+      "comparisonPolicy": {
+        "periods": [
+          4,
+          13
+        ],
+        "periodUnit": "week",
+        "match": "exact-date",
+        "valueScale": 1
+      },
+      "observationDateRule": null,
+      "isDemo": false,
+      "inputAvailable": false,
+      "role": "",
+      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
+      "availability": "empty",
+      "sources": [],
+      "source": {
+        "name": "待接入",
+        "url": null
+      },
+      "notices": []
+    },
+    {
+      "id": "reserve-assets-ratio",
+      "seriesId": "reserve-assets-ratio",
+      "categoryId": "category-1",
+      "name": "准备金占商业银行总资产比例",
+      "unit": "%",
+      "displayUnit": {
+        "kind": "ratio",
+        "label": "%",
+        "precision": 2
+      },
+      "nativeFrequency": "weekly",
+      "comparisonPolicy": {
+        "periods": [
+          4,
+          13
+        ],
+        "periodUnit": "week",
+        "match": "exact-date",
+        "valueScale": 1
+      },
+      "observationDateRule": null,
+      "isDemo": false,
+      "inputAvailable": false,
+      "role": "",
+      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
+      "availability": "empty",
+      "sources": [],
+      "source": {
+        "name": "待接入",
+        "url": null
+      },
+      "notices": []
+    },
+    {
+      "id": "treasury-account",
+      "seriesId": "treasury-account",
+      "categoryId": "category-1",
+      "name": "TGA余额",
+      "unit": "Billions",
+      "displayUnit": {
+        "kind": "amount",
+        "label": "十亿美元",
+        "precision": 1
+      },
+      "nativeFrequency": "weekly",
+      "comparisonPolicy": {
+        "periods": [
+          4,
+          13
+        ],
+        "periodUnit": "week",
+        "match": "exact-date",
+        "valueScale": 1
+      },
+      "observationDateRule": null,
+      "isDemo": false,
+      "inputAvailable": false,
+      "role": "",
+      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
+      "availability": "empty",
+      "sources": [],
+      "source": {
+        "name": "待接入",
+        "url": null
+      },
+      "notices": []
+    },
+    {
+      "id": "reverse-repo",
+      "seriesId": "reverse-repo",
+      "categoryId": "category-1",
+      "name": "ON RRP余额",
+      "unit": "Billions",
+      "displayUnit": {
+        "kind": "amount",
+        "label": "十亿美元",
+        "precision": 1
+      },
+      "nativeFrequency": "daily",
+      "comparisonPolicy": {
+        "periods": [
+          4,
+          13
+        ],
+        "periodUnit": "week",
+        "match": "on-or-before",
+        "maxAgeDays": 7,
+        "explicitMissing": "null",
+        "valueScale": 1
+      },
+      "observationDateRule": null,
+      "isDemo": false,
+      "inputAvailable": false,
+      "role": "",
+      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
+      "availability": "empty",
+      "sources": [],
+      "source": {
+        "name": "待接入",
+        "url": null
+      },
+      "notices": []
+    },
+    {
+      "id": "discount-window",
+      "seriesId": "discount-window",
+      "categoryId": "category-1",
+      "name": "贴现窗口用量",
+      "unit": "Millions",
+      "displayUnit": {
+        "kind": "amount",
+        "label": "百万美元",
+        "precision": 1
+      },
+      "nativeFrequency": "weekly",
+      "comparisonPolicy": {
+        "periods": [
+          4,
+          13
+        ],
+        "periodUnit": "week",
+        "match": "exact-date",
+        "valueScale": 1
+      },
+      "observationDateRule": null,
+      "isDemo": false,
+      "inputAvailable": false,
+      "role": "",
+      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
+      "availability": "empty",
+      "sources": [],
+      "source": {
+        "name": "待接入",
+        "url": null
+      },
+      "notices": []
+    },
+    {
+      "id": "fed-repo",
+      "seriesId": "fed-repo",
+      "categoryId": "category-1",
+      "name": "美联储隔夜正回购总量",
+      "unit": "Billions",
+      "displayUnit": {
+        "kind": "amount",
+        "label": "十亿美元",
+        "precision": 1
+      },
+      "nativeFrequency": "daily",
+      "comparisonPolicy": {
+        "periods": [
+          4,
+          13
+        ],
+        "periodUnit": "week",
+        "match": "on-or-before",
+        "maxAgeDays": 7,
+        "explicitMissing": "null",
+        "valueScale": 1
+      },
+      "observationDateRule": "source-business-date",
+      "isDemo": false,
+      "inputAvailable": true,
+      "role": "",
+      "explanation": "FRED发布的隔夜正回购每日总量，来源为纽约联储临时公开市场操作；覆盖美国国债、联邦机构债及机构MBS。原始单位已为十亿美元，保持原值及来源日期；为每日交易量而非未偿余额；缺失值不视为零。",
+      "availability": "numeric",
+      "sources": [
+        "https://fred.stlouisfed.org/series/RPONTTLD"
+      ],
+      "source": {
+        "name": "FRED · RPONTTLD",
+        "url": "https://fred.stlouisfed.org/series/RPONTTLD"
+      },
+      "notices": [
+        {
+          "text": "© 2026 Federal Reserve Bank of New York. Content from the New York Fed subject to the Terms of Use at newyorkfed.org.",
+          "url": "https://www.newyorkfed.org/privacy/termsofuse"
+        },
+        {
+          "text": "Source: Federal Reserve Bank of New York, Overnight Repurchase Agreements: Total Securities Purchased by the Federal Reserve in the Temporary Open Market Operations (RPONTTLD); distributed by FRED. 十亿美元原值。",
+          "url": "https://fred.stlouisfed.org/series/RPONTTLD"
+        },
+        {
+          "text": "FRED citation: RPONTTLD; retrieved 2026-11-17 (UTC).",
+          "url": "https://fred.stlouisfed.org/series/RPONTTLD"
+        }
+      ]
+    },
+    {
+      "id": "dollar-index",
+      "seriesId": "dollar-index",
+      "categoryId": "category-2",
+      "name": "美元指数",
+      "unit": "none",
+      "displayUnit": {
+        "kind": "index",
+        "label": "点",
+        "precision": 2
+      },
+      "nativeFrequency": "daily",
+      "comparisonPolicy": {
+        "periods": [
+          4,
+          13
+        ],
+        "periodUnit": "week",
+        "match": "on-or-before",
+        "maxAgeDays": 7,
+        "explicitMissing": "null",
+        "valueScale": 1
+      },
+      "observationDateRule": null,
+      "isDemo": false,
+      "inputAvailable": false,
+      "role": "",
+      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
+      "availability": "empty",
+      "sources": [],
+      "source": {
+        "name": "待接入",
+        "url": null
+      },
+      "notices": []
+    },
+    {
+      "id": "swap-line",
+      "seriesId": "swap-line",
+      "categoryId": "category-2",
+      "name": "央行美元流动性互换工具用量（Swap Line）",
+      "unit": "Millions",
+      "displayUnit": {
+        "kind": "amount",
+        "label": "百万美元",
+        "precision": 1
+      },
+      "nativeFrequency": "weekly",
+      "comparisonPolicy": {
+        "periods": [
+          4,
+          13
+        ],
+        "periodUnit": "week",
+        "match": "exact-date",
+        "valueScale": 1
+      },
+      "observationDateRule": null,
+      "isDemo": false,
+      "inputAvailable": false,
+      "role": "",
+      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
+      "availability": "empty",
+      "sources": [],
+      "source": {
+        "name": "待接入",
+        "url": null
+      },
+      "notices": []
+    },
+    {
+      "id": "fima-repo",
+      "seriesId": "fima-repo",
+      "categoryId": "category-2",
+      "name": "FIMA Repo",
+      "unit": "Millions",
+      "displayUnit": {
+        "kind": "amount",
+        "label": "百万美元",
+        "precision": 1
+      },
+      "nativeFrequency": "weekly",
+      "comparisonPolicy": {
+        "periods": [
+          4,
+          13
+        ],
+        "periodUnit": "week",
+        "match": "exact-date",
+        "valueScale": 1
+      },
+      "observationDateRule": null,
+      "isDemo": false,
+      "inputAvailable": false,
+      "role": "",
+      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
+      "availability": "empty",
+      "sources": [],
+      "source": {
+        "name": "待接入",
+        "url": null
+      },
+      "notices": []
+    },
+    {
+      "id": "credit-spreads-ig",
+      "seriesId": "credit-spreads-ig",
+      "categoryId": "category-3",
+      "name": "信用利差-投资级",
+      "unit": "%",
+      "displayUnit": {
+        "kind": "ratio",
+        "label": "%",
+        "precision": 2
+      },
+      "nativeFrequency": "daily",
+      "comparisonPolicy": {
+        "periods": [
+          4,
+          13
+        ],
+        "periodUnit": "week",
+        "match": "on-or-before",
+        "maxAgeDays": 7,
+        "explicitMissing": "null",
+        "valueScale": 1
+      },
+      "observationDateRule": null,
+      "isDemo": false,
+      "inputAvailable": false,
+      "role": "",
+      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
+      "availability": "empty",
+      "sources": [],
+      "source": {
+        "name": "待接入",
+        "url": null
+      },
+      "notices": []
+    },
+    {
+      "id": "credit-spreads-hy",
+      "seriesId": "credit-spreads-hy",
+      "categoryId": "category-3",
+      "name": "信用利差-高收益",
+      "unit": "%",
+      "displayUnit": {
+        "kind": "ratio",
+        "label": "%",
+        "precision": 2
+      },
+      "nativeFrequency": "daily",
+      "comparisonPolicy": {
+        "periods": [
+          4,
+          13
+        ],
+        "periodUnit": "week",
+        "match": "on-or-before",
+        "maxAgeDays": 7,
+        "explicitMissing": "null",
+        "valueScale": 1
+      },
+      "observationDateRule": null,
+      "isDemo": false,
+      "inputAvailable": false,
+      "role": "",
+      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
+      "availability": "empty",
+      "sources": [],
+      "source": {
+        "name": "待接入",
+        "url": null
+      },
+      "notices": []
+    },
+    {
+      "id": "bond-issuance",
+      "seriesId": "bond-issuance",
+      "categoryId": "category-3",
+      "name": "债券发行量",
+      "unit": "Billions",
+      "displayUnit": {
+        "kind": "amount",
+        "label": "十亿美元",
+        "precision": 1
+      },
+      "nativeFrequency": "monthly",
+      "comparisonPolicy": {
+        "periods": [
+          1,
+          12
+        ],
+        "periodUnit": "month",
+        "match": "source-period-date",
+        "valueScale": 1
+      },
+      "observationDateRule": null,
+      "isDemo": false,
+      "inputAvailable": false,
+      "role": "",
+      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
+      "availability": "empty",
+      "sources": [],
+      "source": {
+        "name": "待接入",
+        "url": null
+      },
+      "notices": []
+    },
+    {
+      "id": "treasury-bond-issuance",
+      "seriesId": "treasury-bond-issuance",
+      "categoryId": "category-3",
+      "name": "国债发行量",
+      "unit": "Billions",
+      "displayUnit": {
+        "kind": "amount",
+        "label": "十亿美元",
+        "precision": 1
+      },
+      "nativeFrequency": "monthly",
+      "comparisonPolicy": {
+        "periods": [
+          1,
+          12
+        ],
+        "periodUnit": "month",
+        "match": "source-period-date",
+        "valueScale": 1
+      },
+      "observationDateRule": null,
+      "isDemo": false,
+      "inputAvailable": false,
+      "role": "",
+      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
+      "availability": "empty",
+      "sources": [],
+      "source": {
+        "name": "待接入",
+        "url": null
+      },
+      "notices": []
+    },
+    {
+      "id": "corporate-bond-issuance",
+      "seriesId": "corporate-bond-issuance",
+      "categoryId": "category-3",
+      "name": "公司债发行量",
+      "unit": "Billions",
+      "displayUnit": {
+        "kind": "amount",
+        "label": "十亿美元",
+        "precision": 1
+      },
+      "nativeFrequency": "monthly",
+      "comparisonPolicy": {
+        "periods": [
+          1,
+          12
+        ],
+        "periodUnit": "month",
+        "match": "source-period-date",
+        "valueScale": 1
+      },
+      "observationDateRule": null,
+      "isDemo": false,
+      "inputAvailable": false,
+      "role": "",
+      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
+      "availability": "empty",
+      "sources": [],
+      "source": {
+        "name": "待接入",
+        "url": null
+      },
+      "notices": []
+    },
+    {
+      "id": "lending-standards",
+      "seriesId": "lending-standards",
+      "categoryId": "category-3",
+      "name": "银行贷款标准",
+      "unit": "%",
+      "displayUnit": {
+        "kind": "ratio",
+        "label": "%",
+        "precision": 2
+      },
+      "nativeFrequency": "quarterly",
+      "comparisonPolicy": {
+        "periods": [
+          1,
+          4
+        ],
+        "periodUnit": "quarter",
+        "match": "source-period-date",
+        "valueScale": 1
+      },
+      "observationDateRule": null,
+      "isDemo": false,
+      "inputAvailable": false,
+      "role": "",
+      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
+      "availability": "empty",
+      "sources": [],
+      "source": {
+        "name": "待接入",
+        "url": null
+      },
+      "notices": []
+    },
+    {
+      "id": "bank-loans",
+      "seriesId": "bank-loans",
+      "categoryId": "category-3",
+      "name": "银行贷款",
+      "unit": "Billions",
+      "displayUnit": {
+        "kind": "amount",
+        "label": "十亿美元",
+        "precision": 1
+      },
+      "nativeFrequency": "weekly",
+      "comparisonPolicy": {
+        "periods": [
+          4,
+          13
+        ],
+        "periodUnit": "week",
+        "match": "exact-date",
+        "valueScale": 1
+      },
+      "observationDateRule": null,
+      "isDemo": false,
+      "inputAvailable": false,
+      "role": "",
+      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
+      "availability": "empty",
+      "sources": [],
+      "source": {
+        "name": "待接入",
+        "url": null
+      },
+      "notices": []
+    },
+    {
+      "id": "vix",
+      "seriesId": "vix",
+      "categoryId": "category-4",
+      "name": "VIX指数",
+      "unit": "none",
+      "displayUnit": {
+        "kind": "index",
+        "label": "点",
+        "precision": 2
+      },
+      "nativeFrequency": "daily",
+      "comparisonPolicy": {
+        "periods": [
+          4,
+          13
+        ],
+        "periodUnit": "week",
+        "match": "on-or-before",
+        "maxAgeDays": 7,
+        "explicitMissing": "null",
+        "valueScale": 1
+      },
+      "observationDateRule": null,
+      "isDemo": false,
+      "inputAvailable": false,
+      "role": "",
+      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
+      "availability": "empty",
+      "sources": [],
+      "source": {
+        "name": "待接入",
+        "url": null
+      },
+      "notices": []
+    },
+    {
+      "id": "move",
+      "seriesId": "move",
+      "categoryId": "category-4",
+      "name": "MOVE指数",
+      "unit": "none",
+      "displayUnit": {
+        "kind": "index",
+        "label": "点",
+        "precision": 2
+      },
+      "nativeFrequency": "daily",
+      "comparisonPolicy": {
+        "periods": [
+          4,
+          13
+        ],
+        "periodUnit": "week",
+        "match": "on-or-before",
+        "maxAgeDays": 7,
+        "explicitMissing": "null",
+        "valueScale": 1
+      },
+      "observationDateRule": null,
+      "isDemo": false,
+      "inputAvailable": false,
+      "role": "",
+      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
+      "availability": "empty",
+      "sources": [],
+      "source": {
+        "name": "待接入",
+        "url": null
+      },
+      "notices": []
+    },
+    {
+      "id": "bid-ask-spread",
+      "seriesId": "bid-ask-spread",
+      "categoryId": "category-4",
+      "name": "买卖价差",
+      "unit": "bp",
+      "displayUnit": {
+        "kind": "spread",
+        "label": "bp",
+        "precision": 2
+      },
+      "nativeFrequency": "daily",
+      "comparisonPolicy": {
+        "periods": [
+          4,
+          13
+        ],
+        "periodUnit": "week",
+        "match": "on-or-before",
+        "maxAgeDays": 7,
+        "explicitMissing": "null",
+        "valueScale": 1
+      },
+      "observationDateRule": null,
+      "isDemo": false,
+      "inputAvailable": false,
+      "role": "",
+      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
+      "availability": "empty",
+      "sources": [],
+      "source": {
+        "name": "待接入",
+        "url": null
+      },
+      "notices": []
+    },
+    {
+      "id": "price-impact",
+      "seriesId": "price-impact",
+      "categoryId": "category-4",
+      "name": "价格冲击（Price Impact）",
+      "unit": "pending",
+      "displayUnit": {
+        "kind": "scalar",
+        "label": "待确认",
+        "precision": 2
+      },
+      "nativeFrequency": "daily",
+      "comparisonPolicy": {
+        "periods": [
+          4,
+          13
+        ],
+        "periodUnit": "week",
+        "match": "on-or-before",
+        "maxAgeDays": 7,
+        "explicitMissing": "null",
+        "valueScale": 1
+      },
+      "observationDateRule": null,
+      "isDemo": false,
+      "inputAvailable": false,
+      "role": "",
+      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
+      "availability": "empty",
+      "sources": [],
+      "source": {
+        "name": "待接入",
+        "url": null
+      },
+      "notices": []
+    }
+  ],
+  "snapshotId": "production-50e7bf082b6b1f96bf2e768c5804c0c692a8417dbca4048fb619fd96675fe413"
+}

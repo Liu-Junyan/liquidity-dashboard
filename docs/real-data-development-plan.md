@@ -1,6 +1,6 @@
 # Real-data integration development plan
 
-Updated: November 17, 2026. Status: Slices 1–3 implemented; local FRED collection is available. Production activation, scheduling, and real-data deployment remain disabled.
+Updated: November 17, 2026. Status: Slices 1–4 implemented locally; Slice 4 mobile visual acceptance remains pending. Pilot snapshot assembly is activated; scheduling and real-data deployment remain disabled.
 
 ## 1. Goal and first release
 
@@ -23,10 +23,10 @@ Completion means these pilot series work through collection, normalization, deri
 | Existing component | Current behavior | Required change |
 | --- | --- | --- |
 | `data/registry.csv` and `scripts/registry.py` | Membership, specifications, dependency checks, optional JSON export | Add production completeness checks for activated series without requiring all draft sources to be finished |
-| `scripts/catalog.py` | Generates weekly demo metadata and synthetic explanations | Generate production metadata separately, using native frequencies and reviewed explanations |
-| `scripts/build.py` | Explicit demo/production modes; production validates snapshots but remains blocked pending frontend migration | In Slice 4, consume a validated snapshot without generating observations |
-| `site/assets/data.js` | Exact-date 4/13-week comparisons; weekly frequency label | Frequency-specific comparisons and labels; preserve valid sample counts |
-| `site/assets/app.js` and `charts.js` | Synthetic wording; dialog indexes first/last points | Production labels, version checks, and safe empty/short-history rendering |
+| `scripts/catalog.py` | Separate demo and reviewed production metadata | Extend reviewed sources in Slice 6 |
+| `scripts/build.py` | Demo, manual preview and validated production snapshot modes | Slice 5 will publish an exact artifact revision |
+| `site/assets/data.js` | Native-frequency comparisons, labels and valid sample counts | Retain these checks as new sources activate |
+| `site/assets/app.js` and `charts.js` | Mode-specific labels, source notices, safe empty/short-history rendering | Mobile visual acceptance remains pending |
 | `.github/workflows/pages.yml` | Builds fixtures on pushes, pull requests, and manual runs | Add collection and snapshot publication after local production validation works |
 
 Use Python 3.10+; prefer standard-library modules where they keep the implementation simple. Excel extraction uses `openpyxl`, pinned in `requirements.txt`, to avoid maintaining an XLSX parser. GitHub Actions installs these dependencies before tests. Use the environment specified in AGENTS.md for local dependencies. Keep routine tests offline. Do not add extra maintainer-filled registry columns for scheduling, matching, or aggregation policies.
@@ -90,7 +90,7 @@ Introduce production schema version 2, leaving schema version 1 fixtures intact:
 
 The source-input commit identifies the checked-out registry, policies, and manual inputs; fetched inputs are identified by hashes. The later commit containing automatic inputs and the snapshot is the artifact revision used for deployment. This avoids requiring a commit to contain its own Git hash.
 
-Use temporary staging directories and atomic replacement after validation. The production build will copy a selected snapshot into the output directory without overwriting checked-in demo observations in `site/data/`. The Slice 2 command already fails clearly for a missing snapshot and never falls back to fixtures; successful production output remains gated on Slice 4 frontend support.
+Use temporary staging directories and atomic replacement after validation. The production build will copy a selected snapshot into the output directory without overwriting checked-in demo observations in `site/data/`. The Slice 2 command already fails clearly for a missing snapshot and never falls back to fixtures; Slice 4 now validates and builds production output locally.
 
 ## 5. Development sequence
 
@@ -223,11 +223,11 @@ series first in the credit category. Other series remain empty. This preview doe
 not activate SIFMA, publish data, or complete the production contract below;
 source reference/coverage review and full production assembly remain pending.
 
-- [ ] Assemble activated automatic/manual inputs and derived outputs into one validated version 2 snapshot. Unconnected categorized numeric entries emit empty arrays; unavailable entries are omitted; unquantified entries stay nonnumeric.
-- [ ] Validate IDs, ownership, policy consistency, dates, finite/null values, units, provenance, and shared snapshot identity before replacing the publishable candidate.
-- [ ] Update `catalog.py`, production build validation, and the frontend loader together. Remove unconditional synthetic explanations and notices only in production mode, including chart tooltips, accessibility text, statistics, and expanded details.
-- [ ] Guard empty selected ranges and single-point histories in overview cards, charts, dataset dates, and expanded-dialog first/last-date access. Distinguish `待接入`, no observations in a selected range, and unquantified explanations.
-- [ ] Preserve observation dates beside latest values. Keep collection diagnostics in manifest/Actions reports. Do not add `最近检查`, `人工录入时间`, `自动更新`, `人工维护`, or update-status badges to charts or overview cards.
+- [x] Assemble activated automatic/manual inputs and derived outputs into one validated version 2 snapshot. Unconnected categorized numeric entries emit empty arrays; unavailable entries are omitted; unquantified entries stay nonnumeric.
+- [x] Validate IDs, ownership, policy consistency, dates, finite/null values, units, provenance, and shared snapshot identity before replacing the publishable candidate.
+- [x] Update `catalog.py`, production build validation, and the frontend loader together. Remove unconditional synthetic explanations and notices only in production mode, including chart tooltips, accessibility text, statistics, and expanded details.
+- [x] Guard empty selected ranges and single-point histories in overview cards, charts, dataset dates, and expanded-dialog first/last-date access. Distinguish `待接入`, no observations in a selected range, and unquantified explanations.
+- [x] Preserve observation dates beside latest values. Keep collection diagnostics in manifest/Actions reports. Do not add `最近检查`, `人工录入时间`, `自动更新`, `人工维护`, or update-status badges to charts or overview cards.
 
 Comparison policy for the initial implementation:
 
@@ -242,6 +242,27 @@ Comparison policy for the initial implementation:
 Comparison matching is only for summary metrics; it never fills source history or relaxes derived-input joins. Anchor chart ranges to the snapshot's latest observation date, not a download timestamp. Keep 3M/1Y arithmetic means over actual native observations ending on each series's latest valid date, and the selected-range empirical percentile. State the sample basis and count; do not increase counts by filling dates. Comparison-unit scaling must be explicit so bp-normalized data is not converted twice.
 
 Exit check: weekly and daily pilot data and monthly/quarterly/irregular test inputs render with correct labels, values, gaps, counts, and empty states. Deep links, repository-subpath hosting, keyboard controls, and mobile layouts continue to work. Demo mode remains clearly synthetic.
+
+Implemented November 17, 2026: `scripts/assemble.py` validates saved source inputs,
+normalizes and derives histories offline, and promotes the complete content-hashed
+snapshot atomically. Production builds validate/copy that snapshot; the frontend
+uses reviewed metadata and frequency-specific comparisons. Source-only inputs stay
+outside the chart map; pending indicators remain empty. Publisher: Junyan Liu.
+The manifest records base source commit, exact source-file hashes and local changes;
+commit source changes and reassemble before a release.
+
+Verification: 96 Python tests and 26 JavaScript checks passed. The suites cover
+assembly, manual ownership,
+retained/failed sources, corruption, atomic replacement, production markup, source
+notices, daily/weekly/monthly/quarterly comparisons, native sample counts, deep links,
+empty dialogs and keyboard cancellation. HTTP preview responds successfully.
+Follow-up desktop Chrome verification reproduced a cached pre-migration script
+reading schema-v2 observations and crashing in `latestObservation`. Build output now
+versions the complete JavaScript import graph and styles; JSON requests revalidate
+cached responses. An ordinary reload, visible charts, statistics, expanded details,
+and Escape-to-close were verified in Chrome. Cache regression tests brought the
+passing suite to 99 Python tests and 26 JavaScript checks. Mobile visual acceptance remains
+**pending**. No production schedule or deployment changed.
 
 ### Slice 5 — Automated publication and rollback
 

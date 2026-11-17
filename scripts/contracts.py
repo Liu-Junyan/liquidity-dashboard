@@ -1,7 +1,7 @@
 """Offline schema-v2 snapshot validation, separate from schema-v1 demo builds.
 
-This validates the serialized contract. The future assembler must additionally
-validate activation, reconcile input hashes with staged files, and promote atomically.
+This validates the serialized base contract. scripts.assemble additionally
+validates activation, reconciles content hashes/calculations, and promotes atomically.
 """
 import math
 import re

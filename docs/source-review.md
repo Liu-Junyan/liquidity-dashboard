@@ -145,10 +145,11 @@ Neither that source nor reserve/assets is activated by this review.
 
 `python3 scripts/policies.py` validates the five pilot definitions without network
 access or credentials. `ready` still permits incomplete nonpilot registry entries.
-`ACTIVE_SERIES` remains empty. Slice 3 registers executable collector,
+`ACTIVE_SERIES` now selects the five pilot definitions for local Slice 4 assembly.
+Slice 3 registered executable collector,
 normalization, and calculation paths; `--check-activation` now passes offline.
 Assembly must select all dependencies and pass activation validation. No reviewed
-entry automatically starts collecting. Only the explicit `scripts/collect.py`
+entry automatically starts a network request. Only the explicit `scripts/collect.py`
 command reads the environment/local `.env` key and makes FRED requests.
 
 Slice 3 compares live provider IDs, frequency, source units, and adjustment
@@ -187,3 +188,21 @@ After applying the shared 2010 cutoff, another live refresh saved 880 WALCL,
 was preserved. The refresh removed only pre-2010 observations; all overlapping
 values were unchanged. The original metadata inception dates remain in the
 input files, alongside `requestParameters.observation_start: "2010-01-01"`.
+
+
+## Slice 4 presentation record — November 17, 2026
+
+Publisher name supplied by the maintainer: **Junyan Liu**. Rechecked the
+[New York Fed terms](https://www.newyorkfed.org/privacy/termsofuse) (page states
+last updated June 9, 2023). `scripts/notices.py` supplies the reference-rate
+republication notice, non-affiliation disclaimer, SOFR third-party-data notice,
+and original-source/FRED attribution. Notices appear visibly below the relevant
+chart and in expanded details; FRED citation dates come from successful retrievals.
+SOFR−EFFR is labeled as a project calculation, with links to both source series.
+The Board/FRED WALCL citation identifies H.4.1 and its million-to-billion conversion;
+repo attribution preserves the original series title and billions scale.
+
+These changes enable local production rendering, not public release certification.
+Desktop Chrome rendering and expanded details have since been verified. Mobile
+visual acceptance remains pending; production scheduling, deployment and rollback
+remain Slice 5.
