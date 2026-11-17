@@ -19,7 +19,8 @@ POLICY_VERSION = '2'
 ACTIVE_SERIES = frozenset()
 PILOT_SERIES = frozenset({'fed-assets', 'sofr', 'effr', 'sofr-effr-spread', 'fed-repo'})
 # Keys are pipeline capabilities, values must be real callable implementations.
-# The importer, collector, normalizer, and calculator arrive in Slices 2 and 3.
+# Manual candidate validation exists in Slice 2; no manual source policy is
+# activated. Collector, normalizer, and calculator capabilities arrive in Slice 3.
 IMPLEMENTATIONS = {}
 
 

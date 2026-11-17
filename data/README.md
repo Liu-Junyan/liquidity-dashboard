@@ -13,7 +13,7 @@
 
 The current CSV has 37 series: 23 displayed indicators (9 monetary, 3 offshore, 7 credit, 4 financial-market), 6 source-only inputs, and 8 unavailable entries. Investment-grade and high-yield credit spreads use separate IDs, `credit-spreads-ig` and `credit-spreads-hy`.
 
-**Observations remain explicitly synthetic.** This change connects the registry to dashboard membership and metadata; it does not fetch source data, import manual observations, execute formulas, or apply `less`/`greater` as judgments about market conditions. Registered source references appear in expanded details as intended sources. The demo still uses a weekly fixture grid; `native_frequency` records the planned source frequency separately. Missing normalized units display `待确认` rather than inheriting an obsolete catalog definition.
+**Dashboard observations remain explicitly synthetic.** The demo connects the registry to dashboard membership and metadata; it does not fetch source data, consume manual observations, execute formulas, or apply `less`/`greater` as judgments about market conditions. The separate manual importer validates candidate inputs without changing the dashboard. Registered source references appear in expanded details as intended sources. The demo still uses a weekly fixture grid; `native_frequency` records the planned source frequency separately. Missing normalized units display `待确认` rather than inheriting an obsolete catalog definition.
 
 ## Editing routine
 
@@ -90,12 +90,69 @@ before activation.
 For revisions, edit the existing row. Explain changed values, values replaced by
 missing, and deleted rows in the input commit message, identifying the series and
 affected dates or range. New observations need no correction reason. Git preserves
-the previous values; the planned importer compares against the previous committed
-input and requires a baseline instead of silently skipping correction checks.
+the previous values; the importer compares against previous committed inputs
+and requires a baseline instead of silently skipping correction checks.
 
-The importer is not implemented yet. These files prepare Slice 2 test inputs;
-placing them here does not activate a series or update the dashboard. Source
-review and activation checks still apply before production use.
+The read-only importer validates these candidate inputs; placing them here does
+not activate a series or update the dashboard. Source review and activation
+checks still apply before production use. A missing source reference is allowed
+for unactivated inputs, while any supplied reference must be a sanitized HTTPS
+URL or publication citation. Production activation still requires a reviewed
+reference and coverage definition, including for the SIFMA inputs.
+
+```sh
+# Validate committed inputs and all first-parent correction history.
+python3 scripts/import_manual.py
+
+# Pre-commit validation of local edits against HEAD, with a proposed message.
+python3 scripts/import_manual.py --working-tree --message-file /tmp/manual-commit.txt
+
+# Reuse that exact message when committing the workbook and exported CSVs.
+git commit -F /tmp/manual-commit.txt
+```
+
+Stage the workbook and CSV changes together before committing. Put one or more
+lines in the commit message using this exact format (inclusive date ranges):
+
+```text
+Refresh issuance inputs
+
+Manual-Reason: bond-issuance 2026-09-30: corrected the saved September total
+Manual-Reason: corporate-bond-issuance 2026-01-31..2026-10-31: publisher revised provisional figures
+```
+
+Every changed or removed date must be covered by a reason for its series, including
+null-to-number changes, number-to-null changes, and deletion of an entire CSV.
+Adding dates needs no reason. Numeric formatting changes (`1`, `1.0`, `1e0`) are
+equivalent; decimal values are compared exactly before conversion to JSON numbers.
+Blank value cells become null, while empty/all-null histories remain valid inputs.
+Invalid numbers, unsupported unit conversions, nonmanual ownership, unknown IDs,
+malformed CSVs, duplicate/unsorted dates, and symlink inputs fail validation.
+Units come from the registry; values stay in source scale. Import does not perform
+normalization or infer units from values, interpolate dates, or require a shared calendar.
+
+The default audit checks each first-parent commit, so an undocumented edit cannot
+be hidden by a later revert or unrelated commit. Merge commits are compared with
+their first parent and must carry reasons for any resulting corrections.
+PR checks use the branch head, not GitHub's synthetic merge commit; preserve the
+reason lines when composing the actual merge or squash message. Committed
+reasons come only from Git; `--message-file` is for the working-tree preflight.
+The Git index is not a candidate mode: preflight reads local files, and CI reads
+committed files. `--revision <commit>` checks a historical candidate. The optional
+`--base <commit>` trusts an explicitly selected, previously validated first-parent
+baseline and audits subsequent commits; do not use it to bypass failed history.
+Without it, an empty root commit is the baseline; a root already containing manual
+inputs needs an explicit trusted baseline. Missing commits, missing objects, and
+shallow clones fail with a fetch-history error. CI uses `fetch-depth: 0`.
+
+The initial workbook/export baseline is commit `7ea1a09`. The Python
+`import_manual()` API returns source-scale observations, registry units/reference,
+specification hash, the committed input ID, per-commit changes, and aggregate
+revision counts over the audited range. Working-tree candidates have no
+`sourceInputCommit`; `comparisonCommit` identifies their HEAD baseline. This is
+an in-memory candidate result, not a snapshot or a normalized manifest hash.
+The importer never writes manual, automatic, demo, or production files. Future
+collectors must use the ownership gate before writing automatic inputs.
 
 ### Exporting the Wind issuance workbook
 
@@ -160,9 +217,9 @@ those values are current. Review the printed date range after refreshing. Re-exp
 from the workbook for future updates; direct CSV edits would be replaced on the
 next export. Review revisions/removals in Git and explain them in the commit
 message. GitHub Actions installs the same pinned dependency for the offline tests;
-it does not refresh or re-export the workbook during deployment. Git-baseline
-correction enforcement, production source review, snapshot assembly, and deployment
-remain later pipeline steps. This exporter does not
+it does not refresh or re-export the workbook during deployment. The importer
+enforces Git-baseline corrections separately; production source review, snapshot
+assembly, and deployment remain later pipeline steps. This exporter does not
 activate these series or write to `site/data/`.
 
 ## Production foundation (Slice 1)
@@ -173,8 +230,9 @@ python3 scripts/policies.py
 
 This offline command checks the five reviewed pilot specifications: `fed-assets`,
 `sofr`, `effr`, `sofr-effr-spread`, and automatic FRED `fed-repo`. The existing registry
-validator continues to accept incomplete future entries. No collector, importer,
-or production publisher is enabled. `python3 scripts/policies.py --check-activation`
+validator continues to accept incomplete future entries. The Slice 2 importer
+validates candidates; no collector or production publisher is enabled.
+`python3 scripts/policies.py --check-activation`
 deliberately fails until the required implementations are registered in later slices.
 
 The [source review](../docs/source-review.md) records definitions, release and date
@@ -212,10 +270,14 @@ The repo input now uses FRED `RPONTTLD`: daily overnight repo totals across
 Treasury securities, federal agency debt, and agency MBS, already in billions,
 with an identity conversion and preserved source dates. This replaces the earlier manual all-collateral aggregation; it is not an
 outstanding balance. See the source review for coverage and missing-value handling.
-Manual CSV import still arrives in Slice 2 for other manual series, initially
-tested with offline fixtures; no real manual sample is needed to start that slice.
+Manual CSV import is implemented in Slice 2 for other manual series and tested
+with isolated offline fixtures; it does not change the repo pilot's ownership.
 
 The [version 2 contract](../docs/production-contract.md) and
 `scripts/contracts.py` define production artifact validation independently of
-the existing demo. Snapshot assembly, production build selection, and frontend
-adoption remain later slices; no new production build command exists yet.
+the existing demo. `python3 scripts/build.py --mode production` checks for a
+snapshot at `data/snapshot/` (or `--snapshot <directory>`) and validates its contract.
+It fails without changing demo files or existing build output when the snapshot is
+missing/invalid, and remains explicitly blocked even for valid snapshots until
+Slice 4 supplies production assembly and frontend support. The default build and
+`--mode demo` retain the existing demo behavior.

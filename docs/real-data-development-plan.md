@@ -1,6 +1,6 @@
 # Real-data integration development plan
 
-Updated: November 16, 2026. Status: Slice 1 implemented; no production collector or real-data deployment is enabled.
+Updated: November 17, 2026. Status: Slices 1 and 2 implemented; no production collector or real-data deployment is enabled.
 
 ## 1. Goal and first release
 
@@ -24,7 +24,7 @@ Completion means these pilot series work through collection, normalization, deri
 | --- | --- | --- |
 | `data/registry.csv` and `scripts/registry.py` | Membership, specifications, dependency checks, optional JSON export | Add production completeness checks for activated series without requiring all draft sources to be finished |
 | `scripts/catalog.py` | Generates weekly demo metadata and synthetic explanations | Generate production metadata separately, using native frequencies and reviewed explanations |
-| `scripts/build.py` | Always calls the fixture generator; validator requires demo flags and a shared weekly grid | Explicit demo/production modes; production consumes a validated snapshot without generating observations |
+| `scripts/build.py` | Explicit demo/production modes; production validates snapshots but remains blocked pending frontend migration | In Slice 4, consume a validated snapshot without generating observations |
 | `site/assets/data.js` | Exact-date 4/13-week comparisons; weekly frequency label | Frequency-specific comparisons and labels; preserve valid sample counts |
 | `site/assets/app.js` and `charts.js` | Synthetic wording; dialog indexes first/last points | Production labels, version checks, and safe empty/short-history rendering |
 | `.github/workflows/pages.yml` | Builds fixtures on pushes, pull requests, and manual runs | Add collection and snapshot publication after local production validation works |
@@ -90,7 +90,7 @@ Introduce production schema version 2, leaving schema version 1 fixtures intact:
 
 The source-input commit identifies the checked-out registry, policies, and manual inputs; fetched inputs are identified by hashes. The later commit containing automatic inputs and the snapshot is the artifact revision used for deployment. This avoids requiring a commit to contain its own Git hash.
 
-Use temporary staging directories and atomic replacement after validation. The production build copies a selected snapshot into the output directory without overwriting checked-in demo observations in `site/data/`. Proposed commands should fail clearly for a missing snapshot and never fall back to fixtures.
+Use temporary staging directories and atomic replacement after validation. The production build will copy a selected snapshot into the output directory without overwriting checked-in demo observations in `site/data/`. The Slice 2 command already fails clearly for a missing snapshot and never falls back to fixtures; successful production output remains gated on Slice 4 frontend support.
 
 ## 5. Development sequence
 
@@ -133,10 +133,26 @@ samples can exercise the importer after their registry source, units, and monthl
 date conventions are specified. Their production activation remains in Slice 6.
 
 - [x] Prepare the SIFMA issuance CSVs from the saved Wind workbook with `scripts/export_wind_issuance.py` (November 17, 2026). This `openpyxl` adapter checks headers, billions units, manual ownership, month-end dates, and cached numeric values. The raw workbook is versioned in `data/sources/wind/`; outputs use `date,value` in `data/manual/`. This does not implement the CSV importer, Git-baseline correction checks, source activation, or publication. See the [export workflow](../data/README.md#exporting-the-wind-issuance-workbook).
-- [ ] Implement UTF-8 CSV import with exactly `date,value` at `data/manual/<series-id>.csv`; blank values become null. Enforce the two-column schema, sorted unique ISO dates, finite numbers, and supported registry units. Resolve the shared source reference and table/measurement details from `data/registry.csv`, not individual observations. Require a reviewed source reference before activation; no publication-date or correction-note columns are maintained.
-- [ ] Compare manual edits against the previous committed input. Changed values, nulling a prior value, and removed rows require a reason in the input commit message identifying the series and affected dates or range. New rows need no correction reason. CI fetches enough history for this comparison and reports a missing baseline rather than bypassing validation.
-- [ ] Enforce ownership: collectors cannot write manual files, and manual files cannot override automatic inputs.
-- [ ] Add explicit demo and production build modes. Preserve existing demo commands/tests; production cannot invoke `generate_fixtures.py` or write to its output paths.
+- [x] Implement UTF-8 CSV import with exactly `date,value` at `data/manual/<series-id>.csv`; blank values become null. Enforce the two-column schema, sorted unique ISO dates, finite numbers, and supported registry units. Resolve the shared source reference and table/measurement details from `data/registry.csv`, not individual observations. Require a reviewed source reference before activation; no publication-date or correction-note columns are maintained.
+- [x] Compare manual edits against the previous committed input. Changed values, nulling a prior value, and removed rows require a reason in the input commit message identifying the series and affected dates or range. New rows need no correction reason. CI fetches enough history for this comparison and reports a missing baseline rather than bypassing validation.
+- [x] Enforce input ownership: manual files cannot override automatic or derived inputs. The importer is read-only; a shared ownership gate rejects automatic access to manual series. Slice 3 collectors must use this gate and write only automatic paths.
+- [x] Add explicit demo and production build modes. Preserve existing demo commands/tests; production cannot invoke `generate_fixtures.py` or write to its output paths.
+
+Implemented November 17, 2026. The workbook, exported inputs, exporter, and related
+changes were already committed together in `7ea1a09` before importer work.
+`scripts/import_manual.py` audits every first-parent input revision, accepts
+`Manual-Reason: <series-id> YYYY-MM-DD[..YYYY-MM-DD]: <reason>` lines in each
+correcting commit, and supports read-only working-tree preflight. CI fetches full
+history. Tests use isolated Git repositories and registries for additions,
+corrections, nulling, removals, ownership, units, and missing baselines.
+The three SIFMA files validate as candidate inputs (570 observations); source
+review and production activation remain deferred. See the
+[import commands and audit semantics](../data/README.md#manual-observation-files-slice-2-format).
+
+`python3 scripts/build.py --mode production` requires a version 2 snapshot and
+validates its contract. Missing/invalid snapshots fail before any output changes;
+valid snapshots are also blocked until Slice 4 supplies production assembly and
+rendering. `--mode demo` and the existing no-argument build preserve demo behavior.
 
 Exit check: a manual addition and a documented correction validate as candidate inputs offline using isolated test fixtures (full snapshot assembly arrives in Slice 4); duplicate dates, undocumented corrections/removals, and cross-method writes fail. Production with no snapshot fails without modifying demo files.
 
@@ -222,4 +238,8 @@ node --test tests/data.test.mjs
 git diff --check
 ```
 
-Run `python3 scripts/build.py` for the existing demo build. Implementation must document the new production commands when they become available; this plan does not imply they already exist. Git snapshots preserve versions captured by this project, not a reconstructed point-in-time publication-vintage dataset.
+Run `python3 scripts/build.py --mode demo` for the existing demo build, and
+`python3 scripts/import_manual.py` for committed input validation. The production
+command above currently enforces the snapshot/frontend boundary without writing
+outputs. Git snapshots preserve versions captured by this project, not a
+reconstructed point-in-time publication-vintage dataset.

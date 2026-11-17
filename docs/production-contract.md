@@ -3,7 +3,10 @@
 Slice 1 implements `scripts.contracts.validate_snapshot(catalog, observations,
 manifest)`. It validates serialized objects offline; it does not fetch, assemble,
 write, or deploy anything. The existing demo remains schema version 1. The
-production build and browser loader will adopt this contract together in Slice 4.
+production build and browser loader will render this contract together in Slice 4.
+Slice 2 adds `build.py --mode production`: it checks the snapshot directory and
+validates this contract, then fails explicitly until the Slice 4 rendering path
+exists. It never invokes fixtures or changes `site/data/` or `dist/`.
 
 All three documents carry integer `schemaVersion: 2` and the same slug `snapshotId`.
 A producer chooses a unique ID for a complete candidate; the validator rejects

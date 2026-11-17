@@ -4,6 +4,7 @@ This registers specifications only: no collection, formula execution, or site wr
 """
 import argparse
 import csv
+import io
 import json
 import re
 from pathlib import Path
@@ -23,10 +24,14 @@ SLUG = re.compile(r'[a-z0-9]+(?:-[a-z0-9]+)*\Z')
 
 
 def load_registry(path=DEFAULT_REGISTRY):
+    return parse_registry(Path(path).read_text(encoding='utf-8-sig'))
+
+
+def parse_registry(text):
     """Allow incomplete drafts; reject invalid filled fields and dependency graphs."""
     mapped = set()
     series = {}
-    with Path(path).open(encoding='utf-8-sig', newline='') as handle:
+    with io.StringIO(text.lstrip('\ufeff'), newline='') as handle:
         reader = csv.DictReader(handle)
         headers = reader.fieldnames or []
         if len(headers) != len(set(headers)) or set(headers) != set(FIELDS):

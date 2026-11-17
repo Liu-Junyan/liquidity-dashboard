@@ -1,19 +1,11 @@
-"""Validate local data and build a self-contained GitHub Pages directory."""
+"""Build the demo, or validate the production boundary without synthetic fallback."""
+import argparse
 import json
 import math
 import shutil
 from datetime import date, datetime
 from pathlib import Path
 from urllib.parse import urlparse
-
-if __package__:
-    from .catalog import build_catalog
-    from .registry import load_registry
-    from .generate_fixtures import generate
-else:
-    from catalog import build_catalog
-    from registry import load_registry
-    from generate_fixtures import generate
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -69,7 +61,16 @@ def validate(catalog, observations):
         require(points[0]['date'] == dataset['observationStart'] and points[-1]['date'] == dataset['observationEnd'], 'Series must span the dataset interval')
 
 
-def build():
+def build_demo():
+    # Fixture code is loaded only after the caller explicitly selects demo mode.
+    if __package__:
+        from .catalog import build_catalog
+        from .registry import load_registry
+        from .generate_fixtures import generate
+    else:
+        from catalog import build_catalog
+        from registry import load_registry
+        from generate_fixtures import generate
     source = ROOT / 'site'
     catalog = build_catalog(load_registry())
     observations = generate(catalog)
@@ -87,5 +88,41 @@ def build():
     print(f'Built {len(catalog["categories"])} categories, {len(catalog["indicators"])} indicators to {output}')
 
 
+def build(mode='demo', snapshot=None):
+    if mode == 'demo':
+        if snapshot is not None:
+            raise ValueError('--snapshot is only valid in production mode')
+        return build_demo()
+    if mode != 'production':
+        raise ValueError(f'Unknown build mode: {mode}')
+    directory = Path(snapshot) if snapshot is not None else ROOT / 'data/snapshot'
+    names = ('catalog', 'observations', 'manifest')
+    missing = [f'{name}.json' for name in names if not (directory / f'{name}.json').is_file()]
+    if missing:
+        raise ValueError(f'Production snapshot missing at {directory}: {", ".join(missing)}. '
+                         'Assemble a validated snapshot first; production never generates demo data.')
+    if __package__:
+        from .contracts import validate_snapshot
+    else:
+        from contracts import validate_snapshot
+    documents = [json.loads((directory / f'{name}.json').read_text(encoding='utf-8')) for name in names]
+    validate_snapshot(*documents)
+    # Schema-v1 assets cannot render schema-v2 snapshots. Do not publish a broken
+    # site or falsely relabel the demo before Slice 4 migrates the frontend.
+    raise ValueError('Production snapshot contract validated, but production rendering is not enabled: '
+                     'Slice 4 snapshot assembly and frontend migration are required. No output was changed.')
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--mode', choices=('demo', 'production'), default='demo')
+    parser.add_argument('--snapshot', type=Path, help='Production snapshot directory (default: data/snapshot)')
+    args = parser.parse_args()
+    try:
+        build(args.mode, args.snapshot)
+    except (ValueError, OSError) as error:
+        parser.exit(1, f'Build failed: {error}\n')
+
+
 if __name__ == '__main__':
-    build()
+    main()

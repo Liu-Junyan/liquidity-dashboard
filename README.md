@@ -9,7 +9,7 @@ Each indicator's **查看统计摘要** control shows its trailing 3-month and 1
 The demo preview needs Python 3.10+; no Python packages or frontend installation is needed for that build.
 
 ```sh
-python3 scripts/build.py
+python3 scripts/build.py --mode demo
 python3 -m http.server 8000 --directory dist --bind 127.0.0.1
 ```
 
@@ -26,6 +26,7 @@ python3 -m pip install -r requirements.txt
 python3 scripts/build.py
 python3 scripts/registry.py
 python3 scripts/policies.py
+python3 scripts/import_manual.py
 python3 -m unittest discover -s tests -p 'test_*.py'
 node --test tests/data.test.mjs
 ```
@@ -36,7 +37,22 @@ JavaScript checks use Node 22+ and built-in modules; `npm install` is unnecessar
 
 Edit [data/registry.csv](data/registry.csv), then run `python3 scripts/build.py`. The build regenerates the catalog and demo observations from the CSV, including additions, renames, removals, and `unavailable` exclusions. No separate catalog edit is needed. [The registry guide](data/README.md) explains visibility rules and the 16 columns. `python3 scripts/registry.py --output data/registry.json` optionally exports the complete registry, including hidden entries.
 
-Real-data Slice 1 is implemented: [pilot source reviews](docs/source-review.md), explicit FRED IDs, normalization/calculation policies, activation gates, and the [version 2 artifact contract](docs/production-contract.md). Run `python3 scripts/policies.py` to validate the reviewed specifications offline. No series is activated yet; `--check-activation` intentionally fails until executable import/collection paths exist. The `.env` FRED key is not read by this slice. Real collection, manual import, formula execution, snapshot assembly, and native-frequency frontend migration remain later work.
+Real-data Slices 1 and 2 are implemented: [pilot source reviews](docs/source-review.md), explicit FRED IDs, normalization/calculation policies, activation gates, the [version 2 artifact contract](docs/production-contract.md), and manual CSV validation with Git correction audits. Run `python3 scripts/policies.py` to validate the reviewed specifications offline. No series is activated yet; `--check-activation` intentionally fails until collection and normalization implementations exist. The `.env` FRED key is not read. Real collection, formula execution, snapshot assembly, and native-frequency frontend migration remain later work.
+
+`python3 scripts/import_manual.py` validates committed manual inputs and audits
+each first-parent commit against its predecessor. CI fetches full history. Before
+committing edits, use `python3 scripts/import_manual.py --working-tree
+--message-file /tmp/manual-commit.txt` with your proposed commit message. Corrections
+and removals need `Manual-Reason: <series-id> YYYY-MM-DD[..YYYY-MM-DD]: <reason>`
+lines covering every affected date; additions need no reason. See the
+[manual input guide](data/README.md#manual-observation-files-slice-2-format).
+
+`python3 scripts/build.py` remains a demo build for compatibility; `--mode demo`
+makes that choice explicit. `python3 scripts/build.py --mode production` requires
+`data/snapshot/{catalog,observations,manifest}.json` (or `--snapshot /path/to/snapshot`).
+Missing or invalid snapshots fail without changing `site/data/` or `dist/`.
+Even a valid snapshot remains blocked until Slice 4 implements production assembly
+and rendering. Production mode never invokes fixtures or publishes the demo.
 
 For the three SIFMA issuance inputs, `python3 scripts/export_wind_issuance.py`
 uses `openpyxl` to convert saved values from the Wind workbook into `data/manual/*.csv`.
