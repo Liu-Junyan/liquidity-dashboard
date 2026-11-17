@@ -1,4 +1,4 @@
-import {formatDate, formatNumber, timestamp, seriesLabel, emptyChartLabel, DAY} from './data.js';
+import {formatDate, formatNumber, timestamp, emptyChartLabel, DAY} from './data.js';
 import {t} from './zh-CN.js';
 
 const instances = new Map();
@@ -28,7 +28,7 @@ export function drawChart(element, observations, indicator, {sparkline = false} 
       backgroundColor: '#12374b', borderWidth: 0, textStyle: {color: '#fff', fontSize: 12},
       formatter: params => {
         const point = params[0];
-        return `${formatDate(new Date(point.value[0]).toISOString().slice(0, 10))}\n${formatNumber(point.value[1], indicator.unit.precision)} ${indicator.unit.label}\n${seriesLabel(indicator)}`;
+        return `${formatDate(new Date(point.value[0]).toISOString().slice(0, 10))}\n${formatNumber(point.value[1], indicator.unit.precision)} ${indicator.unit.label}`;
       },
     },
     xAxis: {type: 'time', show: !sparkline, min: timestamp(observations[0].date) - (observations.length === 1 ? DAY : 0), max: timestamp(observations.at(-1).date) + (observations.length === 1 ? DAY : 0), splitNumber: 4,

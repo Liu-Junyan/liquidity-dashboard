@@ -127,7 +127,9 @@ try {
     assert.equal(node('#status').textContent, '');
     assert.equal(node('#indicator-dialog').open, true);
     assert.match(node('#dialog-content').innerHTML, /Junyan Liu.*not affiliated/);
-    assert.match(node('#charts').innerHTML, /DTCC Solutions/);
+    assert.match(node('#dialog-content').innerHTML, /DTCC Solutions/);
+    assert.match(node('#charts').innerHTML, /数据来源：NY Fed \/ FRED · 项目计算<\/p>/);
+    assert.doesNotMatch(node('#charts').innerHTML, /source-notices|DTCC Solutions/);
     assert.match(node('#charts').innerHTML, /近4周变化/);
     assert.ok(labels.every(label => !/合成|演示|SIFMA/.test(label.textContent)));
     assert.doesNotMatch(node('#dialog-content').innerHTML, /最近检查|人工录入时间|自动更新|人工维护|生成时间/);
@@ -135,7 +137,7 @@ try {
     const chart = charts.get(node('#expanded-chart'));
     assert.deepEqual(chart.series[0].data.map(point => point[1]), payload.series[daily.id].map(point => point.value));
     assert.equal(chart.series[0].connectNulls, false);
-    assert.match(chart.tooltip.formatter([{value: chart.series[0].data.at(-2)}]), /FRED/);
+    assert.doesNotMatch(chart.tooltip.formatter([{value: chart.series[0].data.at(-2)}]), /FRED|NY Fed|项目计算/);
     assert.ok(requests.every(address => address.endsWith('/site/data/catalog.json') || address.endsWith('/site/data/observations.json')));
     const source = readFileSync(new URL('../dist/assets/app.js', import.meta.url), 'utf8');
     assert.match(source, /new URL\(`\.\.\/data\/\$\{name\}\.json`, import.meta.url\)/);

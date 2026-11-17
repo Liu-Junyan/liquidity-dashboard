@@ -45,6 +45,14 @@ function statisticsMarkup(indicator) {
     return `<div><dt>${t(key)}${isPercentile ? `<span class="statistics-range">${t(state.range)}</span>` : ''}</dt><dd>${formatNumber(statistic.value, isPercentile ? 1 : indicator.unit.precision)}<small>${isPercentile ? '%' : escape(indicator.unit.label)}</small></dd><dd class="statistics-count">${t('validCount')}：${statistic.count}</dd></div>`;
   }).join('')}</dl><p class="statistics-note">${t('statisticsNote')}</p></section>`;
 }
+function sourceSummary(indicator) {
+  if (indicator.isDemo) return t('sourceFixture');
+  if (!indicator.inputAvailable) return '待接入';
+  const parts = indicator.source.name.split(' · ');
+  const calculated = parts.includes('项目计算');
+  const provider = parts.find(part => part !== '项目计算');
+  return `${provider}${calculated ? ' · 项目计算' : ''}`;
+}
 function sourceMarkup(indicator) {
   if (indicator.sources?.length > 1) return `${escape(indicator.source.name)} · ${indicator.sources.map(reference => reference.startsWith('https://') ? `<a href="${escape(reference)}" target="_blank" rel="noopener noreferrer">${escape(reference.split('/').at(-1))} ↗</a>` : escape(reference)).join(' · ')}`;
   return indicator.source.url ? `<a href="${escape(indicator.source.url)}" target="_blank" rel="noopener noreferrer">${escape(indicator.source.name)} ↗</a>` : escape(indicator.source.name);
@@ -82,7 +90,7 @@ function renderCharts() {
     parent.innerHTML = `<p class="empty-category">${t('emptyCategory')}</p>`;
     return;
   }
-  parent.innerHTML = indicators.map(indicator => `<article class="indicator-card" aria-labelledby="heading-${indicator.id}"><div class="card-heading"><h3 id="heading-${indicator.id}">${escape(indicator.name)}</h3>${indicator.isDemo ? `<span class="card-demo">${t('demoShort')}</span>` : `<span class="card-demo">${frequencyLabel(indicator.frequency)}</span>`}</div><p class="indicator-role">${escape(indicator.role ?? '')}</p>${metrics(indicator)}<div class="chart-unit">${t('unit')}：${escape(indicator.unit.label)}</div><div class="detail-chart" id="chart-${indicator.id}" role="img" aria-label="${escape(indicator.name)} · ${t(state.range)} · ${seriesLabel(indicator)}"></div><div class="card-actions"><button class="text-button" data-statistics="${indicator.id}" aria-expanded="${statisticsOpen.has(indicator.id)}" aria-controls="statistics-${indicator.id}"><span aria-hidden="true">▦</span> ${t(statisticsOpen.has(indicator.id) ? 'hideStatistics' : 'statistics')}</button><button class="text-button" data-expand="${indicator.id}">${t('expand')} <span aria-hidden="true">↗</span></button></div><div id="statistics-${indicator.id}" ${statisticsOpen.has(indicator.id) ? '' : 'hidden'}>${statisticsMarkup(indicator)}</div>${noticesMarkup(indicator)}</article>`).join('');
+  parent.innerHTML = indicators.map(indicator => `<article class="indicator-card" aria-labelledby="heading-${indicator.id}"><div class="card-heading"><h3 id="heading-${indicator.id}">${escape(indicator.name)}</h3>${indicator.isDemo ? `<span class="card-demo">${t('demoShort')}</span>` : `<span class="card-demo">${frequencyLabel(indicator.frequency)}</span>`}</div><p class="indicator-role">${escape(indicator.role ?? '')}</p>${metrics(indicator)}<div class="chart-unit">${t('unit')}：${escape(indicator.unit.label)}</div><div class="detail-chart" id="chart-${indicator.id}" role="img" aria-label="${escape(indicator.name)} · ${t(state.range)} · ${seriesLabel(indicator)}"></div><div class="card-actions"><button class="text-button" data-statistics="${indicator.id}" aria-expanded="${statisticsOpen.has(indicator.id)}" aria-controls="statistics-${indicator.id}"><span aria-hidden="true">▦</span> ${t(statisticsOpen.has(indicator.id) ? 'hideStatistics' : 'statistics')}</button><button class="text-button" data-expand="${indicator.id}">${t('expand')} <span aria-hidden="true">↗</span></button></div><div id="statistics-${indicator.id}" ${statisticsOpen.has(indicator.id) ? '' : 'hidden'}>${statisticsMarkup(indicator)}</div><p class="source-summary">数据来源：${escape(sourceSummary(indicator))}</p></article>`).join('');
   indicators.forEach(indicator => drawChart($(`#chart-${indicator.id}`), pointsFor(indicator), indicator));
 }
 function renderDialog() {
