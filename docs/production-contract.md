@@ -70,7 +70,7 @@ duplicate, or descending date fails validation; zero remains a number.
 | `inputHashes` | Map of automatic/manual series IDs to SHA-256 digests of validated **normalized input content**. Source-only inputs belong here too. First-time failed sources have no hash. |
 | `provenance` | Map keyed by activated series ID, containing the records below. |
 | `outcomes` | Same keys as provenance; contains operational diagnostics, never chart badges. |
-| `revisionSummary` | Nonnegative integer counts `added`, `revised`, `removed`. |
+| `revisionSummary` | Nonnegative integer counts `added`, `revised`, `removed`; summary diagnostics only, not a revision ledger or vintage dataset. |
 
 Each provenance record contains `specHash` (reviewed registry identity), `method`,
 `sourceUnit`, and `normalizedUnit`. Automatic/manual records additionally contain
@@ -111,19 +111,25 @@ cannot follow check time. No operational timestamp can follow snapshot generatio
 
 ## Assembly responsibilities in later slices
 
+Slice 3 now stores full current FRED inputs in `data/automatic/<series-id>.json`.
+The separate input format and deterministic raw/normalized hash serialization are
+documented in the [collection guide](../data/README.md#fred-collection-slice-3).
+Every successful refresh replaces a complete source history and recalculates all
+derived history; no vintage or incremental revision processing is implemented.
+
 Contract validation is one gate, not proof of source correctness. Before calling
 it, the assembler must load/validate the CSV, call `validate_activation`, verify
 input ownership and retained-source compatibility, and reconcile content hashes
 against staged files. It must check provenance formulas/dependencies against
 policies, execute normalization and same-date calculations, and enforce registry
 membership. Keep source-scale observations and hashes in automatic/manual input
-artifacts, distinct from normalized input content; document deterministic content
-hash serialization when those formats are implemented. A manifest digest alone
+artifacts, distinct from normalized input content, using the documented content
+hash serialization. A manifest digest alone
 does not prove those files exist or match.
 
 For a no-change success, compare to the previous input to preserve last-change
 time. For a failure, compare to the previous input to preserve observations and
 last-success time. The single-snapshot validator checks ordering and shape; only
-the later collector can verify these transitions against a previous version.
+the collector verifies these transitions against a previous version.
 Use temporary staging and atomic promotion of the entire validated candidate.
 The production build must never invoke fixtures or overwrite `site/data/`.

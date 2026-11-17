@@ -22,8 +22,9 @@ class PolicyTests(unittest.TestCase):
         self.assertEqual(validate_activation(self.registry), [])
 
     def test_missing_executable_paths_cannot_activate(self):
+        self.assertEqual(set(validate_activation(self.registry, PILOT_SERIES)), PILOT_SERIES)
         with self.assertRaisesRegex(ValueError, 'missing implementation'):
-            validate_activation(self.registry, PILOT_SERIES)
+            validate_activation(self.registry, PILOT_SERIES, implementations={})
         with self.assertRaisesRegex(ValueError, 'missing implementation'):
             validate_activation(self.registry, {'fed-assets'}, implementations={'fred-observations': 'planned'})
 

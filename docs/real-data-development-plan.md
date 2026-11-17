@@ -1,6 +1,6 @@
 # Real-data integration development plan
 
-Updated: November 17, 2026. Status: Slices 1 and 2 implemented; no production collector or real-data deployment is enabled.
+Updated: November 17, 2026. Status: Slices 1–3 implemented; local FRED collection is available. Production activation, scheduling, and real-data deployment remain disabled.
 
 ## 1. Goal and first release
 
@@ -56,7 +56,7 @@ The latest registry's Treasury output is bp. If percent-scale output is preferre
 ### Native dates and derived inputs
 
 - Preserve each source's dates, native frequency, and available history. Observation dates, publication dates, and collection times have separate meanings.
-- Join derived inputs on equal observation dates by default, after normalization. Missing inputs and zero denominators yield null. Recompute affected derived history after revisions.
+- Join derived inputs on equal observation dates by default, after normalization. Missing inputs and zero denominators yield null. Recompute the complete derived history after every refresh.
 - Do not forward-fill inputs or interpolate. A different alignment needs a named per-indicator rule and an age limit in code.
 - Preserve explicit missing values and true zeroes. Do not add weekend or holiday observations to native data. Identify unexpected missing periods using source-specific calendars where needed.
 - Use named calculation functions keyed by derived series ID, validated against their declared inputs and formula. Hyphenated IDs are identifiers, not Python subtraction expressions; do not use unrestricted `eval` on registry text. Reject unknown or mismatched calculation definitions before activation.
@@ -158,13 +158,47 @@ Exit check: a manual addition and a documented correction validate as candidate 
 
 ### Slice 3 — FRED collection, normalization, and derivation
 
-- [ ] Implement metadata review checks and JSON observations collection for `WALCL`, then `SOFR`, `EFFR`, and `RPONTTLD`. Store `FRED_API_KEY` in the local environment and later Actions secrets; never record credential-bearing URLs.
-- [ ] Fetch complete available histories initially, including pagination and response-count checks, to capture revisions. Unexpected empty/truncated responses fail collection; provider missing markers become null. Keep source-scale values before project normalization.
-- [ ] Add bounded retries for transient failures and source-specific freshness expectations. Do not change providers after a failure.
-- [ ] Normalize units and implement the pilot spread. Add normalization/derivation cases for reserve/assets and FRED `chg` using recorded or small illustrative test inputs, even if those series are activated later.
-- [ ] Retain a series's previous valid input on collection failure. A first-time failed series has no history. Report revisions, removals, unchanged responses, and failures distinctly.
+Decision, November 17: fetch the **full current FRED history on every run** and
+replace the prior series only after the complete response validates. Recompute
+all derived history from the resulting inputs. No ALFRED/vintage queries,
+point-in-time dataset, revision ledger, incremental merge, or affected-date
+recomputation is needed. Revision reporting is only three counts (added, changed,
+removed) against the prior file; Git supplies ordinary file history and rollback.
 
-Retained inputs are reusable only when source identity, source units, and provider transformation match the current policy. A source or transformation change needs an explicit migration/refetch; do not relabel old observations as if they came from the new definition. A mismatch in an activated policy blocks assembly until resolved.
+- [x] Implement metadata review checks and JSON observations collection for `WALCL`, `SOFR`, `EFFR`, and `RPONTTLD`. Read `FRED_API_KEY` from the environment or ignored local `.env` (existing `FRED` alias supported); never record credential-bearing URLs.
+- [x] Fetch complete available histories every time, including pagination, response-count checks, and metadata history-bound checks. Unexpected empty/truncated responses fail collection; provider missing markers become null. Keep source-scale values before project normalization.
+- [x] Add bounded retries/timeouts for transient failures and source-specific freshness diagnostics. Do not change providers after a failure.
+- [x] Normalize units and implement the pilot spread. Cover reserve/assets and FRED `chg` with illustrative offline inputs, without activating those future series.
+- [x] Retain a series's previous valid input on collection failure. A first-time failed series has no history. Report revision/removal counts, unchanged responses, and failures distinctly.
+
+Implemented in `scripts/collect.py`, `scripts/providers/fred.py`,
+`scripts/normalize.py`, and `scripts/derive.py`; policy version 3. Run
+`python3 scripts/collect.py` to refresh candidate files under `data/automatic/`.
+Normalization and derivation are recomputed in memory; production snapshot assembly
+and publication remain in Slices 4–5. `--check-activation` now verifies executable
+pilot paths successfully, but `ACTIVE_SERIES` remains empty.
+
+The live November 17 download validated 1,248 WALCL, 2,249 SOFR, 6,880 EFFR, and
+7,011 RPONTTLD observations. Bounds and first values match the published FRED
+tables; see the [reconciliation record](source-review.md#slice-3-live-reconciliation).
+Offline tests cover pagination, metadata drift, malformed/truncated responses,
+retries, source compatibility, full replacement and revision propagation,
+unchanged checks, partial failure, source ownership, and normalization/formulas.
+Verification: all 81 Python tests and 18 JavaScript regression checks passed;
+registry/policy checks and demo/manual-preview builds passed. A second live
+refresh returned unchanged observations for all four sources, advancing check
+times while preserving change times. Demo files remained unchanged.
+
+Freshness is a conservative calendar-day warning: 14 days for WALCL and 7 for
+each daily pilot, measured from the latest numeric observation. It tolerates
+ordinary release lags and holidays, does not fabricate missing dates, and does
+not reject an otherwise valid response. More precise release calendars can be
+added if operational experience warrants them.
+
+Retained inputs are reusable only when the reviewed specification, source identity,
+units, and provider transformation match the current policy. After a reviewed
+source change, a successful full refetch replaces the old definition; a failed
+refetch blocks promotion rather than relabeling or retaining incompatible history.
 
 Exit check: one real download matches its source; a provider revision changes derived history; an unchanged response preserves values but advances check metadata; one failed fetch retains its history while another source updates. Never manufacture values to complete the pilot.
 

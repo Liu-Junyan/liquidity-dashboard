@@ -237,9 +237,9 @@ python3 scripts/policies.py
 This offline command checks the five reviewed pilot specifications: `fed-assets`,
 `sofr`, `effr`, `sofr-effr-spread`, and automatic FRED `fed-repo`. The existing registry
 validator continues to accept incomplete future entries. The Slice 2 importer
-validates candidates; no collector or production publisher is enabled.
-`python3 scripts/policies.py --check-activation`
-deliberately fails until the required implementations are registered in later slices.
+validates manual candidates; Slice 3 supplies local FRED collection.
+`python3 scripts/policies.py --check-activation` now verifies all pilot executable
+paths. Production activation and publication remain disabled.
 
 The [source review](../docs/source-review.md) records definitions, release and date
 conventions, revision treatment, coverage, and redistribution conditions.
@@ -248,6 +248,64 @@ changing scientific definitions, review the source again and update the audit
 record; merely setting `ready` or changing a hash does not implement the source.
 Names/categories/provider codes/unit declarations remain owned by this CSV, not
 duplicated into scheduling policies.
+
+## FRED collection (Slice 3)
+
+```sh
+python3 scripts/collect.py
+# Optional single-source check:
+python3 scripts/collect.py --series fed-assets
+```
+
+The default refresh selects WALCL, SOFR, EFFR, RPONTTLD and the SOFR−EFFR
+calculation. A custom selection containing a derived series must also explicitly
+select its dependencies. Credentials come from `FRED_API_KEY` in the environment,
+then `FRED_API_KEY` or the existing `FRED` alias in the ignored repository `.env`.
+The file is parsed as text, never executed. Use an Actions secret when scheduling
+is implemented; do not commit credentials. Other commands/tests need no key.
+
+Each run fetches the complete current history, validates provider metadata,
+pagination/counts, history bounds, dates, and finite numbers, then replaces the
+source's file at `data/automatic/<series-id>.json`. There are no vintage requests
+or incremental merges. `.` becomes null; zero stays zero. Dates are neither
+resampled nor filled. Requests use a 20-second timeout and at most three attempts
+for network failures, HTTP 429 and transient server errors (1/2-second backoff).
+Error messages omit response bodies, request URLs, and credentials.
+
+Automatic files are candidate inputs, not website assets. Their input schema
+version is 1, independently of production snapshot schema version 2. Each contains:
+
+- Source identity/specification hash, source and normalized units, explicit FRED
+  transformation, reviewed provider metadata, and sanitized request parameters.
+- Complete **source-scale** `observations`, plus `sourceHash`. Values returned for
+  a provider `chg` request are already differences, before project bp scaling.
+- `outcome`: latest stored date, last attempt, successful check, and data-change
+  times, with `updated`, `unchanged`, `retained`, or first-time `failed` status.
+- Three `revisionSummary` counts against the preceding file and a freshness
+  diagnostic. No revision ledger or per-date audit is maintained for FRED.
+
+`sourceHash` hashes the observations array serialized as UTF-8 JSON with sorted
+object keys, compact separators, finite numbers, and no trailing newline.
+`scripts.normalize.content_hash` also hashes normalized arrays independently for
+derived provenance. `normalize` always takes source-scale input; `derive` takes
+normalized input and recalculates the complete same-date union. Missing inputs
+and zero denominators produce null. These outputs are currently returned in
+memory; Slice 4 will assemble them into a production snapshot.
+
+On failure, preserve compatible previous values and successful/change timestamps,
+advancing only the attempt time. Other sources may update. First-time failures
+have empty observations and no source hash; the CLI returns nonzero for any failed
+or retained source so partial failures stay visible. Changed source definitions
+require reviewed registry/policy edits and a successful full refetch; failed
+refetches cannot reuse incompatible history. Corrupt cached files fail validation.
+
+The collector validates the entire in-memory candidate before staging writes and
+atomically replaces each automatic file. It cannot write manual inputs. This is
+not atomic promotion of a publishable snapshot; that remains Slice 4, and writer
+serialization remains Slice 5. Run only one local collector at a time.
+Production activation, scheduled collection, website assembly and deployment
+remain disabled. Full-history replacement incorporates FRED corrections on the
+next run; Git retains ordinary file history for rollback, without vintage tracking.
 
 ### Normalization semantics
 

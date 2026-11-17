@@ -65,7 +65,19 @@ JavaScript checks use Node 22+ and built-in modules; `npm install` is unnecessar
 
 Edit [data/registry.csv](data/registry.csv), then run `python3 scripts/build.py`. The build regenerates the catalog and demo observations from the CSV, including additions, renames, removals, and `unavailable` exclusions. No separate catalog edit is needed. [The registry guide](data/README.md) explains visibility rules and the 16 columns. `python3 scripts/registry.py --output data/registry.json` optionally exports the complete registry, including hidden entries.
 
-Real-data Slices 1 and 2 are implemented: [pilot source reviews](docs/source-review.md), explicit FRED IDs, normalization/calculation policies, activation gates, the [version 2 artifact contract](docs/production-contract.md), and manual CSV validation with Git correction audits. Run `python3 scripts/policies.py` to validate the reviewed specifications offline. No series is activated yet; `--check-activation` intentionally fails until collection and normalization implementations exist. The `.env` FRED key is not read. Real collection, formula execution, snapshot assembly, and native-frequency frontend migration remain later work.
+Real-data Slices 1–3 are implemented: [pilot source reviews](docs/source-review.md),
+manual CSV validation, full-history FRED collection, normalization, and same-date
+calculations. `python3 scripts/policies.py --check-activation` validates the five
+pilot specifications and executable paths offline; no series is activated for
+production yet. Snapshot assembly, production frontend support, and publication
+remain later slices.
+
+Run `python3 scripts/collect.py` to download complete current histories for WALCL,
+SOFR, EFFR, and RPONTTLD into `data/automatic/`. It reads `FRED_API_KEY` from the
+environment or ignored `.env` (the existing local `FRED` alias also works), validates
+each complete response, then replaces its candidate input. Failed downloads retain
+compatible previous history; derived histories are fully recomputed. No vintage
+tracking or incremental merging is used. See the [collection guide](data/README.md#fred-collection-slice-3).
 
 `python3 scripts/import_manual.py` validates committed manual inputs and audits
 each first-parent commit against its predecessor. CI fetches full history. Before

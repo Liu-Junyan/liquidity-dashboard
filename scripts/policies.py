@@ -1,13 +1,17 @@
-"""Reviewed production specifications and fail-closed activation gates (no collection).
+"""Reviewed production specifications and fail-closed activation gates.
 
 Run this file to check pilot specifications offline. Implementations are registered
-only when their executable paths exist; Slice 1 deliberately activates nothing.
+only when their executable paths exist; production activation remains separate.
 """
 import argparse
 import hashlib
 import json
+import sys
 from dataclasses import dataclass
 from pathlib import Path
+
+if not __package__:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 if __package__:
     from .registry import DEFAULT_REGISTRY, load_registry
@@ -15,13 +19,22 @@ else:
     from registry import DEFAULT_REGISTRY, load_registry
 
 ROOT = Path(__file__).resolve().parents[1]
-POLICY_VERSION = '2'
+POLICY_VERSION = '3'
 ACTIVE_SERIES = frozenset()
 PILOT_SERIES = frozenset({'fed-assets', 'sofr', 'effr', 'sofr-effr-spread', 'fed-repo'})
-# Keys are pipeline capabilities, values must be real callable implementations.
-# Manual candidate validation exists in Slice 2; no manual source policy is
-# activated. Collector, normalizer, and calculator capabilities arrive in Slice 3.
-IMPLEMENTATIONS = {}
+# Conservative calendar-day diagnostics, not release-time guarantees or rejection
+# rules. These tolerate weekends, holidays and ordinary provider ingestion lag.
+FRESHNESS_DAYS = {'fed-assets': 14, 'sofr': 7, 'effr': 7, 'fed-repo': 7}
+
+
+def executable_implementations():
+    # Lazy imports keep policies and the shared validators independently usable.
+    from scripts.derive import difference
+    from scripts.normalize import normalize
+    from scripts.providers.fred import FredClient
+    return {'fred-observations': FredClient.fetch, 'same-date-difference': difference,
+            **{f'normalize:{name}': normalize for name in
+               ('identity', 'millions-to-billions', 'percentage-points-to-bp')}}
 
 
 @dataclass(frozen=True)
@@ -99,7 +112,8 @@ def validate_policies(registry, selected=PILOT_SERIES, *, policies=None, reviews
     """Check definitions separately from activation; return dependency-first IDs."""
     policies = POLICIES if policies is None else policies
     reviews = load_reviews() if reviews is None else reviews
-    implementations = IMPLEMENTATIONS if implementations is None else implementations
+    if implementations is None:
+        implementations = executable_implementations() if require_implementations else {}
     series, selected = registry['series'], set(selected)
     for identifier, policy in policies.items():
         if identifier not in series:
@@ -176,7 +190,7 @@ def validate_activation(registry, selected=ACTIVE_SERIES, **kwargs):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--input', type=Path, default=DEFAULT_REGISTRY)
-    parser.add_argument('--check-activation', action='store_true', help='Require pilot executable paths (expected to fail in Slice 1)')
+    parser.add_argument('--check-activation', action='store_true', help='Require pilot executable paths; does not activate production')
     args = parser.parse_args()
     try:
         registry = load_registry(args.input)

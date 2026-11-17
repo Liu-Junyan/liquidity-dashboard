@@ -140,15 +140,39 @@ Neither that source nor reserve/assets is activated by this review.
 
 `python3 scripts/policies.py` validates the five pilot definitions without network
 access or credentials. `ready` still permits incomplete nonpilot registry entries.
-`ACTIVE_SERIES` and `IMPLEMENTATIONS` are empty until the importer/collector and
-normalization/calculation paths exist. `--check-activation` intentionally fails
-in Slice 1. Later slices must register real callables, select all dependencies,
-and pass activation validation before assembly. No reviewed entry automatically
-starts collecting. The `.env` key is not read or needed in this slice.
+`ACTIVE_SERIES` remains empty. Slice 3 registers executable collector,
+normalization, and calculation paths; `--check-activation` now passes offline.
+Assembly must select all dependencies and pass activation validation. No reviewed
+entry automatically starts collecting. Only the explicit `scripts/collect.py`
+command reads the environment/local `.env` key and makes FRED requests.
 
-Slice 3 must compare live provider IDs, frequency, source units, and adjustment
-metadata with this review, retrieve complete histories with count checks, and
-reconcile sample values before enabling an automatic source. Freshness diagnostics
-must account for the above release conventions and source calendars, rather than
-treating holidays as missing observations. Production publication remains gated
-on Slices 2–5, including source notices, browser checks, and rollback verification.
+Slice 3 compares live provider IDs, frequency, source units, and adjustment
+metadata with this review and retrieves complete histories with count/bounds
+checks. Conservative freshness diagnostics allow 14 calendar days for WALCL and
+7 for each daily source, using the latest numeric date. They tolerate normal
+release lags/holidays, warn without rejecting complete histories, and do not infer
+missing dates or fill values. These are research-refresh thresholds, not precise
+release-calendar checks. Production publication remains gated on Slices 4–5,
+including source notices, browser checks, and rollback verification.
+
+## Slice 3 live reconciliation
+
+On November 17, 2026, `python3 scripts/collect.py` downloaded and validated the
+following full histories. Counts include explicit missing observations. History
+bounds and first observations were compared with the public FRED tables linked
+below; this is sample reconciliation, not an independent audit of every value.
+
+| Source | Count | First date / source-scale value | Last date |
+| --- | ---: | --- | --- |
+| [WALCL](https://fred.stlouisfed.org/data/WALCL) | 1,248 | 2002-12-18 / 719,542 million USD | 2026-11-11 |
+| [SOFR](https://fred.stlouisfed.org/data/SOFR) | 2,249 | 2018-04-03 / 1.83% | 2026-11-13 |
+| [EFFR](https://fred.stlouisfed.org/data/EFFR) | 6,880 | 2000-07-03 / 7.03% | 2026-11-13 |
+| [RPONTTLD](https://fred.stlouisfed.org/data/RPONTTLD) | 7,011 | 2000-01-03 / 8.990 billion USD | 2026-11-16 |
+
+WALCL's first normalized value is 719.542 billion USD. RPONTTLD remains in
+billions. SOFR−EFFR was recomputed over 6,880 union dates, with nulls outside
+same-date numeric overlap. A second live full refresh returned `unchanged` for
+all four sources, preserving values and change times while advancing successful
+check times. Offline tests additionally verify revision/removal propagation and
+partial-failure retention. These candidate files do not activate production or
+replace any demo/preview website data.
