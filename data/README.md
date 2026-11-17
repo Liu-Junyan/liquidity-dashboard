@@ -82,9 +82,10 @@ data/manual/corporate-bond-issuance.csv
 Record the shared source in the registry's `source_reference`, with worksheet,
 column, coverage, and period details in `notes`. Do not repeat source references
 in every CSV row or add publication-date/correction-note columns. The current
-SIFMA entries still need those details and verified units: their configured source
-and normalized units are both `Trillion`, which is not verification of a SIFMA
-table's actual scale. Confirm monthly amounts versus year-to-date totals too.
+SIFMA entries use `Billions` for both source and normalized units, matching the
+supplied Wind workbook's `Billions $` label. Exact SIFMA/Wind series identifiers,
+coverage, and monthly versus year-to-date definitions still need source review
+before activation.
 
 For revisions, edit the existing row. Explain changed values, values replaced by
 missing, and deleted rows in the input commit message, identifying the series and
@@ -95,6 +96,74 @@ input and requires a baseline instead of silently skipping correction checks.
 The importer is not implemented yet. These files prepare Slice 2 test inputs;
 placing them here does not activate a series or update the dashboard. Source
 review and activation checks still apply before production use.
+
+### Exporting the Wind issuance workbook
+
+Keep the refreshable workbook at `data/sources/wind/bond-issuance.xlsx`. Source
+workbooks belong in Git so another machine can pull, refresh, and export the same
+file. This directory remains outside `site/`, so source workbooks are not included
+in the GitHub Pages website.
+
+Pull the latest changes before opening the workbook. Refresh and save it in Excel
+with the Wind add-in, close Excel, then export and commit the workbook together
+with its CSV changes. Excel lock files (`~$*.xlsx`) are ignored. Git cannot merge
+competing workbook edits as text; coordinate updates or choose the correct
+workbook version and regenerate the CSVs if a conflict occurs.
+
+Install the pinned Excel reader once in your Python environment:
+
+```sh
+python3 -m pip install -r requirements.txt
+```
+
+From the repository root, run:
+
+```sh
+python3 scripts/export_wind_issuance.py --check
+python3 scripts/export_wind_issuance.py
+git diff -- data/manual/
+```
+
+The script uses Python 3.10+ and `openpyxl` to read saved values. Excel and Wind
+are needed to refresh the workbook, but not to extract its saved results. To read
+a workbook saved elsewhere:
+
+```sh
+python3 scripts/export_wind_issuance.py --input /path/to/bond-issuance.xlsx
+```
+
+The expected worksheet is `bond-issuance` (`--sheet` can select another name):
+
+- Row 1 contains the Wind control formula, which is never evaluated, and the
+  required `Billions $` unit label in B1.
+- Row 2 has `指标名称` or `date` in A2 and the three registry series IDs as column
+  headers. The exporter matches IDs, so rearranging the three value columns is safe.
+- Row 3 onward contains dates in column A and the saved numeric values. Dates
+  must be month-end Excel dates or ISO `YYYY-MM-DD` text; source dates are preserved.
+
+The exporter writes the three files listed above with exactly `date,value`, sorted
+oldest first. It preserves Excel numeric values, zeroes, and blank/missing
+values (decimal text may be shortened by the Excel reader); it does not round to
+Excel's displayed two decimal places, convert units, fill missing months, or add
+component series together. The supplied workbook
+produced 190 observations per series from January 2011 through October 2026.
+
+Duplicate dates, unknown/duplicate headers, invalid dates or values, Excel errors,
+uncached data formulas, empty/all-missing series, and mismatched registry units or
+ownership fail before any CSV is replaced. All outputs are staged first and each
+file is replaced atomically; this is not a three-file transaction. `--check`
+validates without writing, and unchanged exports leave CSV files untouched.
+`--output-dir` selects an alternative destination for inspection or tests.
+
+This reads the workbook's last saved values. It cannot refresh Wind or prove that
+those values are current. Review the printed date range after refreshing. Re-export
+from the workbook for future updates; direct CSV edits would be replaced on the
+next export. Review revisions/removals in Git and explain them in the commit
+message. GitHub Actions installs the same pinned dependency for the offline tests;
+it does not refresh or re-export the workbook during deployment. Git-baseline
+correction enforcement, production source review, snapshot assembly, and deployment
+remain later pipeline steps. This exporter does not
+activate these series or write to `site/data/`.
 
 ## Production foundation (Slice 1)
 

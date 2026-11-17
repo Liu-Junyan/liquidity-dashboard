@@ -6,3 +6,5 @@ wechat.txt
 # Generated from the editable data/registry.csv; never maintain both by hand.
 /data/registry.json
 .env
+# Excel's temporary lock files; source workbooks are versioned.
+~$*.xlsx

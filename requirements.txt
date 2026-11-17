@@ -1,0 +1,2 @@
+# Excel input extraction and its offline tests.
+openpyxl==3.1.5

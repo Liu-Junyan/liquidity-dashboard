@@ -6,7 +6,7 @@ Each indicator's **查看统计摘要** control shows its trailing 3-month and 1
 
 ## Preview
 
-Python 3.10+ is sufficient; no Python packages or frontend installation is needed.
+The demo preview needs Python 3.10+; no Python packages or frontend installation is needed for that build.
 
 ```sh
 python3 scripts/build.py
@@ -19,7 +19,10 @@ To reproduce project-subdirectory hosting, serve the repository root instead and
 
 ## Checks
 
+Install the Python dependencies for Excel extraction and its tests first:
+
 ```sh
+python3 -m pip install -r requirements.txt
 python3 scripts/build.py
 python3 scripts/registry.py
 python3 scripts/policies.py
@@ -34,6 +37,13 @@ JavaScript checks use Node 22+ and built-in modules; `npm install` is unnecessar
 Edit [data/registry.csv](data/registry.csv), then run `python3 scripts/build.py`. The build regenerates the catalog and demo observations from the CSV, including additions, renames, removals, and `unavailable` exclusions. No separate catalog edit is needed. [The registry guide](data/README.md) explains visibility rules and the 16 columns. `python3 scripts/registry.py --output data/registry.json` optionally exports the complete registry, including hidden entries.
 
 Real-data Slice 1 is implemented: [pilot source reviews](docs/source-review.md), explicit FRED IDs, normalization/calculation policies, activation gates, and the [version 2 artifact contract](docs/production-contract.md). Run `python3 scripts/policies.py` to validate the reviewed specifications offline. No series is activated yet; `--check-activation` intentionally fails until executable import/collection paths exist. The `.env` FRED key is not read by this slice. Real collection, manual import, formula execution, snapshot assembly, and native-frequency frontend migration remain later work.
+
+For the three SIFMA issuance inputs, `python3 scripts/export_wind_issuance.py`
+uses `openpyxl` to convert saved values from the Wind workbook into `data/manual/*.csv`.
+Keep the workbook in versioned `data/sources/wind/bond-issuance.xlsx` and commit
+workbook and CSV updates together for use on other machines. See the
+[refresh and export instructions](data/README.md#exporting-the-wind-issuance-workbook).
+This prepares manual inputs without activating production data.
 
 ## Deployment
 
@@ -52,7 +62,9 @@ See [the real-data development plan](docs/real-data-development-plan.md) for imp
 - `data/categories.json`: research-layer names, stable IDs, and descriptions.
 - `site/data/catalog.json`: generated indicator metadata and demo dataset metadata.
 - `site/data/observations.json`: five years of weekly observations with explicit nulls.
-- `scripts/`: standard-library fixture generation, validation, and static build.
+- `scripts/`: fixture generation, validation, static build, and Excel input extraction.
+- `data/sources/wind/`: versioned Wind workbooks, outside the published website.
+- `requirements.txt`: pinned Python dependency for Excel extraction and its tests.
 - `.github/workflows/pages.yml`: validation and GitHub Pages deployment.
 
 Apache ECharts is distributed under its bundled [Apache 2.0 license](site/assets/vendor/echarts-LICENSE.txt). No remote fonts, data calls, analytics, or CDN dependencies are required at runtime.
