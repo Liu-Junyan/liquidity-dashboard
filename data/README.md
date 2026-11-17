@@ -260,7 +260,7 @@ python3 scripts/collect.py --series fed-assets
 The default refresh selects WALCL, SOFR, EFFR, RPONTTLD and the SOFR−EFFR
 calculation. A custom selection containing a derived series must also explicitly
 select its dependencies. Credentials come from `FRED_API_KEY` in the environment,
-then `FRED_API_KEY` or the existing `FRED` alias in the ignored repository `.env`.
+then `FRED_API_KEY` in the ignored repository `.env`. Only this setting name is accepted.
 The file is parsed as text, never executed. Use an Actions secret when scheduling
 is implemented; do not commit credentials. Other commands/tests need no key.
 

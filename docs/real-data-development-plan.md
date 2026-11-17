@@ -165,7 +165,7 @@ point-in-time dataset, revision ledger, incremental merge, or affected-date
 recomputation is needed. Revision reporting is only three counts (added, changed,
 removed) against the prior file; Git supplies ordinary file history and rollback.
 
-- [x] Implement metadata review checks and JSON observations collection for `WALCL`, `SOFR`, `EFFR`, and `RPONTTLD`. Read `FRED_API_KEY` from the environment or ignored local `.env` (existing `FRED` alias supported); never record credential-bearing URLs.
+- [x] Implement metadata review checks and JSON observations collection for `WALCL`, `SOFR`, `EFFR`, and `RPONTTLD`. Read only `FRED_API_KEY` from the environment or ignored local `.env`; never record credential-bearing URLs.
 - [x] Fetch complete available histories every time, including pagination, response-count checks, and metadata history-bound checks. Unexpected empty/truncated responses fail collection; provider missing markers become null. Keep source-scale values before project normalization.
 - [x] Add bounded retries/timeouts for transient failures and source-specific freshness diagnostics. Do not change providers after a failure.
 - [x] Normalize units and implement the pilot spread. Cover reserve/assets and FRED `chg` with illustrative offline inputs, without activating those future series.

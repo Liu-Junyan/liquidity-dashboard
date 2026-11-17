@@ -252,7 +252,11 @@ class CollectionTests(unittest.TestCase):
     def test_local_key_is_parsed_without_executing_shell(self):
         with tempfile.TemporaryDirectory() as temporary, patch.dict(os.environ, {}, clear=True):
             path = Path(temporary) / '.env'
-            path.write_text('FRED="local-key" # local alias\nUNRELATED=$(false)\n')
+            path.write_text('FRED="old-key"\n')
+            with patch.dict(os.environ, {'FRED': 'old-environment-key'}):
+                with self.assertRaisesRegex(ValueError, 'Set FRED_API_KEY'):
+                    load_api_key(path)
+            path.write_text('FRED_API_KEY="local-key" # local setting\nFRED="old-key"\nUNRELATED=$(false)\n')
             self.assertEqual(load_api_key(path), 'local-key')
             path.write_text('FRED_API_KEY="$(false)"\n')
             self.assertEqual(load_api_key(path), '$(false)')

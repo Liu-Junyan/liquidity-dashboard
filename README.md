@@ -74,7 +74,7 @@ remain later slices.
 
 Run `python3 scripts/collect.py` to download complete current histories for WALCL,
 SOFR, EFFR, and RPONTTLD into `data/automatic/`. It reads `FRED_API_KEY` from the
-environment or ignored `.env` (the existing local `FRED` alias also works), validates
+environment or ignored `.env` (only this setting name is accepted), validates
 each complete response, then replaces its candidate input. Failed downloads retain
 compatible previous history; derived histories are fully recomputed. No vintage
 tracking or incremental merging is used. See the [collection guide](data/README.md#fred-collection-slice-3).

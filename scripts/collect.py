@@ -1,7 +1,7 @@
 """Refresh complete FRED pilot histories without publishing or enabling production.
 
 Run python3 scripts/collect.py. FRED_API_KEY comes from the environment or the
-ignored local .env (the existing local FRED name is also supported).
+ignored local .env. Only the FRED_API_KEY setting is accepted.
 """
 import argparse
 import copy
@@ -33,14 +33,14 @@ def load_api_key(env_file=ROOT / '.env'):
     if Path(env_file).is_file():
         for line in Path(env_file).read_text(encoding='utf-8').splitlines():
             name, separator, raw = line.removeprefix('export ').partition('=')
-            if separator and name.strip() in {'FRED_API_KEY', 'FRED'}:
+            if separator and name.strip() == 'FRED_API_KEY':
                 try:
                     parts = shlex.split(raw, comments=True)
                 except ValueError:
                     raise ValueError('Invalid FRED key setting in local .env') from None
                 if len(parts) == 1:
                     values[name.strip()] = parts[0]
-    key = values.get('FRED_API_KEY') or values.get('FRED')
+    key = values.get('FRED_API_KEY')
     if not key:
         raise ValueError('Set FRED_API_KEY in the environment or local .env')
     return key
