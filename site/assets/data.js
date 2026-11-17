@@ -5,17 +5,24 @@ export const timestamp = date => Date.parse(`${date}T00:00:00Z`);
 export function latestObservation(observations) {
   return observations.findLast(point => point.value !== null) ?? null;
 }
-export function changeAt(observations, weeks, indicator) {
+export function changeAt(observations, period, indicator) {
   const latest = latestObservation(observations);
   if (!latest) return null;
-  const target = timestamp(latest.date) - weeks * 7 * DAY;
+  let target = timestamp(latest.date) - period * 7 * DAY;
+  if (indicator.comparisonPolicy?.periodUnit === 'month') {
+    // Preview issuance points are month-end observations: retain month ends
+    // across leap years and short months; never substitute an earlier month.
+    const current = new Date(timestamp(latest.date));
+    target = Date.UTC(current.getUTCFullYear(), current.getUTCMonth() - period + 1, 0);
+  }
   const prior = observations.find(point => timestamp(point.date) === target);
   if (!prior || prior.value === null) return null;
-  const difference = (latest.value - prior.value) * (indicator.unit.kind === 'rate' ? 100 : 1);
+  const difference = (latest.value - prior.value) * (indicator.comparisonPolicy?.valueScale ?? (indicator.unit.kind === 'rate' ? 100 : 1));
   return Math.abs(difference) < 1e-8 ? 0 : difference;
 }
 export function inRange(observations, range, anchor) {
   if (range === 'all') return observations;
+  if (!anchor) return [];
   const start = new Date(timestamp(anchor));
   if (range === 'ytd') start.setUTCMonth(0, 1);
   else start.setUTCFullYear(start.getUTCFullYear() - (range === '1y' ? 1 : 5));
@@ -62,8 +69,45 @@ export function formatChange(value, indicator) {
 export function parseRoute(hash, categories, indicators) {
   const params = new URLSearchParams(hash.replace(/^#/, ''));
   const indicator = indicators.find(item => item.id === params.get('indicator'));
-  const category = indicator?.categoryId ?? (categories.some(item => item.id === params.get('category')) ? params.get('category') : categories[0].id);
+  const category = indicator?.categoryId ?? (categories.some(item => item.id === params.get('category')) ? params.get('category') : (indicators.find(item => item.availability === 'numeric')?.categoryId ?? categories[0].id));
   const range = ['ytd', '1y', '5y', 'all'].includes(params.get('range')) ? params.get('range') : '5y';
   return { category, range, indicator: indicator?.id ?? null };
 }
-export const frequencyLabel = frequency => frequency === 'weekly' ? t('weeklyFrequency') : frequency;
+export const frequencyLabel = frequency => ({daily: '每日', weekly: '每周', monthly: '每月', quarterly: '每季度', annual: '每年', irregular: '不定期'})[frequency] ?? '待确认';
+export const comparisonPeriods = indicator => indicator.isDemo ? [4, 13] : (indicator.comparisonPolicy?.periods ?? []);
+export const comparisonLabel = (indicator, period) => indicator.comparisonPolicy?.periodUnit === 'month' ? (period === 1 ? '较上月变化' : '较上年同月变化') : `近${period}周变化`;
+export const seriesLabel = indicator => indicator.isDemo ? t('syntheticSeries') : (indicator.inputAvailable ? 'SIFMA / Wind 数据' : '待接入');
+export const emptyChartLabel = indicator => indicator.unit.kind === 'unquantified' ? t('unquantifiedChart') :
+  (indicator.inputAvailable === false ? '待接入 · 暂无真实数据' : '所选区间暂无有效观测');
+
+export function unpackDataset(catalog, document) {
+  if (catalog.schemaVersion === 1 && catalog.dataset.isDemo === true) {
+    if (!document || document.schemaVersion !== undefined) throw new Error('Mismatched demo dataset');
+    return document;
+  }
+  if (catalog.schemaVersion !== 2 || document.schemaVersion !== 2 ||
+      catalog.dataset.mode !== 'manual-preview' || catalog.dataset.isDemo !== false ||
+      catalog.dataset.sourceReview !== 'pending' || !catalog.snapshotId || catalog.snapshotId !== document.snapshotId) {
+    throw new Error('Unsupported dataset or mismatched preview snapshot');
+  }
+  const allowed = new Set(['bond-issuance', 'treasury-bond-issuance', 'corporate-bond-issuance']);
+  const ids = catalog.indicators.map(item => item.id);
+  if (!document.series || new Set(ids).size !== ids.length ||
+      Object.keys(document.series).length !== ids.length) throw new Error('Preview membership mismatch');
+  for (const item of catalog.indicators) {
+    const points = document.series[item.id];
+    if (item.isDemo !== false || !Array.isArray(points) || (!allowed.has(item.seriesId) && points.length)) {
+      throw new Error('Invalid preview series');
+    }
+    let previous = '';
+    for (const point of points) {
+      if (typeof point.date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(point.date) ||
+          !Number.isFinite(timestamp(point.date)) || new Date(timestamp(point.date)).toISOString().slice(0, 10) !== point.date ||
+          point.date <= previous || (point.value !== null && (typeof point.value !== 'number' || !Number.isFinite(point.value)))) {
+        throw new Error('Invalid preview observation');
+      }
+      previous = point.date;
+    }
+  }
+  return document.series;
+}

@@ -170,6 +170,15 @@ Exit check: one real download matches its source; a provider revision changes de
 
 ### Slice 4 — Snapshot assembly and frontend migration
 
+Local SIFMA preview implemented November 17, 2026 as a focused precursor:
+`python3 scripts/build.py --mode preview` assembles the three audited, committed
+manual inputs into `dist-preview/`. Monthly month-end comparisons, native sample
+counts, empty dialogs/charts, single-point rendering, matching snapshot IDs, and
+preview-specific labels are supported. The default view puts available issuance
+series first in the credit category. Other series remain empty. This preview does
+not activate SIFMA, publish data, or complete the production contract below;
+source reference/coverage review and full production assembly remain pending.
+
 - [ ] Assemble activated automatic/manual inputs and derived outputs into one validated version 2 snapshot. Unconnected categorized numeric entries emit empty arrays; unavailable entries are omitted; unquantified entries stay nonnumeric.
 - [ ] Validate IDs, ownership, policy consistency, dates, finite/null values, units, provenance, and shared snapshot identity before replacing the publishable candidate.
 - [ ] Update `catalog.py`, production build validation, and the frontend loader together. Remove unconditional synthetic explanations and notices only in production mode, including chart tooltips, accessibility text, statistics, and expanded details.

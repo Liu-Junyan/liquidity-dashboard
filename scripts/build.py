@@ -1,4 +1,4 @@
-"""Build the demo, or validate the production boundary without synthetic fallback."""
+"""Build a demo or local SIFMA preview; keep production gated without fallback."""
 import argparse
 import json
 import math
@@ -89,6 +89,14 @@ def build_demo():
 
 
 def build(mode='demo', snapshot=None):
+    if mode == 'preview':
+        if snapshot is not None:
+            raise ValueError('--snapshot is only valid in production mode')
+        if __package__:
+            from .preview import build_preview
+        else:
+            from preview import build_preview
+        return build_preview(ROOT)
     if mode == 'demo':
         if snapshot is not None:
             raise ValueError('--snapshot is only valid in production mode')
@@ -115,7 +123,7 @@ def build(mode='demo', snapshot=None):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--mode', choices=('demo', 'production'), default='demo')
+    parser.add_argument('--mode', choices=('demo', 'preview', 'production'), default='demo')
     parser.add_argument('--snapshot', type=Path, help='Production snapshot directory (default: data/snapshot)')
     args = parser.parse_args()
     try:

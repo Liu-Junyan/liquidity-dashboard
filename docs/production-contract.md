@@ -8,6 +8,17 @@ Slice 2 adds `build.py --mode production`: it checks the snapshot directory and
 validates this contract, then fails explicitly until the Slice 4 rendering path
 exists. It never invokes fixtures or changes `site/data/` or `dist/`.
 
+The local `build.py --mode preview` command is separate from this contract. Its
+schema-v2 envelope uses `dataset.mode: "manual-preview"`, `isDemo: false`, and
+`sourceReview: "pending"`, plus a matching snapshot ID in catalog, observations,
+and manifest. `scripts/preview.py` assembles only the three committed SIFMA inputs;
+other visible series have empty histories. Units retain the existing frontend
+display object, and the manifest records input paths, specification hashes, and
+the source commit. It deliberately has no production activation, normalized input
+hashes, or production outcomes. `validate_snapshot` rejects it as production.
+The frontend accepts this preview envelope and the existing demo contract; it
+still rejects production envelopes until the full Slice 4 migration is complete.
+
 All three documents carry integer `schemaVersion: 2` and the same slug `snapshotId`.
 A producer chooses a unique ID for a complete candidate; the validator rejects
 mixed IDs/versions. Operational timestamps use ISO UTC (`T…Z` or `T…+00:00`);

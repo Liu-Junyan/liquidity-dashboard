@@ -1,6 +1,6 @@
 # USD Liquidity Observatory
 
-A Chinese-language weekly dollar-liquidity research prototype, styled with restrained navy, blue charts, thin rules, and editorial typography inspired by the New York Fed Markets Data Dashboard. **All observations are synthetic.** [data/registry.csv](data/registry.csv) controls dashboard membership, names, grouping, and ordering. The current selection has 23 indicators across 货币层、离岸层、信用层、金融市场层 (9 / 3 / 7 / 4). Rows marked `unavailable` are retained for future use and omitted from the dashboard; blank-category calculation inputs are also hidden.
+A Chinese-language dollar-liquidity research prototype, styled with restrained navy, blue charts, thin rules, and editorial typography inspired by the New York Fed Markets Data Dashboard. **The default demo uses synthetic observations; a separate local preview displays the three saved SIFMA issuance inputs.** [data/registry.csv](data/registry.csv) controls dashboard membership, names, grouping, and ordering. The current selection has 23 indicators across 货币层、离岸层、信用层、金融市场层 (9 / 3 / 7 / 4). Rows marked `unavailable` are retained for future use and omitted from the dashboard; blank-category calculation inputs are also hidden.
 
 Each indicator's **查看统计摘要** control shows its trailing 3-month and 1-year means and the latest value's percentile within the selected chart range, with valid sample counts and calculation notes. **展开指标** opens the larger chart, indicator explanation, and source details; no raw-history table is rendered.
 
@@ -17,6 +17,32 @@ Open <http://127.0.0.1:8000/>. Use HTTP rather than opening `index.html` directl
 
 To reproduce project-subdirectory hosting, serve the repository root instead and open <http://127.0.0.1:8000/dist/>. Example deep link: `/dist/#category=category-2&range=1y&indicator=dollar-index`.
 
+### Real SIFMA data preview (local only)
+
+```sh
+python3 scripts/build.py --mode preview
+python3 -m http.server 8001 --directory dist-preview --bind 127.0.0.1
+```
+
+Open <http://127.0.0.1:8001/>. The preview opens the credit category with bond,
+Treasury, and corporate issuance first. It uses the **committed** manual CSVs,
+registry, and category definitions at `HEAD`, after auditing correction reasons.
+Refresh/export and commit inputs before rebuilding to see new workbook values.
+The current inputs contain 190 monthly observations each, January 2011–October 2026.
+
+Monthly comparisons use the previous month-end and the same month-end one year
+earlier; missing values remain missing. All other displayed indicators show
+`待接入` with empty charts. The page, details, statistics, and tooltips identify
+the real inputs; the page prominently states that source definitions remain
+pending review. Source references, coverage, overlap, and monthly versus year-to-date
+definitions must be resolved before production activation.
+
+This builds an explicitly unreviewed preview into ignored `dist-preview/`, including
+matching catalog/observations and an audit manifest. It does not modify `site/data/`,
+`dist/`, manual inputs, or activation policies. GitHub Pages still publishes only
+the demo `dist/`; production remains gated. No automatic collection or full
+production snapshot assembly is required for this preview.
+
 ## Checks
 
 Install the Python dependencies for Excel extraction and its tests first:
@@ -29,6 +55,8 @@ python3 scripts/policies.py
 python3 scripts/import_manual.py
 python3 -m unittest discover -s tests -p 'test_*.py'
 node --test tests/data.test.mjs
+python3 scripts/build.py --mode preview
+node --test tests/preview.test.mjs
 ```
 
 JavaScript checks use Node 22+ and built-in modules; `npm install` is unnecessary. Regenerate the checked-in observations with `python3 scripts/generate_fixtures.py`.
@@ -51,8 +79,10 @@ lines covering every affected date; additions need no reason. See the
 makes that choice explicit. `python3 scripts/build.py --mode production` requires
 `data/snapshot/{catalog,observations,manifest}.json` (or `--snapshot /path/to/snapshot`).
 Missing or invalid snapshots fail without changing `site/data/` or `dist/`.
-Even a valid snapshot remains blocked until Slice 4 implements production assembly
-and rendering. Production mode never invokes fixtures or publishes the demo.
+Even a valid production snapshot remains blocked until Slice 4 implements production
+assembly and the complete production frontend contract. The local SIFMA preview
+uses a separate, explicitly unreviewed contract. Production mode never invokes
+fixtures or publishes the demo.
 
 For the three SIFMA issuance inputs, `python3 scripts/export_wind_issuance.py`
 uses `openpyxl` to convert saved values from the Wind workbook into `data/manual/*.csv`.

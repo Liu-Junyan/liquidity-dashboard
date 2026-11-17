@@ -351,8 +351,8 @@
       "explanation": "债券发行量的合成示例，尚未接入登记的数据源。",
       "unit": {
         "kind": "amount",
-        "label": "万亿美元",
-        "precision": 2
+        "label": "十亿美元",
+        "precision": 1
       },
       "frequency": "weekly",
       "nativeFrequency": "monthly",
@@ -373,8 +373,8 @@
       "explanation": "国债发行量的合成示例，尚未接入登记的数据源。",
       "unit": {
         "kind": "amount",
-        "label": "万亿美元",
-        "precision": 2
+        "label": "十亿美元",
+        "precision": 1
       },
       "frequency": "weekly",
       "nativeFrequency": "monthly",
@@ -395,8 +395,8 @@
       "explanation": "公司债发行量的合成示例，尚未接入登记的数据源。",
       "unit": {
         "kind": "amount",
-        "label": "万亿美元",
-        "precision": 2
+        "label": "十亿美元",
+        "precision": 1
       },
       "frequency": "weekly",
       "nativeFrequency": "monthly",

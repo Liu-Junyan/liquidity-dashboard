@@ -1,11 +1,13 @@
-import {t} from './zh-CN.js';
-import {latestObservation, changeAt, inRange, formatNumber, formatDate, formatChange, parseRoute, frequencyLabel, summaryStatistics} from './data.js';
+import {t, setDataMode} from './zh-CN.js';
+import {latestObservation, changeAt, inRange, formatNumber, formatDate, formatChange, parseRoute, frequencyLabel, summaryStatistics, comparisonPeriods, comparisonLabel, seriesLabel, unpackDataset} from './data.js';
 import {drawChart, disposeCharts} from './charts.js';
 
 const $ = selector => document.querySelector(selector);
 const escape = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[char]));
-document.querySelectorAll('[data-i18n]').forEach(element => { element.textContent = t(element.dataset.i18n); });
-document.querySelectorAll('[data-i18n-aria-label]').forEach(element => { element.setAttribute('aria-label', t(element.dataset.i18nAriaLabel)); });
+function translatePage() {
+  document.querySelectorAll('[data-i18n]').forEach(element => { element.textContent = t(element.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-aria-label]').forEach(element => { element.setAttribute('aria-label', t(element.dataset.i18nAriaLabel)); });
+}
 const status = $('#status');
 const dialog = $('#indicator-dialog');
 let catalog, observations, categories, state, dialogTrigger;
@@ -27,15 +29,17 @@ function secondarySummary(indicator, primaryDate) {
 }
 function metrics(indicator) {
   if (indicator.unit.kind === 'unquantified') return `<p class="definition-pending">${t('definitionPending')}</p>`;
+  if (indicator.inputAvailable === false) return '<p class="definition-pending">待接入 · 暂无真实数据</p>';
   const points = observations[indicator.id];
   const latest = latestObservation(points);
-  return `<div class="indicator-metrics"><div class="latest-value"><span class="metric-label">${t('latest')}</span><strong>${formatNumber(latest?.value, indicator.unit.precision)}<small>${escape(indicator.unit.label)}</small></strong></div><div><span class="metric-label">${t('change4')}</span><span class="metric-change">${formatChange(changeAt(points, 4, indicator), indicator)}</span></div><div><span class="metric-label">${t('change13')}</span><span class="metric-change">${formatChange(changeAt(points, 13, indicator), indicator)}</span></div></div><p class="observation-date">${t('observationDate')}：${formatDate(latest?.date)}</p>`;
+  const changes = comparisonPeriods(indicator).map(period => `<div><span class="metric-label">${comparisonLabel(indicator, period)}</span><span class="metric-change">${formatChange(changeAt(points, period, indicator), indicator)}</span></div>`).join('');
+  return `<div class="indicator-metrics"><div class="latest-value"><span class="metric-label">${t('latest')}</span><strong>${formatNumber(latest?.value, indicator.unit.precision)}<small>${escape(indicator.unit.label)}</small></strong></div>${changes}</div><p class="observation-date">${t('observationDate')}：${formatDate(latest?.date)}</p>`;
 }
 function statisticsMarkup(indicator) {
   if (indicator.unit.kind === 'unquantified') return `<p class="statistics-note statistics-panel">${t('definitionPending')}</p>`;
   const statistics = summaryStatistics(observations[indicator.id], pointsFor(indicator));
   const latest = latestObservation(observations[indicator.id]);
-  return `<section class="statistics-panel" aria-label="${escape(indicator.name)} · ${t('statistics')}"><p class="statistics-date">${t('statisticsAsOf')}：${formatDate(latest?.date)} · ${t('syntheticSeries')}</p><dl class="statistics-grid">${['average3m', 'average1y', 'percentile'].map(key => {
+  return `<section class="statistics-panel" aria-label="${escape(indicator.name)} · ${t('statistics')}"><p class="statistics-date">${t('statisticsAsOf')}：${formatDate(latest?.date)} · ${seriesLabel(indicator)}</p><dl class="statistics-grid">${['average3m', 'average1y', 'percentile'].map(key => {
     const statistic = statistics[key];
     const isPercentile = key === 'percentile';
     return `<div><dt>${t(key)}${isPercentile ? `<span class="statistics-range">${t(state.range)}</span>` : ''}</dt><dd>${formatNumber(statistic.value, isPercentile ? 1 : indicator.unit.precision)}<small>${isPercentile ? '%' : escape(indicator.unit.label)}</small></dd><dd class="statistics-count">${t('validCount')}：${statistic.count}</dd></div>`;
@@ -48,11 +52,12 @@ function renderOverview() {
   $('#categories').innerHTML = categories.map((category, index) => {
     const items = catalog.indicators.filter(item => item.categoryId === category.id);
     if (!items.length) return `<button class="category-card" data-category="${category.id}" aria-pressed="false" aria-controls="charts"><span class="category-top"><span class="category-number">0${index + 1}</span><span class="category-name">${escape(category.name)}</span></span><span class="summary-label">${t('emptyCategory')}</span><span class="summary-date">0 ${t('indicatorCount')}</span></button>`;
-    const primary = items[0], latest = latestObservation(observations[primary.id]);
-    return `<button class="category-card" data-category="${category.id}" aria-pressed="false" aria-controls="charts"><span class="category-top"><span class="category-number">0${index + 1}</span><span class="category-name">${escape(category.name)}</span><span class="category-arrow" aria-hidden="true">↗</span></span><span class="summary-label">${escape(primary.name)}</span><span class="summary-value">${formatNumber(latest?.value, primary.unit.precision)}<small>${escape(primary.unit.label)}</small></span><span class="sparkline" id="spark-${category.id}" aria-hidden="true"></span><span class="secondary-summary">${items.slice(1, 2).map(item => secondarySummary(item, latest?.date)).join('<br>')}</span><span class="summary-date">${t('observationDate')} ${formatDate(latest?.date)} · ${items.length} ${t('indicatorCount')} · ${t('demoShort')}</span></button>`;
+    const primary = items.find(item => item.availability === 'numeric') ?? items[0], latest = latestObservation(observations[primary.id]);
+    return `<button class="category-card" data-category="${category.id}" aria-pressed="false" aria-controls="charts"><span class="category-top"><span class="category-number">0${index + 1}</span><span class="category-name">${escape(category.name)}</span><span class="category-arrow" aria-hidden="true">↗</span></span><span class="summary-label">${escape(primary.name)}</span><span class="summary-value">${primary.inputAvailable === false ? '待接入' : formatNumber(latest?.value, primary.unit.precision)}<small>${escape(primary.unit.label)}</small></span><span class="sparkline" id="spark-${category.id}" aria-hidden="true"></span><span class="secondary-summary">${items.filter(item => item !== primary && (item.isDemo || item.inputAvailable)).slice(0, 1).map(item => secondarySummary(item, latest?.date)).join('<br>')}</span><span class="summary-date">${t('observationDate')} ${formatDate(latest?.date)} · ${items.length} ${t('indicatorCount')}${catalog.dataset.isDemo ? ` · ${t('demoShort')}` : ''}</span></button>`;
   }).join('');
   categories.forEach(category => {
-    const indicator = catalog.indicators.find(item => item.categoryId === category.id);
+    const items = catalog.indicators.filter(item => item.categoryId === category.id);
+    const indicator = items.find(item => item.availability === 'numeric') ?? items[0];
     if (!indicator) return;
     drawChart($(`#spark-${category.id}`), inRange(observations[indicator.id], '1y', catalog.dataset.observationEnd), indicator, {sparkline: true});
   });
@@ -67,11 +72,12 @@ function renderCharts() {
   const parent = $('#charts');
   disposeCharts(parent);
   const indicators = catalog.indicators.filter(item => item.categoryId === state.category);
+  if (!catalog.dataset.isDemo) indicators.sort((a, b) => Number(b.inputAvailable) - Number(a.inputAvailable));
   if (!indicators.length) {
     parent.innerHTML = `<p class="empty-category">${t('emptyCategory')}</p>`;
     return;
   }
-  parent.innerHTML = indicators.map(indicator => `<article class="indicator-card" aria-labelledby="heading-${indicator.id}"><div class="card-heading"><h3 id="heading-${indicator.id}">${escape(indicator.name)}</h3><span class="card-demo">${t('demoShort')}</span></div><p class="indicator-role">${escape(indicator.role ?? '')}</p>${metrics(indicator)}<div class="chart-unit">${t('unit')}：${escape(indicator.unit.label)}</div><div class="detail-chart" id="chart-${indicator.id}" role="img" aria-label="${escape(indicator.name)} · ${t(state.range)} · ${t('syntheticSeries')}"></div><div class="card-actions"><button class="text-button" data-statistics="${indicator.id}" aria-expanded="${statisticsOpen.has(indicator.id)}" aria-controls="statistics-${indicator.id}"><span aria-hidden="true">▦</span> ${t(statisticsOpen.has(indicator.id) ? 'hideStatistics' : 'statistics')}</button><button class="text-button" data-expand="${indicator.id}">${t('expand')} <span aria-hidden="true">↗</span></button></div><div id="statistics-${indicator.id}" ${statisticsOpen.has(indicator.id) ? '' : 'hidden'}>${statisticsMarkup(indicator)}</div></article>`).join('');
+  parent.innerHTML = indicators.map(indicator => `<article class="indicator-card" aria-labelledby="heading-${indicator.id}"><div class="card-heading"><h3 id="heading-${indicator.id}">${escape(indicator.name)}</h3>${indicator.isDemo ? `<span class="card-demo">${t('demoShort')}</span>` : `<span class="card-demo">${frequencyLabel(indicator.frequency)}</span>`}</div><p class="indicator-role">${escape(indicator.role ?? '')}</p>${metrics(indicator)}<div class="chart-unit">${t('unit')}：${escape(indicator.unit.label)}</div><div class="detail-chart" id="chart-${indicator.id}" role="img" aria-label="${escape(indicator.name)} · ${t(state.range)} · ${seriesLabel(indicator)}"></div><div class="card-actions"><button class="text-button" data-statistics="${indicator.id}" aria-expanded="${statisticsOpen.has(indicator.id)}" aria-controls="statistics-${indicator.id}"><span aria-hidden="true">▦</span> ${t(statisticsOpen.has(indicator.id) ? 'hideStatistics' : 'statistics')}</button><button class="text-button" data-expand="${indicator.id}">${t('expand')} <span aria-hidden="true">↗</span></button></div><div id="statistics-${indicator.id}" ${statisticsOpen.has(indicator.id) ? '' : 'hidden'}>${statisticsMarkup(indicator)}</div></article>`).join('');
   indicators.forEach(indicator => drawChart($(`#chart-${indicator.id}`), pointsFor(indicator), indicator));
 }
 function renderDialog() {
@@ -83,7 +89,7 @@ function renderDialog() {
     if (renderedIndicator && dialogTrigger?.isConnected) dialogTrigger.focus();
     return;
   }
-  $('#dialog-content').innerHTML = `<h2 id="dialog-title">${escape(indicator.name)}</h2><p class="dialog-range">${t(state.range)} · ${t('rangeDates')}：${formatDate(pointsFor(indicator)[0].date)} — ${formatDate(pointsFor(indicator).at(-1).date)}</p>${metrics(indicator)}<div class="chart-unit">${t('unit')}：${escape(indicator.unit.label)}</div><div id="expanded-chart" class="expanded-chart" role="img" aria-label="${escape(indicator.name)} · ${t('syntheticSeries')}"></div><div class="indicator-info"><div><h3>${t('explanation')}</h3><p>${escape(indicator.explanation)}</p></div><dl><dt>${t('source')}</dt><dd>${t('sourceFixture')}</dd><dt>${t('frequency')}</dt><dd>${frequencyLabel(indicator.frequency)}</dd><dt>${t('intendedSource')}</dt><dd>${sourceMarkup(indicator)}</dd><dt>${t('collectedAt')}</dt><dd>${formatDate(catalog.dataset.collectedAt, {hour: '2-digit', minute: '2-digit'})} UTC</dd></dl></div>`;
+  $('#dialog-content').innerHTML = `<h2 id="dialog-title">${escape(indicator.name)}</h2><p class="dialog-range">${t(state.range)} · ${t('rangeDates')}：${formatDate(pointsFor(indicator)[0]?.date)} — ${formatDate(pointsFor(indicator).at(-1)?.date)}</p>${metrics(indicator)}<div class="chart-unit">${t('unit')}：${escape(indicator.unit.label)}</div><div id="expanded-chart" class="expanded-chart" role="img" aria-label="${escape(indicator.name)} · ${seriesLabel(indicator)}"></div><div class="indicator-info"><div><h3>${t('explanation')}</h3><p>${escape(indicator.explanation)}</p></div><dl><dt>${t('source')}</dt><dd>${indicator.isDemo ? t('sourceFixture') : (indicator.inputAvailable ? sourceMarkup(indicator) : '待接入')}</dd><dt>${t('frequency')}</dt><dd>${frequencyLabel(indicator.frequency)}</dd>${indicator.isDemo ? `<dt>${t('intendedSource')}</dt><dd>${sourceMarkup(indicator)}</dd><dt>${t('collectedAt')}</dt><dd>${formatDate(catalog.dataset.collectedAt, {hour: '2-digit', minute: '2-digit'})} UTC</dd>` : ''}</dl></div>`;
   if (!dialog.open) dialog.showModal();
   document.body.classList.add('modal-open');
   drawChart($('#expanded-chart'), pointsFor(indicator), indicator);
@@ -128,11 +134,15 @@ async function initialize() {
   status.textContent = t('loading');
   try {
     const responses = await Promise.all(['catalog', 'observations'].map(name => fetch(new URL(`../data/${name}.json`, import.meta.url)).then(response => {if (!response.ok) throw new Error(`HTTP ${response.status}`); return response.json();})));
-    [catalog, observations] = responses;
+    catalog = responses[0];
+    observations = unpackDataset(catalog, responses[1]);
+    setDataMode(catalog.dataset.mode ?? 'demo');
+    translatePage();
     categories = catalog.categories.toSorted((a, b) => a.order - b.order);
     $('#dataset-date').textContent = `${t('observationDate')}：${formatDate(catalog.dataset.observationEnd)}`;
     $('#dataset-window').textContent = `${t('dataWindow')}：${formatDate(catalog.dataset.observationStart)} — ${formatDate(catalog.dataset.observationEnd)}`;
-    $('#collection-time').textContent = `${t('collectedAt')}：${formatDate(catalog.dataset.collectedAt, {hour: '2-digit', minute: '2-digit'})} UTC · ${t('collectionNote')}`;
+    $('#collection-time').hidden = !catalog.dataset.isDemo;
+    if (catalog.dataset.isDemo) $('#collection-time').textContent = `${t('collectedAt')}：${formatDate(catalog.dataset.collectedAt, {hour: '2-digit', minute: '2-digit'})} UTC · ${t('collectionNote')}`;
     renderOverview();
     renderRoute();
     window.addEventListener('hashchange', renderRoute);

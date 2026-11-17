@@ -1,4 +1,4 @@
-import {formatDate, formatNumber, timestamp} from './data.js';
+import {formatDate, formatNumber, timestamp, seriesLabel, emptyChartLabel, DAY} from './data.js';
 import {t} from './zh-CN.js';
 
 const instances = new Map();
@@ -11,7 +11,7 @@ export function disposeCharts(parent) {
 export function drawChart(element, observations, indicator, {sparkline = false} = {}) {
   if (!observations.some(point => point.value !== null)) {
     element.classList.add('chart-empty');
-    element.textContent = t('unquantifiedChart');
+    element.textContent = sparkline ? '' : emptyChartLabel(indicator);
     return;
   }
   if (!window.echarts) { if (!sparkline) element.textContent = t('chartUnavailable'); return; }
@@ -28,12 +28,12 @@ export function drawChart(element, observations, indicator, {sparkline = false} 
       backgroundColor: '#12374b', borderWidth: 0, textStyle: {color: '#fff', fontSize: 12},
       formatter: params => {
         const point = params[0];
-        return `${formatDate(new Date(point.value[0]).toISOString().slice(0, 10))}\n${formatNumber(point.value[1], indicator.unit.precision)} ${indicator.unit.label}\n${t('syntheticSeries')}`;
+        return `${formatDate(new Date(point.value[0]).toISOString().slice(0, 10))}\n${formatNumber(point.value[1], indicator.unit.precision)} ${indicator.unit.label}\n${seriesLabel(indicator)}`;
       },
     },
-    xAxis: {type: 'time', show: !sparkline, min: timestamp(observations[0].date), max: timestamp(observations.at(-1).date), splitNumber: 4,
+    xAxis: {type: 'time', show: !sparkline, min: timestamp(observations[0].date) - (observations.length === 1 ? DAY : 0), max: timestamp(observations.at(-1).date) + (observations.length === 1 ? DAY : 0), splitNumber: 4,
       axisLine: {lineStyle: {color: '#d9dfe2'}}, axisTick: {show: false}, axisLabel: {color: '#75818a', fontSize: 11, hideOverlap: true, formatter: value => new Intl.DateTimeFormat('zh-CN', {year: 'numeric', month: '2-digit', timeZone: 'UTC'}).format(value)}, splitLine: {show: false}},
     yAxis: {type: 'value', show: !sparkline, scale: true, splitNumber: 4, axisLabel: {color: '#75818a', fontSize: 11, formatter: value => formatNumber(value, indicator.unit.precision)}, splitLine: {lineStyle: {color: '#e8ecee', type: 'dashed'}}},
-    series: [{type: 'line', name: indicator.name, data: observations.map(point => [timestamp(point.date), point.value]), connectNulls: false, showSymbol: false, symbolSize: 4, lineStyle: {width: sparkline ? 1.8 : 2, color: '#2b7295'}, itemStyle: {color: '#2b7295'}, areaStyle: sparkline ? {color: '#2b7295', opacity: 0.055} : undefined, emphasis: {lineStyle: {width: 2.5}}}],
+    series: [{type: 'line', name: indicator.name, data: observations.map(point => [timestamp(point.date), point.value]), connectNulls: false, showSymbol: observations.filter(point => point.value !== null).length === 1, symbolSize: 5, lineStyle: {width: sparkline ? 1.8 : 2, color: '#2b7295'}, itemStyle: {color: '#2b7295'}, areaStyle: sparkline ? {color: '#2b7295', opacity: 0.055} : undefined, emphasis: {lineStyle: {width: 2.5}}}],
   });
 }

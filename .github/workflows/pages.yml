@@ -40,6 +40,8 @@ jobs:
           python scripts/import_manual.py
           python -m unittest discover -s tests -p 'test_*.py'
           node --test tests/data.test.mjs
+          python scripts/build.py --mode preview
+          node --test tests/preview.test.mjs
       - uses: actions/upload-pages-artifact@v4
         with:
           path: dist

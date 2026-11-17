@@ -100,6 +100,12 @@ for unactivated inputs, while any supplied reference must be a sanitized HTTPS
 URL or publication citation. Production activation still requires a reviewed
 reference and coverage definition, including for the SIFMA inputs.
 
+To inspect the committed SIFMA inputs on charts, use the separate local
+`python3 scripts/build.py --mode preview` command and serve `dist-preview/`.
+This preview is explicitly labeled as awaiting definition review; it does not
+modify the demo or activate production sources. See the
+[preview instructions](../README.md#real-sifma-data-preview-local-only).
+
 ```sh
 # Validate committed inputs and all first-parent correction history.
 python3 scripts/import_manual.py
