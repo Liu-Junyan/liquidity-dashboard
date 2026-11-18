@@ -4,7 +4,7 @@
     "mode": "production",
     "isDemo": false,
     "publisher": "Junyan Liu",
-    "generatedAt": "2026-11-17T08:13:17.578061Z",
+    "generatedAt": "2026-11-18T05:48:37.040118Z",
     "observationStart": "2010-01-01",
     "observationEnd": "2026-11-16"
   },
@@ -656,18 +656,29 @@
         "explicitMissing": "null",
         "valueScale": 1
       },
-      "observationDateRule": null,
+      "observationDateRule": "source-daily-close",
       "isDemo": false,
-      "inputAvailable": false,
+      "inputAvailable": true,
       "role": "",
-      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
-      "availability": "empty",
-      "sources": [],
+      "explanation": "ICE BofA美国公司债券指数期权调整利差（OAS），日度收盘、未季调，百分比原值。FRED仅提供滚动三年历史（当前起于2023-11-20），月末观察值即使落在周末也保留来源日期。",
+      "availability": "numeric",
+      "sources": [
+        "https://fred.stlouisfed.org/series/BAMLC0A0CM"
+      ],
       "source": {
-        "name": "待接入",
-        "url": null
+        "name": "FRED · BAMLC0A0CM",
+        "url": "https://fred.stlouisfed.org/series/BAMLC0A0CM"
       },
-      "notices": []
+      "notices": [
+        {
+          "text": "Source: ICE Data Indices, LLC, ICE BofA US Corporate Index Option-Adjusted Spread (BAMLC0A0CM); distributed by FRED. Maintainer confirmed ICE BofA index redistribution permission on 2026-11-18. FRED supplies a rolling three-year history for this series.",
+          "url": "https://fred.stlouisfed.org/series/BAMLC0A0CM"
+        },
+        {
+          "text": "FRED citation: BAMLC0A0CM; retrieved 2026-11-18 (UTC).",
+          "url": "https://fred.stlouisfed.org/series/BAMLC0A0CM"
+        }
+      ]
     },
     {
       "id": "credit-spreads-hy",
@@ -692,18 +703,29 @@
         "explicitMissing": "null",
         "valueScale": 1
       },
-      "observationDateRule": null,
+      "observationDateRule": "source-daily-close",
       "isDemo": false,
-      "inputAvailable": false,
+      "inputAvailable": true,
       "role": "",
-      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
-      "availability": "empty",
-      "sources": [],
+      "explanation": "ICE BofA美国高收益债券指数期权调整利差（OAS），日度收盘、未季调，百分比原值。FRED仅提供滚动三年历史（当前起于2023-11-20），月末观察值即使落在周末也保留来源日期。",
+      "availability": "numeric",
+      "sources": [
+        "https://fred.stlouisfed.org/series/BAMLH0A0HYM2"
+      ],
       "source": {
-        "name": "待接入",
-        "url": null
+        "name": "FRED · BAMLH0A0HYM2",
+        "url": "https://fred.stlouisfed.org/series/BAMLH0A0HYM2"
       },
-      "notices": []
+      "notices": [
+        {
+          "text": "Source: ICE Data Indices, LLC, ICE BofA US High Yield Index Option-Adjusted Spread (BAMLH0A0HYM2); distributed by FRED. Maintainer confirmed ICE BofA index redistribution permission on 2026-11-18. FRED supplies a rolling three-year history for this series.",
+          "url": "https://fred.stlouisfed.org/series/BAMLH0A0HYM2"
+        },
+        {
+          "text": "FRED citation: BAMLH0A0HYM2; retrieved 2026-11-18 (UTC).",
+          "url": "https://fred.stlouisfed.org/series/BAMLH0A0HYM2"
+        }
+      ]
     },
     {
       "id": "bond-issuance",
@@ -1063,5 +1085,5 @@
       "notices": []
     }
   ],
-  "snapshotId": "production-1f8b9dabb2e35c8761d61857546280a09accc0bcc4e9a7350c4e77da0da33b39"
+  "snapshotId": "production-9224d129c6ff7b00e1defffb5b90fc49d020d31ebe14c57d60ad33ea94059056"
 }
