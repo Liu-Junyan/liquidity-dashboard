@@ -4,7 +4,7 @@
     "mode": "production",
     "isDemo": false,
     "publisher": "Junyan Liu",
-    "generatedAt": "2026-11-18T05:55:49.310696Z",
+    "generatedAt": "2026-11-18T06:17:44.352902Z",
     "observationStart": "2010-01-01",
     "observationEnd": "2026-11-16"
   },
@@ -963,18 +963,29 @@
         "explicitMissing": "null",
         "valueScale": 1
       },
-      "observationDateRule": null,
+      "observationDateRule": "source-daily-close",
       "isDemo": false,
-      "inputAvailable": false,
+      "inputAvailable": true,
       "role": "",
-      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
-      "availability": "empty",
-      "sources": [],
+      "explanation": "芝加哥期权交易所波动率指数（VIX），日度收盘、未季调，指数点位原值。反映标普500指数期权隐含的近月波动率预期，不是已实现波动率；来源缺失值保留为空，不视为零，也不跨日填充。",
+      "availability": "numeric",
+      "sources": [
+        "https://fred.stlouisfed.org/series/VIXCLS"
+      ],
       "source": {
-        "name": "待接入",
-        "url": null
+        "name": "FRED · VIXCLS",
+        "url": "https://fred.stlouisfed.org/series/VIXCLS"
       },
-      "notices": []
+      "notices": [
+        {
+          "text": "Source: Cboe Volatility Index (VIX), VIXCLS; distributed by FRED. Copyright, Chicago Board Options Exchange, Inc. Maintainer confirmed Cboe VIX redistribution permission on 2026-11-18. Cite Cboe and FRED.",
+          "url": "https://fred.stlouisfed.org/series/VIXCLS"
+        },
+        {
+          "text": "FRED citation: VIXCLS; retrieved 2026-11-18 (UTC).",
+          "url": "https://fred.stlouisfed.org/series/VIXCLS"
+        }
+      ]
     },
     {
       "id": "move",
@@ -1085,5 +1096,5 @@
       "notices": []
     }
   ],
-  "snapshotId": "production-911b528875316300d1275b0d0c01980964477ba3903a9898fa5a1ebb78584300"
+  "snapshotId": "production-2f13370f0cd672c3f3fa8607dbb0618bd7423c06246774ea2756e6221ca794b2"
 }
