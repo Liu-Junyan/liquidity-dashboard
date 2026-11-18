@@ -9,3 +9,5 @@ wechat.txt
 .env
 # Excel's temporary lock files; source workbooks are versioned.
 ~$*.xlsx
+
+AGENTS.md
