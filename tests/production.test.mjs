@@ -26,11 +26,22 @@ test('expanded production preserves quarterly and manual policies and deferred g
   const ratio = catalog.indicators.find(item => item.seriesId === 'reserve-assets-ratio');
   assert.match(ratio.explanation, /季调/);
   assert.match(ratio.source.name, /项目计算/);
-  for (const key of ['vix', 'credit-spreads-ig', 'credit-spreads-hy', 'bid-ask-spread', 'price-impact']) {
+  for (const key of ['vix', 'bid-ask-spread', 'price-impact']) {
     assert.equal(catalog.indicators.find(item => item.seriesId === key).inputAvailable, false);
     assert.deepEqual(payload.series[key], []);
   }
   assert.ok(!Object.hasOwn(payload.series, 'treasury-yield-chg'));
+});
+
+test('credit spreads display both ICE OAS series with daily source dates', () => {
+  for (const key of ['credit-spreads-ig', 'credit-spreads-hy']) {
+    const spread = display.indicators.find(item => item.seriesId === key);
+    assert.equal(spread.nativeFrequency, 'daily');
+    assert.equal(spread.observationDateRule, 'source-daily-close');
+    assert.equal(comparisonLabel(spread, 4), '近4周变化');
+    assert.ok(payload.series[key].length > 0);
+    assert.match(spread.notices.map(notice => notice.text).join(' '), /ICE Data Indices/);
+  }
 });
 
 test('daily comparison uses calendar weeks, seven-day limit, explicit nulls and zero', () => {

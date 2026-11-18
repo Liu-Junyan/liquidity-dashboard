@@ -65,17 +65,19 @@ JavaScript checks use Node 22+ and built-in modules; `npm install` is unnecessar
 Edit [data/registry.csv](data/registry.csv), then run `python3 scripts/build.py`. The build regenerates the catalog and demo observations from the CSV, including additions, renames, removals, and `unavailable` exclusions. No separate catalog edit is needed. [The registry guide](data/README.md) explains visibility rules and the 16 columns. `python3 scripts/registry.py --output data/registry.json` optionally exports the complete registry, including hidden entries.
 
 Real-data Slices 1–6 are implemented locally within the reviewed scope. The active
-set contains **21 series and 16 displayed indicators**: 15 FRED inputs, three
+set contains **23 series and 18 displayed indicators**: 17 FRED inputs, three
 SIFMA/Wind manual inputs, and three calculations. SOFR, EFFR, SOFR99, bank assets,
 and Treasury yield change remain internal inputs. Source-specific seasonal
-adjustment, Wednesday/quarter-start conventions and freshness checks are enforced.
-The reserve/assets chart explicitly identifies its coverage and seasonal mismatch.
-See the [Slice 6 review and remaining inputs](docs/source-review-slice-6.md).
+adjustment, Wednesday/quarter-start/daily-close conventions and freshness checks are
+enforced. The reserve/assets chart explicitly identifies its coverage and seasonal
+mismatch. See the [Slice 6 review and remaining inputs](docs/source-review-slice-6.md).
 
-ICE credit spreads and VIX remain inactive at the maintainer's request. Treasury
-bid–ask is deferred; iFind dollar index/MOVE and FINRA price impact still need
-source definitions. The first hosted production run and rollback remain to be
-verified after merge. Mobile UI polish remains deferred.
+The two ICE BofA credit-spread series use FRED's rolling three-year history and are
+published with the maintainer's confirmed redistribution permission recorded in the
+source review. VIX remains inactive at the maintainer's request. Treasury bid–ask is
+deferred; iFind dollar index/MOVE and FINRA price impact still need source
+definitions. The first hosted production run and rollback remain to be verified
+after merge. Mobile UI polish remains deferred.
 
 Run `python3 scripts/collect.py` to download current histories since `2010-01-01`
 for every active automatic input. It reads only `FRED_API_KEY` from the environment

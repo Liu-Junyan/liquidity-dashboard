@@ -33,6 +33,16 @@ def notices_for(identifier, year):
         code, title = board_sources[identifier]
         return [{'text': f'Source: Board of Governors of the Federal Reserve System (US), {title} '
                  f'({code}); distributed by FRED.', 'url': f'https://fred.stlouisfed.org/series/{code}'}]
+    ice_sources = {
+        'credit-spreads-ig': ('BAMLC0A0CM', 'ICE BofA US Corporate Index Option-Adjusted Spread'),
+        'credit-spreads-hy': ('BAMLH0A0HYM2', 'ICE BofA US High Yield Index Option-Adjusted Spread'),
+    }
+    if identifier in ice_sources:
+        code, title = ice_sources[identifier]
+        return [{'text': f'Source: ICE Data Indices, LLC, {title} ({code}); distributed by FRED. '
+                 'Maintainer confirmed ICE BofA index redistribution permission on 2026-11-18. '
+                 'FRED supplies a rolling three-year history for this series.',
+                 'url': f'https://fred.stlouisfed.org/series/{code}'}]
     if identifier == 'reserve-assets-ratio':
         return (notices_for('reserve-balances', year) + notices_for('bank-total-assets', year) +
                 [{'text': f'Project calculation by {PUBLISHER}: 100 × normalized WRBWFRBL / TLAACBW027SBOG. '

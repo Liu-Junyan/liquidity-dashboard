@@ -107,9 +107,9 @@ def _validate_snapshot(catalog, observations, manifest):
     generated = utc_time(dataset['generatedAt'])
     require(dataset['generatedAt'] == manifest['generatedAt'], 'Generation time mismatch')
     require(COMMIT.fullmatch(manifest['sourceInputCommit']) is not None, 'Invalid source-input commit')
-    # Slice 6 only extends policies/calculations; v4 snapshots remain valid for
-    # exact-byte rollback of the original production pilot.
-    require(manifest['policyVersion'] in {'4', POLICY_VERSION}, 'Unsupported policy version')
+    # Slice 6 only extends policies/calculations; earlier policy versions remain
+    # valid for exact-byte rollback of their published snapshots.
+    require(manifest['policyVersion'] in {'4', '5', POLICY_VERSION}, 'Unsupported policy version')
     categories, indicators, series = catalog['categories'], catalog['indicators'], observations['series']
     require(isinstance(categories, list) and len(categories) == 4, 'Expected four research layers')
     require(isinstance(indicators, list) and isinstance(series, dict), 'Invalid catalog/series containers')

@@ -6,6 +6,7 @@ from scripts.assemble import validate_source_dates
 from scripts.collect import freshness
 from scripts.derive import derive
 from scripts.normalize import normalize
+from scripts.notices import notices_for
 from scripts.policies import ACTIVE_SERIES, POLICIES, validate_activation
 from scripts.providers.fred import CollectionError, FredClient, validate_metadata
 from scripts.registry import load_registry
@@ -66,9 +67,34 @@ class CoverageTests(unittest.TestCase):
         self.assertEqual([p['value'] for p in result['observations']], [0.2, None, None])
         self.assertEqual(set(result['inputHashes']), {'sofr99', 'sofr'})
 
-    def test_deferred_and_unlicensed_sources_cannot_activate(self):
-        for key in ('credit-spreads-ig', 'credit-spreads-hy', 'vix', 'bid-ask-spread',
-                    'price-impact', 'dollar-index', 'move'):
+    def test_ice_credit_spreads_preserve_weekend_month_ends_and_rolling_window(self):
+        metadata = {'frequency_short': 'D', 'frequency': 'Daily, Close',
+                    'units': 'Percent', 'seasonal_adjustment_short': 'NSA'}
+        rows = [('2023-11-20', '1.10'), ('2024-03-31', '1.20'), ('2026-11-16', '0.86')]
+        for key in ('credit-spreads-ig', 'credit-spreads-hy'):
+            with self.subTest(key=key):
+                record, transport = self.fetch(key, rows, metadata)
+                self.assertEqual(transport.calls[-1]['units'], 'lin')
+                self.assertEqual([point['date'] for point in record['observations']],
+                                 [day for day, _ in rows])
+                validate_source_dates(record['observations'], POLICIES[key].date_rule)
+                normalized = normalize(self.registry['series'][key], record['observations'])
+                self.assertEqual([point['value'] for point in normalized], [1.1, 1.2, 0.86])
+                self.assertTrue(any('ICE Data Indices' in notice['text']
+                                    for notice in notices_for(key, '2026')))
+                with self.assertRaises(CollectionError):
+                    self.fetch(key, rows, metadata | {'seasonal_adjustment_short': 'SA'})
+                with self.assertRaises(CollectionError):
+                    self.fetch(key, [('2023-11-01', '1.0'), ('2026-11-16', '0.8')],
+                               {'observation_start': '2023-11-20', 'observation_end': '2026-11-16'})
+
+    def test_credit_spreads_activate_with_reviewed_permission(self):
+        keys = {'credit-spreads-ig', 'credit-spreads-hy'}
+        self.assertTrue(keys <= ACTIVE_SERIES)
+        self.assertEqual(set(validate_activation(self.registry, keys)), keys)
+
+    def test_deferred_sources_cannot_activate(self):
+        for key in ('vix', 'bid-ask-spread', 'price-impact', 'dollar-index', 'move'):
             self.assertNotIn(key, ACTIVE_SERIES)
             with self.subTest(key=key), self.assertRaises(ValueError):
                 validate_activation(self.registry, {key})

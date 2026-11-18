@@ -177,5 +177,23 @@
     "explanation": "同日SOFR第99百分位减SOFR中位数，反映融资利率分布尾部；输出为百分点（沿用%标签），不乘100；缺少任一输入时为空，不跨日填充。",
     "dateRule": "exact-date-union",
     "redistribution": "NY Fed terms apply; original-source/FRED attribution and applicable reference-rate notices required."
+  },
+  "credit-spreads-ig": {
+    "specHash": "47b93cb385ccb1a893c907253c9103148b2607e4b1624d873be30f0f80f5abe9",
+    "reviewedOn": "2026-11-18",
+    "reference": "docs/source-review-slice-6.md#credit-spreads-ig",
+    "explanation": "ICE BofA美国公司债券指数期权调整利差（OAS），日度收盘、未季调，百分比原值。FRED仅提供滚动三年历史（当前起于2023-11-20），月末观察值即使落在周末也保留来源日期。",
+    "dateRule": "source-daily-close",
+    "redistribution": "Maintainer confirmed prior written redistribution permission for ICE BofA index data on 2026-11-18. ICE Data Indices, LLC data; cite ICE and FRED.",
+    "seasonalAdjustment": "NSA"
+  },
+  "credit-spreads-hy": {
+    "specHash": "1e745d3e7f89b0d5780dc9e281297de26d6a2c2e7351bc61ef94eb8435ba0e1c",
+    "reviewedOn": "2026-11-18",
+    "reference": "docs/source-review-slice-6.md#credit-spreads-hy",
+    "explanation": "ICE BofA美国高收益债券指数期权调整利差（OAS），日度收盘、未季调，百分比原值。FRED仅提供滚动三年历史（当前起于2023-11-20），月末观察值即使落在周末也保留来源日期。",
+    "dateRule": "source-daily-close",
+    "redistribution": "Maintainer confirmed prior written redistribution permission for ICE BofA index data on 2026-11-18. ICE Data Indices, LLC data; cite ICE and FRED.",
+    "seasonalAdjustment": "NSA"
   }
 }

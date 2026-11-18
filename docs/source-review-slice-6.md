@@ -1,11 +1,13 @@
 # Slice 6 source review
 
-Reviewed November 17, 2026. Registry specifications are bound to
+Reviewed November 17–18, 2026. Registry specifications are bound to
 `data/source-reviews.json`; changing measurement fields requires renewed review.
-The active set contains 21 series: 15 automatic inputs, three manual inputs and
-three derived outputs, producing 16 displayed indicators. Five inputs stay hidden.
-ICE credit spreads and VIX remain inactive by the maintainer's explicit decision;
-Treasury bid–ask is deferred. Existing unavailable entries remain excluded.
+The active set contains 23 series: 17 automatic inputs, three manual inputs and
+three derived outputs, producing 18 displayed indicators. Five inputs stay hidden.
+ICE credit spreads were activated on November 18 after the maintainer confirmed
+redistribution permission; VIX remains inactive by the maintainer's explicit
+decision, and Treasury bid–ask is deferred. Existing unavailable entries remain
+excluded.
 
 ## Source conventions
 
@@ -124,6 +126,27 @@ re-difference or bridge missing source periods locally. For November 13, 2026,
 5.15 − 5.10 = 0.05 percentage points, normalized to 5 bp. The input stays hidden
 while price impact remains undefined. Credit Board and FRED and disclose transform.
 
+### credit-spreads-ig
+
+[FRED BAMLC0A0CM](https://fred.stlouisfed.org/series/BAMLC0A0CM): ICE BofA US
+Corporate Index option-adjusted spread, daily close, NSA, percent unchanged. This is
+an index OAS, not a single-bond spread or a Treasury yield difference. FRED publishes
+a **rolling three-year window** (currently 2023-11-20 onward), so the collector
+accepts an inception later than the 2010 request window while still rejecting any
+history starting before the declared source start. Month-end observations may fall
+on weekends (for example 2024-03-31); preserve those source calendar dates without
+a weekday rule, resampling, interpolation or vintage reconstruction. ICE Data
+Indices, LLC data; cite ICE and FRED. The maintainer confirmed redistribution
+permission on November 18, 2026.
+
+### credit-spreads-hy
+
+[FRED BAMLH0A0HYM2](https://fred.stlouisfed.org/series/BAMLH0A0HYM2): ICE BofA US
+High Yield Index option-adjusted spread, daily close, NSA, percent unchanged. Same
+rolling three-year window, weekend month-end dates, missing markers and attribution
+as the investment-grade series above. High-yield OAS is not comparable in level to
+the investment-grade OAS and the two series are not combined.
+
 ## Manual issuance sources
 
 ### bond-issuance
@@ -164,16 +187,12 @@ Manual input corrections, nulling and removals require the existing commit reaso
 format. Registry definitions and input CSVs must be committed before assembly;
 working-tree definitions cannot silently replace the audited committed specification.
 Credit SIFMA and Wind, with the permission confirmation recorded here. This
-confirmation does not extend to ICE or Cboe data.
+confirmation does not extend to Cboe data; the separate ICE confirmation covers
+only the two ICE BofA OAS series.
 
 ## Deferred sources and maintainer follow-up
 
-- **ICE IG/HY and VIX:** explicit maintainer decision to leave inactive. IDs are
-  recorded, but no activation policy, source-review approval or observation files
-  are supplied. [ICE IG](https://fred.stlouisfed.org/series/BAMLC0A0CM) and
-  [ICE HY](https://fred.stlouisfed.org/series/BAMLH0A0HYM2) require prior written
-  redistribution approval and now expose a three-year history. A future implementation
-  must handle that rolling window and month-end weekend observations deliberately.
+- **VIX:** explicit maintainer decision to leave inactive.
   [VIX](https://fred.stlouisfed.org/series/VIXCLS) is Cboe copyrighted daily-close
   index data; technical availability through FRED is not treated as permission.
 - **iFind dollar index/MOVE:** permission confirmed, but identifiable source series,
@@ -187,9 +206,9 @@ confirmation does not extend to ICE or Cboe data.
 
 ## Live collection and acceptance
 
-A complete live refresh on November 17 validated all 15 automatic inputs. The
-existing four pilot histories were unchanged; the eleven new sources were fetched
-successfully. All were current under their source-specific freshness allowances.
+A complete live refresh on November 17 validated the 15 then-active automatic
+inputs. The existing four pilot histories were unchanged; the eleven new sources
+were fetched successfully. All were current under their source-specific freshness allowances.
 The table below records source-scale samples, including missing observations in
 counts. Latest samples were reconciled with the linked FRED series pages above.
 
@@ -223,3 +242,14 @@ source explanations and Escape handling. Page methodology now covers mixed sourc
 Mobile polish and hosted deployment/rollback remain deferred or pending as recorded
 in the development plan. Demo observations, the Wind workbook and manual CSVs are
 unchanged; only automatic candidates were refreshed in the source checkout.
+
+### ICE credit spread activation (November 18)
+
+A targeted collection fetched both ICE inputs without touching the other stored
+histories. Each returned 792 daily observations spanning 2023-11-20 to 2026-11-16,
+including eleven weekend month-end dates and the provider's missing markers
+(IG 9, HY 8). Both were current under the 7-day daily freshness allowance and
+normalize as identity percentages. The assembled policy-version-6 snapshot contains
+23 active series and 18 numeric charts. Python and JavaScript checks cover the
+three-year inception, weekend source dates, NSA metadata rejection and the required
+ICE notice.

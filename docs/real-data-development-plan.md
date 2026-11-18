@@ -1,6 +1,6 @@
 # Real-data integration development plan
 
-Updated: November 17, 2026. Status: Slices 1–6 implemented locally within reviewed/authorized scope. Slice 6 activates 21 series (16 displayed); ICE spreads/VIX remain inactive, Treasury bid–ask is deferred, and iFind/price-impact definitions remain pending. Slice 5 configures scheduled production publication and rollback; first hosted deployment and live rollback acceptance remain pending after merge. Mobile UI polish is deferred at the maintainer's request.
+Updated: November 18, 2026. Status: Slices 1–6 implemented locally within reviewed/authorized scope. Slice 6 activates 23 series (18 displayed); VIX remains inactive, Treasury bid–ask is deferred, and iFind/price-impact definitions remain pending. Slice 5 configures scheduled production publication and rollback; first hosted deployment and live rollback acceptance remain pending after merge. Mobile UI polish is deferred at the maintainer's request.
 
 ## 1. Goal and first release
 
@@ -316,18 +316,20 @@ Exit check: the first production milestone is published successfully; scheduled,
   Publication tests cover addition, documented correction/removal and rejected
   undocumented changes, using temporary Git remotes.
 - [x] Activate hidden Treasury yield change with explicit `chg` and ×100 to bp once.
-- [x] Keep ICE credit spreads and VIX inactive at the maintainer's request;
-  redistribution permission is not available. Keep Treasury bid–ask deferred.
+- [x] Activate ICE IG/HY credit spreads after the maintainer confirmed
+  redistribution permission on November 18; keep VIX inactive and Treasury bid–ask
+  deferred. Preserve FRED's rolling three-year window and month-end weekend dates.
 - [x] Leave cross-currency basis, CDS, ETFs, depth, positioning and leverage unavailable.
 - [ ] Add iFind exports when source identifiers/descriptions, date and adjustment
   conventions and files are available. Permission is confirmed; definitions are not.
 - [ ] Define FINRA coverage/units and the price-impact proxy methodology before activation.
 
 Implementation and evidence: [Slice 6 source review](source-review-slice-6.md).
-Policy version 5 contains 21 activated series (15 automatic, three manual, three
-calculated), with 16 displayed charts and five hidden inputs. Version 4 snapshots
-remain readable for exact rollback. Full live refresh validated all automatic
-histories; no unlicensed series were fetched. The legacy local preview still
+Policy version 6 contains 23 activated series (17 automatic, three manual, three
+calculated), with 18 displayed charts and five hidden inputs. Versions 4 and 5
+snapshots remain readable for exact rollback. Full live refresh validated all active
+automatic histories; the ICE inputs were fetched only after the maintainer recorded
+redistribution permission. The legacy local preview still
 bypasses production review gates and must not be used as a publication artifact.
 
 Before release, commit the definitions and inputs together so manual assembly can

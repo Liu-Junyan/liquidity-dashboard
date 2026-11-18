@@ -50,9 +50,11 @@ class ProductionContractTests(unittest.TestCase):
     def validate(self):
         validate_snapshot(self.catalog, self.observations, self.manifest)
 
-    def test_pilot_policy_version_remains_readable_for_rollback(self):
-        self.manifest['policyVersion'] = '4'
-        self.validate()
+    def test_earlier_policy_versions_remain_readable_for_rollback(self):
+        for version in ('4', '5'):
+            with self.subTest(version=version):
+                self.manifest['policyVersion'] = version
+                self.validate()
         self.manifest['policyVersion'] = 'unknown'
         with self.assertRaisesRegex(ValueError, 'policy version'):
             self.validate()
