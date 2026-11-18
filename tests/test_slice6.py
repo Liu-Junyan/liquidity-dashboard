@@ -93,8 +93,28 @@ class CoverageTests(unittest.TestCase):
         self.assertTrue(keys <= ACTIVE_SERIES)
         self.assertEqual(set(validate_activation(self.registry, keys)), keys)
 
+    def test_vix_index_levels_preserve_missing_markers(self):
+        metadata = {'frequency_short': 'D', 'frequency': 'Daily, Close', 'units': 'Index',
+                    'seasonal_adjustment_short': 'NSA',
+                    'observation_start': '1990-01-02', 'observation_end': '2026-11-16'}
+        rows = [('2010-01-01', '.'), ('2010-01-04', '19.5'), ('2026-11-16', '22.91')]
+        record, transport = self.fetch('vix', rows, metadata)
+        self.assertEqual(transport.calls[-1]['units'], 'lin')
+        self.assertEqual([point['value'] for point in record['observations']], [None, 19.5, 22.91])
+        normalized = normalize(self.registry['series']['vix'], record['observations'])
+        self.assertEqual([point['value'] for point in normalized], [None, 19.5, 22.91])
+        self.assertTrue(any('Cboe' in notice['text'] for notice in notices_for('vix', '2026')))
+        with self.assertRaises(CollectionError):
+            self.fetch('vix', rows, metadata | {'units': 'Percent'})
+        with self.assertRaises(CollectionError):
+            self.fetch('vix', [('2009-12-31', '20'), ('2026-11-16', '22.91')], metadata)
+
+    def test_vix_activates_with_reviewed_permission(self):
+        self.assertIn('vix', ACTIVE_SERIES)
+        self.assertEqual(validate_activation(self.registry, {'vix'}), ['vix'])
+
     def test_deferred_sources_cannot_activate(self):
-        for key in ('vix', 'bid-ask-spread', 'price-impact', 'dollar-index', 'move'):
+        for key in ('bid-ask-spread', 'price-impact', 'dollar-index', 'move'):
             self.assertNotIn(key, ACTIVE_SERIES)
             with self.subTest(key=key), self.assertRaises(ValueError):
                 validate_activation(self.registry, {key})

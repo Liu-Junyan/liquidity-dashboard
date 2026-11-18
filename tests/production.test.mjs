@@ -26,7 +26,7 @@ test('expanded production preserves quarterly and manual policies and deferred g
   const ratio = catalog.indicators.find(item => item.seriesId === 'reserve-assets-ratio');
   assert.match(ratio.explanation, /季调/);
   assert.match(ratio.source.name, /项目计算/);
-  for (const key of ['vix', 'bid-ask-spread', 'price-impact']) {
+  for (const key of ['bid-ask-spread', 'price-impact']) {
     assert.equal(catalog.indicators.find(item => item.seriesId === key).inputAvailable, false);
     assert.deepEqual(payload.series[key], []);
   }
@@ -42,6 +42,16 @@ test('credit spreads display both ICE OAS series with daily source dates', () =>
     assert.ok(payload.series[key].length > 0);
     assert.match(spread.notices.map(notice => notice.text).join(' '), /ICE Data Indices/);
   }
+});
+
+test('VIX displays as an index level with Cboe attribution', () => {
+  const vix = display.indicators.find(item => item.seriesId === 'vix');
+  assert.equal(vix.nativeFrequency, 'daily');
+  assert.equal(vix.observationDateRule, 'source-daily-close');
+  assert.equal(vix.unit.label, '点');
+  assert.equal(comparisonLabel(vix, 13), '近13周变化');
+  assert.ok(payload.series.vix.length > 0);
+  assert.match(vix.notices.map(notice => notice.text).join(' '), /Cboe/);
 });
 
 test('daily comparison uses calendar weeks, seven-day limit, explicit nulls and zero', () => {

@@ -195,5 +195,14 @@
     "dateRule": "source-daily-close",
     "redistribution": "Maintainer confirmed prior written redistribution permission for ICE BofA index data on 2026-11-18. ICE Data Indices, LLC data; cite ICE and FRED.",
     "seasonalAdjustment": "NSA"
+  },
+  "vix": {
+    "specHash": "b5c3c30fa5dd0eee49a3075cd50d09145476292e2ced746c494dd60feebaeb8b",
+    "reviewedOn": "2026-11-18",
+    "reference": "docs/source-review-slice-6.md#vix",
+    "explanation": "芝加哥期权交易所波动率指数（VIX），日度收盘、未季调，指数点位原值。反映标普500指数期权隐含的近月波动率预期，不是已实现波动率；来源缺失值保留为空，不视为零，也不跨日填充。",
+    "dateRule": "source-daily-close",
+    "redistribution": "Maintainer confirmed prior written redistribution permission for the Cboe VIX on 2026-11-18. Cboe Volatility Index data; cite Cboe and FRED.",
+    "seasonalAdjustment": "NSA"
   }
 }

@@ -51,7 +51,7 @@ class ProductionContractTests(unittest.TestCase):
         validate_snapshot(self.catalog, self.observations, self.manifest)
 
     def test_earlier_policy_versions_remain_readable_for_rollback(self):
-        for version in ('4', '5'):
+        for version in ('4', '5', '6'):
             with self.subTest(version=version):
                 self.manifest['policyVersion'] = version
                 self.validate()

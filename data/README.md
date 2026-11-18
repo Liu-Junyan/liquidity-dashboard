@@ -401,10 +401,10 @@ setup, failure handling, rollback verification and resuming collection.
 
 ## Slice 6 coverage and manual publication
 
-The [reviewed expansion](../docs/source-review-slice-6.md) activates 17 automatic
+The [reviewed expansion](../docs/source-review-slice-6.md) activates 18 automatic
 inputs, three manual issuance inputs and three calculations. `collect.py` now
 refreshes all active automatic inputs, including the two ICE BofA credit-spread
-series (rolling three-year history); VIX is not fetched. `treasury-yield-chg`
+series (rolling three-year history) and the daily Cboe VIX index. `treasury-yield-chg`
 requests FRED `chg` and normalizes once to bp, remaining hidden.
 H.8 assets/loans retain seasonal adjustment; SLOOS retains quarter-start labels.
 

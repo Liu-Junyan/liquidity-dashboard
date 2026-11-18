@@ -58,7 +58,7 @@ class PolicyTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'dependency must be selected'):
             validate_policies(self.registry, {'sofr-effr-spread'})
         with self.assertRaisesRegex(ValueError, 'missing registry entry or policy'):
-            validate_policies(self.registry, {'vix'})
+            validate_policies(self.registry, {'cds-spreads'})
         policies = POLICIES | {'typo-id': POLICIES['sofr']}
         with self.assertRaisesRegex(ValueError, 'unknown registry ID'):
             validate_policies(self.registry, policies=policies)

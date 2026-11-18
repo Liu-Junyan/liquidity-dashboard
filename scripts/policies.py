@@ -19,23 +19,22 @@ else:
     from registry import DEFAULT_REGISTRY, load_registry
 
 ROOT = Path(__file__).resolve().parents[1]
-POLICY_VERSION = '6'
+POLICY_VERSION = '7'
 FRED_OBSERVATION_START = '2010-01-01'
 PILOT_SERIES = frozenset({'fed-assets', 'sofr', 'effr', 'sofr-effr-spread', 'fed-repo'})
-# VIX remains inactive at the maintainer's request (2026-11-17).
 ACTIVE_SERIES = PILOT_SERIES | frozenset({
     'sofr99', 'sofr-tail-spread', 'reserve-balances', 'bank-total-assets',
     'reserve-assets-ratio', 'treasury-account', 'reverse-repo', 'discount-window',
     'swap-line', 'fima-repo', 'bank-loans', 'lending-standards', 'treasury-yield-chg',
     'bond-issuance', 'treasury-bond-issuance', 'corporate-bond-issuance',
-    'credit-spreads-ig', 'credit-spreads-hy',
+    'credit-spreads-ig', 'credit-spreads-hy', 'vix',
 })
 # Conservative calendar-day diagnostics, not release-time guarantees or rejection
 # rules. These tolerate weekends, holidays and ordinary provider ingestion lag.
 FRESHNESS_DAYS = {'fed-assets': 14, 'sofr': 7, 'effr': 7, 'fed-repo': 7}
 FRESHNESS_DAYS.update({
     'sofr99': 7, 'reverse-repo': 7, 'treasury-yield-chg': 7,
-    'credit-spreads-ig': 7, 'credit-spreads-hy': 7,
+    'credit-spreads-ig': 7, 'credit-spreads-hy': 7, 'vix': 7,
     'reserve-balances': 14, 'treasury-account': 14, 'discount-window': 14,
     'swap-line': 14, 'fima-repo': 14, 'bank-total-assets': 21, 'bank-loans': 21,
     # Quarter-start labels predate publication; allow a full quarter plus lag.
@@ -95,6 +94,7 @@ POLICIES = {
     'credit-spreads-ig': SeriesPolicy('automatic', 'fred-observations', 'source-daily-close', 'lin'),
     'credit-spreads-hy': SeriesPolicy('automatic', 'fred-observations', 'source-daily-close', 'lin'),
     'corporate-bond-issuance': SeriesPolicy('manual', 'manual-csv', 'month-end'),
+    'vix': SeriesPolicy('automatic', 'fred-observations', 'source-daily-close', 'lin'),
 }
 COLLECTION_SERIES = frozenset(key for key in ACTIVE_SERIES if POLICIES[key].method != 'manual')
 

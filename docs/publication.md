@@ -166,12 +166,13 @@ Commit the Slice 6 source definitions, reviews, tests and saved automatic inputs
 before running the full check or publication command. The three manual issuance
 series are now active, and the assembler requires their current specification to
 match the audited committed registry. An uncommitted definition cannot be published.
-After that commit, `python scripts/check.py` assembles all 21 active series offline;
-`publish` uses saved inputs and `refresh` updates only the 17 automatic sources.
+After that commit, `python scripts/check.py` assembles all 24 active series offline;
+`publish` uses saved inputs and `refresh` updates only the 18 automatic sources.
 
-Policy version 6 adds the two ICE BofA credit-spread series without changing the v2
-snapshot format. Policy versions 4 and 5 remain accepted for exact-byte rollback of
-their published snapshots. Old required source notices are preserved. VIX and
-Treasury bid–ask remain inactive, and iFind/price impact still await definitions. See the
+Policy version 7 adds the Cboe VIX index after the two ICE BofA credit-spread series,
+without changing the v2 snapshot format. Policy versions 4–6 remain accepted for
+exact-byte rollback of their published snapshots. Old required source notices are
+preserved. Treasury bid–ask remains inactive, and iFind/price impact still await
+definitions. See the
 [review and evidence](source-review-slice-6.md). Hosted first-deployment and live
 rollback/recovery acceptance remain pending; local Git rehearsals do not replace them.

@@ -43,6 +43,11 @@ def notices_for(identifier, year):
                  'Maintainer confirmed ICE BofA index redistribution permission on 2026-11-18. '
                  'FRED supplies a rolling three-year history for this series.',
                  'url': f'https://fred.stlouisfed.org/series/{code}'}]
+    if identifier == 'vix':
+        return [{'text': 'Source: Cboe Volatility Index (VIX), VIXCLS; distributed by FRED. '
+                 'Copyright, Chicago Board Options Exchange, Inc. Maintainer confirmed Cboe VIX '
+                 'redistribution permission on 2026-11-18. Cite Cboe and FRED.',
+                 'url': 'https://fred.stlouisfed.org/series/VIXCLS'}]
     if identifier == 'reserve-assets-ratio':
         return (notices_for('reserve-balances', year) + notices_for('bank-total-assets', year) +
                 [{'text': f'Project calculation by {PUBLISHER}: 100 × normalized WRBWFRBL / TLAACBW027SBOG. '

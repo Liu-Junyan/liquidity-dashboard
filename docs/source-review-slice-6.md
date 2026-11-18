@@ -2,12 +2,11 @@
 
 Reviewed November 17–18, 2026. Registry specifications are bound to
 `data/source-reviews.json`; changing measurement fields requires renewed review.
-The active set contains 23 series: 17 automatic inputs, three manual inputs and
-three derived outputs, producing 18 displayed indicators. Five inputs stay hidden.
-ICE credit spreads were activated on November 18 after the maintainer confirmed
-redistribution permission; VIX remains inactive by the maintainer's explicit
-decision, and Treasury bid–ask is deferred. Existing unavailable entries remain
-excluded.
+The active set contains 24 series: 18 automatic inputs, three manual inputs and
+three derived outputs, producing 19 displayed indicators. Five inputs stay hidden.
+ICE credit spreads and VIX were activated on November 18 after the maintainer
+confirmed redistribution permission; Treasury bid–ask is deferred. Existing
+unavailable entries remain excluded.
 
 ## Source conventions
 
@@ -147,6 +146,18 @@ rolling three-year window, weekend month-end dates, missing markers and attribut
 as the investment-grade series above. High-yield OAS is not comparable in level to
 the investment-grade OAS and the two series are not combined.
 
+### vix
+
+[FRED VIXCLS](https://fred.stlouisfed.org/series/VIXCLS): Cboe Volatility Index,
+daily close, NSA, index points unchanged. VIX measures the option-implied
+expectation of near-term S&P 500 volatility; it is not a realized-volatility
+measure. FRED history starts in 1990, so collection begins at the 2010 cutoff and
+the first stored observation may be an explicit missing marker (2010-01-01 was a
+market holiday). Preserve those nulls, true non-zero levels and source dates; never
+resample to a weekly grid or fill missing days. Cboe copyrighted index data;
+cite Cboe and FRED. The maintainer confirmed redistribution permission on
+November 18, 2026.
+
 ## Manual issuance sources
 
 ### bond-issuance
@@ -186,15 +197,11 @@ Do not execute the embedded Wind formula or rewrite workbook metadata in Python.
 Manual input corrections, nulling and removals require the existing commit reason
 format. Registry definitions and input CSVs must be committed before assembly;
 working-tree definitions cannot silently replace the audited committed specification.
-Credit SIFMA and Wind, with the permission confirmation recorded here. This
-confirmation does not extend to Cboe data; the separate ICE confirmation covers
-only the two ICE BofA OAS series.
+Credit SIFMA and Wind, with the permission confirmation recorded here. The
+separate ICE and Cboe confirmations cover only those index series.
 
 ## Deferred sources and maintainer follow-up
 
-- **VIX:** explicit maintainer decision to leave inactive.
-  [VIX](https://fred.stlouisfed.org/series/VIXCLS) is Cboe copyrighted daily-close
-  index data; technical availability through FRED is not treated as permission.
 - **iFind dollar index/MOVE:** permission confirmed, but identifiable source series,
   instrument definitions, observation units/dates, adjustment conventions and input
   files remain missing. Supply original export descriptions or table references;
@@ -243,13 +250,16 @@ Mobile polish and hosted deployment/rollback remain deferred or pending as recor
 in the development plan. Demo observations, the Wind workbook and manual CSVs are
 unchanged; only automatic candidates were refreshed in the source checkout.
 
-### ICE credit spread activation (November 18)
+### Credit spread and VIX activation (November 18)
 
 A targeted collection fetched both ICE inputs without touching the other stored
 histories. Each returned 792 daily observations spanning 2023-11-20 to 2026-11-16,
 including eleven weekend month-end dates and the provider's missing markers
 (IG 9, HY 8). Both were current under the 7-day daily freshness allowance and
-normalize as identity percentages. The assembled policy-version-6 snapshot contains
-23 active series and 18 numeric charts. Python and JavaScript checks cover the
-three-year inception, weekend source dates, NSA metadata rejection and the required
-ICE notice.
+normalize as identity percentages. A second targeted collection fetched VIXCLS:
+4,402 daily observations from 2010-01-01 to 2026-11-16, including 125 provider
+missing markers and the starting holiday null, all current under the same 7-day
+allowance and normalized as identity index points. The assembled policy-version-7
+snapshot contains 24 active series and 19 numeric charts. Python and JavaScript
+checks cover the three-year inception, weekend source dates, VIX index units and
+missing markers, NSA metadata rejection and the required ICE/Cboe notices.
