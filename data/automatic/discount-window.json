@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "policyVersion": "5",
+  "policyVersion": "7",
   "seriesId": "discount-window",
   "specHash": "33c2f82126e52450d70bae0d29b4ebffcba550214f458441b606f873a8df621c",
   "provider": "FRED",
@@ -3551,21 +3551,21 @@
   },
   "sourceHash": "a18b16e73e29d8fa85b272232b7b04ca8c4141637d52e8d6ad0bbb44ea885c06",
   "revisionSummary": {
-    "added": 880,
+    "added": 0,
     "removed": 0,
     "revised": 0
   },
   "error": null,
   "outcome": {
-    "status": "updated",
+    "status": "unchanged",
     "latestObservationDate": "2026-11-11",
-    "lastAttempt": "2026-11-17T07:49:52.018793Z",
-    "lastSuccessfulCheck": "2026-11-17T07:49:52.018793Z",
+    "lastAttempt": "2026-11-18T16:28:27.574162Z",
+    "lastSuccessfulCheck": "2026-11-18T16:28:27.574162Z",
     "lastDataChange": "2026-11-17T07:49:52.018793Z"
   },
   "freshness": {
     "latestNumericDate": "2026-11-11",
-    "ageDays": 6,
+    "ageDays": 7,
     "maxAgeDays": 14,
     "status": "current"
   }

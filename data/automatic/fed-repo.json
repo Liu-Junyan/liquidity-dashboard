@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "policyVersion": "5",
+  "policyVersion": "7",
   "seriesId": "fed-repo",
   "specHash": "268efab12fa0004407c6f00f86e81ef3c57dde4610ef39b8ba2e2a751f182947",
   "provider": "FRED",
@@ -17617,6 +17617,10 @@
     {
       "date": "2026-11-16",
       "value": 0.002
+    },
+    {
+      "date": "2026-11-17",
+      "value": 0.104
     }
   ],
   "metadata": {
@@ -17625,7 +17629,7 @@
     "frequency_short": "D",
     "seasonal_adjustment_short": "NSA",
     "observation_start": "2000-01-03",
-    "observation_end": "2026-11-16"
+    "observation_end": "2026-11-17"
   },
   "requestParameters": {
     "series_id": "RPONTTLD",
@@ -17637,22 +17641,22 @@
     "limit": 100000,
     "offset": 0
   },
-  "sourceHash": "4501722cab9de5cf8e2ee8ea091087e5ff75aefc8a037811c9472bc9943d3a61",
+  "sourceHash": "ebe7eafa50e829102ec4405ceda82a459c9f1e937b8c6c81df7751d795d12f09",
   "revisionSummary": {
-    "added": 0,
+    "added": 1,
     "removed": 0,
     "revised": 0
   },
   "error": null,
   "outcome": {
-    "status": "unchanged",
-    "latestObservationDate": "2026-11-16",
-    "lastAttempt": "2026-11-17T07:49:52.018793Z",
-    "lastSuccessfulCheck": "2026-11-17T07:49:52.018793Z",
-    "lastDataChange": "2026-11-17T05:54:45.289045Z"
+    "status": "updated",
+    "latestObservationDate": "2026-11-17",
+    "lastAttempt": "2026-11-18T16:28:27.574162Z",
+    "lastSuccessfulCheck": "2026-11-18T16:28:27.574162Z",
+    "lastDataChange": "2026-11-18T16:28:27.574162Z"
   },
   "freshness": {
-    "latestNumericDate": "2026-11-16",
+    "latestNumericDate": "2026-11-17",
     "ageDays": 1,
     "maxAgeDays": 7,
     "status": "current"
