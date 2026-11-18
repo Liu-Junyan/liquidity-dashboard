@@ -33,7 +33,8 @@ class SavedInputClient:
         values = [6000000, 7000000] if weekly else [4.1, 4.0, None] if identifier == 'sofr' else [4, 4, None] if identifier == 'effr' else [0, 1, None]
         if quarterly:
             days, values = ['2026-07-01', '2026-10-01'], [-5, 0]
-        units = {'Millions': 'Millions of U.S. Dollars', 'Billions': 'Billions of US Dollars', '%': 'Percent'}
+        units = {'Millions': 'Millions of U.S. Dollars', 'Billions': 'Billions of US Dollars',
+                 '%': 'Percent', 'none': 'Index'}
         return {'observations': [dict(date=day, value=value) for day, value in zip(days, values)],
                 'metadata': {'id': entry['provider_series_id'], 'units': units[entry['source_unit']],
                              'frequency_short': 'W' if weekly else 'Q' if quarterly else 'D',
