@@ -1,12 +1,14 @@
 {
   "schemaVersion": 1,
   "mode": "publish",
-  "baseCommit": "35f0d6e55bdd657009e2213f4bb1c10d8178aa35",
-  "snapshotId": "production-1f8b9dabb2e35c8761d61857546280a09accc0bcc4e9a7350c4e77da0da33b39",
+  "baseCommit": "6853d9864677f5a74769664dfd670295ae9c4310",
+  "snapshotId": "production-911b528875316300d1275b0d0c01980964477ba3903a9898fa5a1ebb78584300",
   "restoredFrom": null,
   "artifactHashes": {
     "data/automatic/bank-loans.json": "548bda46039308a804567fb978f43a0b228bfd8b89b6e6b611c830fb92ad3ead",
     "data/automatic/bank-total-assets.json": "b9bb1117852c3448e38c58b21cfbd75e9bf44368bdb7f39236fc9272c715a21a",
+    "data/automatic/credit-spreads-hy.json": "182044198768a166f862fb8f13cf6644cd312cf57f324e0a89c6b74852303402",
+    "data/automatic/credit-spreads-ig.json": "f4f59ea7e7f07c802109f25bfa21a85e2e431bf41d32470fe6e18a84ac78bef7",
     "data/automatic/discount-window.json": "67e9065962e3efe9f1befd45caa75304ba1ee844155946a183cee7b3fe140957",
     "data/automatic/effr.json": "8e5c55a1e11ffdf7b77b8e9295ef8c62229fdc813b08959029b0c698ed14d7dd",
     "data/automatic/fed-assets.json": "3b39fcf546aef0c6f922f18a94847a1c9b18b62a441c566bfc05219fa606cf0f",
@@ -20,8 +22,8 @@
     "data/automatic/swap-line.json": "712efb35cb3507d4ba422941243db16540d793fa9f90b18ac94fad65801735ea",
     "data/automatic/treasury-account.json": "a31dd82a7365fb0ade2ac7657bbf991f49f97b7df9871be9428bd109d18e3eae",
     "data/automatic/treasury-yield-chg.json": "f790f45fba072860ac01610356ede6012af0ddec12ecd965f5396b8e9639d03f",
-    "data/snapshot/catalog.json": "ef6b06f04cb31d13e1f37116c20a67defcea5f11e4dec7aeb70bb920cac369b7",
-    "data/snapshot/manifest.json": "2ca6422af7743023907b4da6a2cb4ffb1eec74a02124bbafe50ee128f36119d9",
-    "data/snapshot/observations.json": "02caaa23e28f4619dee3cecd32494135e25a42c90e721059761622402ee22806"
+    "data/snapshot/catalog.json": "1daa57b200af815039d1c3a04e2cbcab0f74659ceddb4c1c4beaf644ad47a54f",
+    "data/snapshot/manifest.json": "89c5d3f89cece75685c79d910302b4f2b3d14a9d003e9730cd863484b921590e",
+    "data/snapshot/observations.json": "d1def832164cf8d77b50fba299ea3c900e93f47163db311b9c063aa91832a734"
   }
 }
