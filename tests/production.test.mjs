@@ -189,6 +189,22 @@ try {
     const source = readFileSync(new URL('../dist/assets/app.js', import.meta.url), 'utf8');
     assert.match(source, /new URL\(`\.\.\/data\/\$\{name\}\.json`, import.meta.url\)/);
   });
+  test('expanded range applies only until the dialog closes', () => {
+    const pageChart = charts.get(node(`#chart-${daily.id}`));
+    const originalHash = location.hash;
+    const button = {dataset: {range: 'ytd'}, getAttribute: () => 'false'};
+    handlers['#dialog-content:click']({target: {closest: () => button}});
+    assert.match(node('#dialog-content').innerHTML, /data-range="ytd" aria-pressed="true"/);
+    assert.match(node('#ranges').innerHTML, /data-range="all" aria-pressed="true"/);
+    assert.equal(charts.get(node(`#chart-${daily.id}`)), pageChart);
+    assert.equal(location.hash, originalHash);
+    assert.ok(charts.get(node('#expanded-chart')).series[0].data.length < pageChart.series[0].data.length);
+    handlers['#close-dialog:click']();
+    handlers.hashchange();
+    location.hash = originalHash;
+    handlers.hashchange();
+    assert.match(node('#dialog-content').innerHTML, /data-range="all" aria-pressed="true"/);
+  });
   test('production dialogs handle single points, empty ranges and keyboard cancellation', () => {
     payload.series[daily.id] = [point('2024-02-29', 0)];
     location.hash = '#indicator=sofr-effr-spread&range=5y'; handlers.hashchange();

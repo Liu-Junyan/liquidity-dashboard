@@ -21,7 +21,7 @@ function navigate(patch) {
   if (next.indicator) params.set('indicator', next.indicator);
   location.hash = params.toString();
 }
-function pointsFor(indicator) { return inRange(observations[indicator.id], state.range, catalog.dataset.observationEnd); }
+function pointsFor(indicator, range = state.range) { return inRange(observations[indicator.id], range, catalog.dataset.observationEnd); }
 function secondarySummary(indicator, primaryDate) {
   const latest = latestObservation(observations[indicator.id]);
   const date = latest?.date !== primaryDate ? `<span class="secondary-date">${t('observationDate')} ${formatDate(latest?.date)}</span>` : '';
@@ -75,13 +75,16 @@ function renderOverview() {
     drawChart($(`#spark-${category.id}`), inRange(observations[indicator.id], '1y', catalog.dataset.observationEnd), indicator, {sparkline: true});
   });
 }
+function rangeButtons(selected) {
+  return ['ytd', '1y', '5y', 'all'].map(range => `<button data-range="${range}" aria-pressed="${selected === range}">${t(range)}</button>`).join('');
+}
 function renderCharts() {
   const category = categories.find(item => item.id === state.category);
   $('#category-title').textContent = category.name;
   $('#category-eyebrow').textContent = `0${categories.indexOf(category) + 1} / ${t('category')}`;
   $('#category-description').textContent = category.description;
   document.querySelectorAll('[data-category]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.category === state.category)));
-  $('#ranges').innerHTML = ['ytd', '1y', '5y', 'all'].map(range => `<button data-range="${range}" aria-pressed="${state.range === range}">${t(range)}</button>`).join('');
+  $('#ranges').innerHTML = rangeButtons(state.range);
   const parent = $('#charts');
   disposeCharts(parent);
   const indicators = catalog.indicators.filter(item => item.categoryId === state.category);
@@ -93,7 +96,7 @@ function renderCharts() {
   parent.innerHTML = indicators.map(indicator => `<article class="indicator-card" aria-labelledby="heading-${indicator.id}"><div class="card-heading"><h3 id="heading-${indicator.id}">${escape(indicator.name)}</h3>${indicator.isDemo ? `<span class="card-demo">${t('demoShort')}</span>` : `<span class="card-demo">${frequencyLabel(indicator.frequency)}</span>`}</div><p class="indicator-role">${escape(indicator.role ?? '')}</p>${metrics(indicator)}<div class="chart-unit">${t('unit')}：${escape(indicator.unit.label)}</div><div class="detail-chart" id="chart-${indicator.id}" role="img" aria-label="${escape(indicator.name)} · ${t(state.range)} · ${seriesLabel(indicator)}"></div><div class="card-actions"><button class="text-button" data-statistics="${indicator.id}" aria-expanded="${statisticsOpen.has(indicator.id)}" aria-controls="statistics-${indicator.id}"><span aria-hidden="true">▦</span> ${t(statisticsOpen.has(indicator.id) ? 'hideStatistics' : 'statistics')}</button><button class="text-button" data-expand="${indicator.id}">${t('expand')} <span aria-hidden="true">↗</span></button></div><div id="statistics-${indicator.id}" ${statisticsOpen.has(indicator.id) ? '' : 'hidden'}>${statisticsMarkup(indicator)}</div><p class="source-summary">数据来源：${escape(sourceSummary(indicator))}</p></article>`).join('');
   indicators.forEach(indicator => drawChart($(`#chart-${indicator.id}`), pointsFor(indicator), indicator));
 }
-function renderDialog() {
+function renderDialog(range = state.range) {
   const indicator = catalog.indicators.find(item => item.id === state.indicator);
   disposeCharts($('#dialog-content'));
   if (!indicator) {
@@ -102,19 +105,20 @@ function renderDialog() {
     if (renderedIndicator && dialogTrigger?.isConnected) dialogTrigger.focus();
     return;
   }
-  $('#dialog-content').innerHTML = `<h2 id="dialog-title">${escape(indicator.name)}</h2><p class="dialog-range">${t(state.range)} · ${t('rangeDates')}：${formatDate(pointsFor(indicator)[0]?.date)} — ${formatDate(pointsFor(indicator).at(-1)?.date)}</p>${metrics(indicator)}<div class="chart-unit">${t('unit')}：${escape(indicator.unit.label)}</div><div id="expanded-chart" class="expanded-chart" role="img" aria-label="${escape(indicator.name)} · ${seriesLabel(indicator)}"></div><div class="indicator-info"><div><h3>${t('explanation')}</h3><p>${escape(indicator.explanation)}</p></div><dl><dt>${t('source')}</dt><dd>${indicator.isDemo ? t('sourceFixture') : (indicator.inputAvailable ? sourceMarkup(indicator) : '待接入')}</dd><dt>${t('frequency')}</dt><dd>${frequencyLabel(indicator.frequency)}</dd>${indicator.isDemo ? `<dt>${t('intendedSource')}</dt><dd>${sourceMarkup(indicator)}</dd><dt>${t('collectedAt')}</dt><dd>${formatDate(catalog.dataset.collectedAt, {hour: '2-digit', minute: '2-digit'})} UTC</dd>` : ''}</dl></div>${noticesMarkup(indicator)}`;
+  const points = pointsFor(indicator, range);
+  $('#dialog-content').innerHTML = `<h2 id="dialog-title">${escape(indicator.name)}</h2><div class="range-field"><span>${t('rangeLabel')}</span><div id="dialog-ranges" class="range-controls" role="group" aria-label="${t('rangeAria')}">${rangeButtons(range)}</div></div><p class="dialog-range">${t('rangeDates')}：${formatDate(points[0]?.date)} — ${formatDate(points.at(-1)?.date)}</p>${metrics(indicator)}<div class="chart-unit">${t('unit')}：${escape(indicator.unit.label)}</div><div id="expanded-chart" class="expanded-chart" role="img" aria-label="${escape(indicator.name)} · ${t(range)} · ${seriesLabel(indicator)}"></div><div class="indicator-info"><div><h3>${t('explanation')}</h3><p>${escape(indicator.explanation)}</p></div><dl><dt>${t('source')}</dt><dd>${indicator.isDemo ? t('sourceFixture') : (indicator.inputAvailable ? sourceMarkup(indicator) : '待接入')}</dd><dt>${t('frequency')}</dt><dd>${frequencyLabel(indicator.frequency)}</dd>${indicator.isDemo ? `<dt>${t('intendedSource')}</dt><dd>${sourceMarkup(indicator)}</dd><dt>${t('collectedAt')}</dt><dd>${formatDate(catalog.dataset.collectedAt, {hour: '2-digit', minute: '2-digit'})} UTC</dd>` : ''}</dl></div>${noticesMarkup(indicator)}`;
   if (!dialog.open) dialog.showModal();
   document.body.classList.add('modal-open');
-  drawChart($('#expanded-chart'), pointsFor(indicator), indicator);
+  drawChart($('#expanded-chart'), points, indicator);
 }
 function renderRoute() {
   if (state && ['#methodology', '#research'].includes(location.hash)) return;
-  const focusedRange = document.activeElement?.dataset.range;
+  const focusedRange = !dialog.open && document.activeElement?.dataset.range;
   const next = parseRoute(location.hash, categories, catalog.indicators);
   state = next;
   rangesByCategory.set(state.category, state.range);
   if (state.category !== renderedCategory || state.range !== renderedRange) renderCharts();
-  if (focusedRange) $(`[data-range="${state.range}"]`)?.focus();
+  if (focusedRange) $(`#ranges [data-range="${state.range}"]`)?.focus();
   if (state.indicator !== renderedIndicator || state.range !== renderedRange) renderDialog();
   renderedCategory = state.category; renderedRange = state.range; renderedIndicator = state.indicator;
 }
@@ -139,6 +143,12 @@ $('#charts').addEventListener('click', event => {
   statisticsButton.innerHTML = `<span aria-hidden="true">▦</span> ${t(statisticsOpen.has(id) ? 'hideStatistics' : 'statistics')}`;
 });
 function closeDialog() { navigate({indicator: null}); }
+$('#dialog-content').addEventListener('click', event => {
+  const button = event.target.closest('#dialog-ranges [data-range]');
+  if (!button || button.getAttribute('aria-pressed') === 'true') return;
+  renderDialog(button.dataset.range);
+  $('#dialog-ranges [aria-pressed="true"]').focus({preventScroll: true});
+});
 $('#close-dialog').addEventListener('click', closeDialog);
 dialog.addEventListener('cancel', event => { event.preventDefault(); closeDialog(); });
 dialog.addEventListener('click', event => { if (event.target === dialog) closeDialog(); });
