@@ -322,15 +322,15 @@ next run; Git retains ordinary file history for rollback, without vintage tracki
 `source_unit` is the scale actually delivered by the collector or manual input;
 `normalized_unit` is the scale consumed by formulas and displayed by the site.
 Raw values must be retained separately from normalized values. For derived rows,
-the formula consumes already-normalized inputs and directly yields the declared
-output unit; never apply an input conversion again to the calculated output.
+the formula consumes already-normalized inputs and yields a value in the declared source unit.
+The two SOFR spreads convert this difference from percentage points to bp once.
 
 | Rule | Example |
 | --- | --- |
 | Millions → Billions | `3,000,000 / 1,000 = 3,000` |
 | Billions → Billions | `25,000` remains `25,000` |
 | Reserve/assets percent | `100 * 3,000 / 25,000 = 12` |
-| SOFR − EFFR, `%` output | `4.10 - 4.00 = 0.10` percentage points |
+| SOFR − EFFR and SOFR99 − SOFR, bp output | `(4.10 - 4.00) × 100 = 10` bp |
 | Provider `chg`, `%` → `bp` | A returned difference of `0.10` becomes `10` bp once |
 
 The bank-assets definition stays in billions and ON RRP stays daily/billions.

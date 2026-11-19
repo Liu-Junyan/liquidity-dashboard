@@ -141,6 +141,15 @@ def conversion_policy(entry):
     raise ValueError(f'Unsupported conversion: {source!r} -> {target!r}')
 
 
+def derived_output_factor(identifier, entry):
+    conversion, factor = conversion_policy(entry)
+    if conversion == 'identity':
+        return factor
+    if identifier in {'sofr-effr-spread', 'sofr-tail-spread'} and conversion == 'percentage-points-to-bp':
+        return factor
+    raise ValueError(f'{identifier}: unsupported derived output conversion')
+
+
 def specification_hash(entry):
     """Bind a source review to measurement semantics, independently of display edits."""
     encoded = json.dumps({key: entry[key] for key in SPEC_FIELDS}, sort_keys=True,
@@ -195,7 +204,8 @@ def validate_policies(registry, selected=PILOT_SERIES, *, policies=None, reviews
             actual = (frozenset(entry['input_series_ids']), ''.join((entry['formula'] or '').split()))
             if actual != expected or policy.calculation != actual[1]:
                 raise ValueError(f'{identifier}: unknown or mismatched calculation definition')
-            if conversion != 'identity' or policy.request_units is not None:
+            derived_output_factor(identifier, entry)
+            if policy.request_units is not None:
                 raise ValueError(f'{identifier}: formulas consume normalized inputs; no second conversion')
         else:
             if entry['input_series_ids'] or entry['formula']:

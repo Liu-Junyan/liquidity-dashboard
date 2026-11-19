@@ -42,7 +42,7 @@ Use Python 3.10+; prefer standard-library modules where they keep the implementa
 | `reserve-balances` | Millions → billions: divide by 1,000 | 3,000,000 → 3,000 |
 | `bank-total-assets` | Billions → billions: unchanged | 25,000 → 25,000 |
 | `reserve-assets-ratio` | `100 * reserve-balances / bank-total-assets`, using normalized inputs | 3,000 / 25,000 → 12 (%) |
-| `sofr-effr-spread`, `sofr-tail-spread` | Subtract normalized percent-level inputs; current `%` outputs retain percentage-point scale | 4.10 − 4.00 → 0.10; multiply by 100 only if the output is explicitly changed to bp |
+| `sofr-effr-spread`, `sofr-tail-spread` | Subtract normalized percent-level inputs and multiply the difference by 100 for bp | (4.10 − 4.00) × 100 = 10 bp |
 | `treasury-yield-chg` | Request `DGS10` with `units=chg`; current registry specifies `%` → `bp`, so multiply the returned difference by 100 once | Yield 4.00% → 4.10% gives API change 0.10, then normalized change 10 bp |
 | `fed-repo` | FRED `RPONTTLD`; Treasury, agency debt, and agency MBS collateral; daily billions → billions with `units=lin` | No division by 1,000; replaces manual all-collateral aggregation |
 | `reverse-repo` | Use the updated `RRPONTSYD` mapping; daily billions → billions | No weekly resampling or amount conversion by default |

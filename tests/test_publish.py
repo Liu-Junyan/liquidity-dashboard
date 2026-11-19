@@ -167,7 +167,7 @@ class PublicationTests(unittest.TestCase):
         record = json.loads((self.repo / release.RECORD).read_text())
         docs = release.read_snapshot(self.repo)
         self.assertEqual(docs[2]['outcomes']['sofr']['status'], 'retained')
-        self.assertEqual(docs[1]['series']['sofr-effr-spread'][0]['value'], 0.1)
+        self.assertEqual(docs[1]['series']['sofr-effr-spread'][0]['value'], 10)
         self.assertIn('Collection warning', release.summary(self.repo, record, 'test', 'ready'))
 
     def test_fatal_validation_does_not_push_or_replace_previous_output(self):

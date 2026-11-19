@@ -32,10 +32,10 @@
     "redistribution": "Copyrighted, citation required; cite NY Fed and FRED. NY Fed general content terms apply; recheck before publication."
   },
   "sofr-effr-spread": {
-    "specHash": "39d93190bb4177ee36c9484cc67a92327fa5f1ae641ef3495f6dfd05c18e19bd",
-    "reviewedOn": "2026-11-16",
+    "specHash": "9b8240a00d0e0359644f1e187a03e11ebfb700ba62bd11d4c6b13e61c4879a1b",
+    "reviewedOn": "2026-11-19",
     "reference": "docs/source-review.md#sofr-effr-spread",
-    "explanation": "相同观察日的SOFR减EFFR。先规范化输入单位；输出为百分点（沿用%标签），4.10减4.00为0.10；缺少任一输入时为空，不跨日填充。",
+    "explanation": "相同观察日的SOFR减EFFR。先规范化输入单位；将百分点差乘以100得到基点（bp），例如4.10减4.00为10 bp；缺少任一输入时为空，不跨日填充。",
     "dateRule": "exact-date-union",
     "redistribution": "NY Fed terms apply; attribution and applicable reference-rate notices required. See source review."
   },
@@ -171,10 +171,10 @@
     "redistribution": "Maintainer confirmed public redistribution permission for Wind/SIFMA on 2026-11-17. Cite SIFMA and Wind."
   },
   "sofr-tail-spread": {
-    "specHash": "c3b4d7dfdfc543919a7b0c169374f259e8b236453e3d6ca2790e0d5a73ae5da9",
-    "reviewedOn": "2026-11-17",
+    "specHash": "70ed52a499f9f4ecbcc97f76bb39f19cccb215d888282e86111493d1cb3ea6ec",
+    "reviewedOn": "2026-11-19",
     "reference": "docs/source-review-slice-6.md#sofr-tail-spread",
-    "explanation": "同日SOFR第99百分位减SOFR中位数，反映融资利率分布尾部；输出为百分点（沿用%标签），不乘100；缺少任一输入时为空，不跨日填充。",
+    "explanation": "同日SOFR第99百分位减SOFR中位数，反映融资利率分布尾部；将百分点差乘以100得到基点（bp），例如4.10减4.00为10 bp；缺少任一输入时为空，不跨日填充。",
     "dateRule": "exact-date-union",
     "redistribution": "NY Fed terms apply; original-source/FRED attribution and applicable reference-rate notices required."
   },

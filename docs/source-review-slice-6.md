@@ -31,7 +31,7 @@ review. This is a distribution percentile, not a confidence interval.
 
 ### sofr-tail-spread
 
-Same-date SOFR99 minus SOFR, in percentage points under the existing `%` label.
+Same-date SOFR99 minus SOFR, multiplied by 100 to express the percentage-point difference in bp.
 Use the union of source dates, null when either input is absent, and no second
 scale conversion. Recompute all history and record both normalized input hashes.
 NY Fed notices cover the inputs and related project calculation.

@@ -60,11 +60,11 @@ class CoverageTests(unittest.TestCase):
         self.assertEqual([p['value'] for p in normalize(self.registry['series']['treasury-yield-chg'],
                                                       record['observations'])], [None, None, 5])
 
-    def test_tail_difference_never_fills_dates_or_multiplies_percentage_points(self):
+    def test_tail_difference_in_basis_points_preserves_missing_dates(self):
         inputs = {'sofr99': [{'date': '2026-11-12', 'value': 4.3}, {'date': '2026-11-13', 'value': None}],
                   'sofr': [{'date': '2026-11-12', 'value': 4.1}, {'date': '2026-11-16', 'value': 4}]}
         result = derive(self.registry, inputs, {'sofr-tail-spread'})['sofr-tail-spread']
-        self.assertEqual([p['value'] for p in result['observations']], [0.2, None, None])
+        self.assertEqual([p['value'] for p in result['observations']], [20, None, None])
         self.assertEqual(set(result['inputHashes']), {'sofr99', 'sofr'})
 
     def test_ice_credit_spreads_preserve_weekend_month_ends_and_rolling_window(self):

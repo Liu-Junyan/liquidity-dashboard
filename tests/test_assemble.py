@@ -77,7 +77,7 @@ class AssemblyTests(unittest.TestCase):
         catalog, observations, manifest = self.candidate()
         self.assertEqual(observations['series']['fed-assets'][0]['value'], 6000)
         self.assertEqual(observations['series']['sofr-effr-spread'], [
-            {'date': '2026-11-12', 'value': 0.1}, {'date': '2026-11-13', 'value': 0},
+            {'date': '2026-11-12', 'value': 10}, {'date': '2026-11-13', 'value': 0},
             {'date': '2026-11-16', 'value': None}])
         self.assertNotIn('sofr', observations['series'])
         self.assertEqual(manifest['provenance']['sofr-effr-spread']['inputHashes']['sofr'],
@@ -113,7 +113,7 @@ class AssemblyTests(unittest.TestCase):
         self.save_inputs()
         docs = assemble.assemble(self.root, now='2026-11-17T12:02:00Z')
         self.assertEqual(docs[2]['outcomes']['sofr']['status'], 'retained')
-        self.assertEqual(docs[1]['series']['sofr-effr-spread'][0]['value'], 0.1)
+        self.assertEqual(docs[1]['series']['sofr-effr-spread'][0]['value'], 10)
 
     def test_corruption_and_changed_metadata_rejected(self):
         original = copy.deepcopy(self.records['fed-assets'])

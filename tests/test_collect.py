@@ -323,7 +323,7 @@ class CollectionTests(unittest.TestCase):
         )
         self.assertEqual(
             second["derived"]["sofr-effr-spread"]["observations"],
-            points((12, 0.3), (13, None), (16, None)),
+            points((12, 30), (13, None), (16, None)),
         )
         self.assertEqual(
             second["derived"]["sofr-effr-spread"]["inputHashes"]["sofr"],
@@ -351,7 +351,7 @@ class CollectionTests(unittest.TestCase):
         self.assertEqual(retained["outcome"]["lastAttempt"], self.next_time)
         self.assertEqual(
             second["derived"]["sofr-effr-spread"]["observations"],
-            points((12, 0.4), (13, 0.5)),
+            points((12, 40), (13, 50)),
         )
         first_failure = self.run_collect(client)
         self.assertIsNone(first_failure["automatic"]["effr"]["sourceHash"])

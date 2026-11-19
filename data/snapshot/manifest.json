@@ -1,34 +1,38 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-18T06:22:42.051532Z",
-  "sourceInputCommit": "ebfe99e5655e0737f797fda697ac0e2bec2385a8",
+  "generatedAt": "2026-11-19T01:54:01.617493Z",
+  "sourceInputCommit": "91d3dac486c47d62eba8f224fa707cdf75db19d1",
   "sourceFileHashes": {
     "data/categories.json": "41b46e91bcbdfef69a4471b6fbdd3af84d6a1aa3ad01e1c09f57d9c20f89620c",
-    "data/registry.csv": "8eea963d9320a0ecf1120fa959f071cd8b7031b05ee57c47c909fbb3b0ff9d3b",
-    "data/source-reviews.json": "1c56986bf6fc81b1752ac57dda343262f9e9c8acca0101ae43f8fbfb664f28d8",
+    "data/registry.csv": "6558a461a954b1dfd15d14caf7d08a86ea87347726cb76974f9e4af779f0396c",
+    "data/source-reviews.json": "9927b87d145e6b8a1ec50d9374eb8602dbbe2041afb6bbe4883f0eba1ff8ef7d",
     "scripts/artifacts.py": "ae83fd0771cc6a4e44e110960249e7c9d816246d629513165ccfa4fd86ab591a",
     "scripts/assemble.py": "f21817ce6d771d6b984aca84537630bef9a33d8b6a56ede26c20305b8aad3c96",
     "scripts/assets.py": "f7a16d925aa2bd22e58cfb8f57fd813207a005e67fa7e88fd1463aba54b3dc7a",
-    "scripts/build.py": "65656abfab6686bb7391ff612b62e3cc058f0b87eaf642360dfbb4198a5e9891",
+    "scripts/build.py": "9d9f4144db9bc07c26e3cc0a163cc8bed19b046897faef9e910d470decc80c6b",
     "scripts/catalog.py": "6f64dd9ff4573b4555bbf3a56a3b1f0a0bce9bbb343949be629be5d4e532cd05",
-    "scripts/check.py": "dec3194523a8e9792313aebe73d2f0e56bce6ba6bb50cc91cc735191423b855e",
+    "scripts/check.py": "9edf3959cad94686326c5db65e53046f950b3d295d15e8cb4378f2c136b8ae6e",
     "scripts/collect.py": "3dff88f223e641b90e2d1a2b447f407a5f36f9e9c02921b93eee61560d12e8ec",
     "scripts/contracts.py": "97c2bf6eeb34bb383e969e24140170f26236de2a3804bda67f39c91489961ea7",
-    "scripts/derive.py": "d5e80237ebdb070ffea33acf1dabe45a9e1d549fbeea6b629263e19c84f4cffb",
+    "scripts/derive.py": "c563ce75bb3561280f5e23a3108d31816742acb3500e9b1b847e36b8696d0bb4",
     "scripts/export_wind_issuance.py": "ee6c1504fb8e0348cb49f90f5d7eda304420c92c027761bdf7a984d5af327a05",
     "scripts/generate_fixtures.py": "77b6093f6d75419df3f48204bec34d4b79e22f3a49c93bd94372737eea06eb35",
     "scripts/import_manual.py": "c6e21c7ab4573c5ed7bf5f172975a0568154f69b994eb42303aacb9aaa1b848b",
     "scripts/normalize.py": "d49b7fabc1acc1f733107d9e29c1d1cb6f1cee4dc7228c26f3b95e6dcdeb2460",
     "scripts/notices.py": "c3924dd2290d2420a58ab3f25af96b36ee77913592fe70d19c6af44deb7c53d7",
-    "scripts/policies.py": "c6ed8f4dd216ccb90f69ec8f9f507db84aeba47b4700bdfb25ecb611f0855e92",
-    "scripts/preview.py": "e3b018c85122de65dc7e2850d1af10780cfd004fdc164e1f741242c1f3a48668",
+    "scripts/policies.py": "c3bad201dc9704e36a8dfc9ce4c7459948ecb0a861c236ef75c399024c834b16",
     "scripts/providers/__init__.py": "78e5397c274726362e57c18eeda036d2a7a90ff8221cf8cb407b6df93f17c4c5",
     "scripts/providers/fred.py": "58fb3454a7ba40c1ab75c95ba7b1c31f10047a02c9e5731439ff8ff137dfd92e",
     "scripts/publish.py": "8ec9de68fb5d88e94e688f02bc5215f1a4c2ac9cfb52a06ae0790cab151aa216",
     "scripts/registry.py": "cb598e9e3222f62a25c0d328e5c4a1142b3f32f8e69131804aa7de01885b7e29",
     "scripts/release.py": "dff900668e46ffafe11a917e0e05b7a8c150bac61dc343d71331ca93af6e9c51"
   },
-  "modifiedSourceFiles": [],
+  "modifiedSourceFiles": [
+    "data/registry.csv",
+    "data/source-reviews.json",
+    "scripts/derive.py",
+    "scripts/policies.py"
+  ],
   "policyVersion": "7",
   "inputHashes": {
     "bank-loans": "af6ef9d7e0a1ae83923436d47fc2201dc620eb7fdff22c630bb5516956d1312c",
@@ -143566,9 +143570,9 @@
     },
     "sofr-effr-spread": {
       "method": "derived",
-      "specHash": "39d93190bb4177ee36c9484cc67a92327fa5f1ae641ef3495f6dfd05c18e19bd",
+      "specHash": "9b8240a00d0e0359644f1e187a03e11ebfb700ba62bd11d4c6b13e61c4879a1b",
       "sourceUnit": "%",
-      "normalizedUnit": "%",
+      "normalizedUnit": "bp",
       "inputHashes": {
         "sofr": "0cab581fd713c0b74c0f41ce9d659e13c1bbb62b4502523d28ae9eb2455bd143",
         "effr": "b961787daafe42e5eb61645a1af91d9d75806b518834d5509c5f6ccba09a484f"
@@ -143578,9 +143582,9 @@
     },
     "sofr-tail-spread": {
       "method": "derived",
-      "specHash": "c3b4d7dfdfc543919a7b0c169374f259e8b236453e3d6ca2790e0d5a73ae5da9",
+      "specHash": "70ed52a499f9f4ecbcc97f76bb39f19cccb215d888282e86111493d1cb3ea6ec",
       "sourceUnit": "%",
-      "normalizedUnit": "%",
+      "normalizedUnit": "bp",
       "inputHashes": {
         "sofr99": "6e67272a442c2374bb89ddcc917f34eadc2b73876d012497a1fee647c7af60ad",
         "sofr": "0cab581fd713c0b74c0f41ce9d659e13c1bbb62b4502523d28ae9eb2455bd143"
@@ -144018,5 +144022,5 @@
       }
     }
   },
-  "snapshotId": "production-2bcb4c968aed76c33d4f822d42d064df0c524189dcc97a59d4636a94d55adc85"
+  "snapshotId": "production-fd2bd8dde98b5b48b996eac884525b29d322aecfeddc5643aac731604a35fa55"
 }

@@ -3,7 +3,7 @@ from decimal import Decimal
 
 from .contracts import validate_points
 from .normalize import content_hash
-from .policies import CALCULATIONS, conversion_policy
+from .policies import CALCULATIONS, derived_output_factor
 
 
 def difference(values):
@@ -36,9 +36,9 @@ def derive(registry, inputs, selected):
         entry = registry['series'][identifier]
         expected = CALCULATIONS.get(identifier)
         actual = (frozenset(entry['input_series_ids']), ''.join((entry['formula'] or '').split()))
-        if (entry['update_method'] != 'derived' or expected != actual or identifier not in FUNCTIONS
-                or conversion_policy(entry)[0] != 'identity'):
+        if (entry['update_method'] != 'derived' or expected != actual or identifier not in FUNCTIONS):
             raise ValueError(f'{identifier}: unknown or mismatched calculation definition')
+        output_factor = derived_output_factor(identifier, entry)
         visiting.add(identifier)
         for dependency in entry['input_series_ids']:
             if dependency in selected:
@@ -58,7 +58,7 @@ def derive(registry, inputs, selected):
             values = {key: mapping.get(day) for key, mapping in aligned.items()}
             value = None if any(value is None for value in values.values()) else FUNCTIONS[identifier](
                 {key: Decimal(str(value)) for key, value in values.items()})
-            points.append({'date': day, 'value': None if value is None else float(value)})
+            points.append({'date': day, 'value': None if value is None else float(value * output_factor)})
         validate_points(points)
         available[identifier] = points
         result[identifier] = {'observations': points, 'inputHashes': hashes,

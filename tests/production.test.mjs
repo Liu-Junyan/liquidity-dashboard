@@ -63,7 +63,7 @@ test('daily comparison uses calendar weeks, seven-day limit, explicit nulls and 
   assert.equal(changeAt([point('2026-10-16', 3), point('2026-10-18', null), latest], 4, daily), 2);
   assert.equal(changeAt([point('2026-10-20', 3), latest], 4, daily), null);
   assert.equal(changeAt([point('2026-10-19', 4.9), latest], 4, daily).toFixed(1), '0.1');
-  assert.equal(formatChange(0.1, daily), '+0.10 百分点');
+  assert.equal(formatChange(10, daily), '+10.00 bp');
 });
 test('weekly matching stays exact and bp values never scale twice', () => {
   assert.equal(changeAt([point('2026-10-13', 1), point('2026-11-11', 5)], 4, weekly), null);

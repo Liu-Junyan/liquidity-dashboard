@@ -38,12 +38,12 @@
       "id": "sofr-effr-spread",
       "seriesId": "sofr-effr-spread",
       "categoryId": "category-1",
-      "name": "SOFR与EFFR利差",
+      "name": "SOFR - EFFR",
       "role": "",
-      "explanation": "SOFR与EFFR利差的合成示例，尚未接入登记的数据源。 登记计算式：sofr-effr。当前演示数值不执行此公式。",
+      "explanation": "SOFR - EFFR的合成示例，尚未接入登记的数据源。 登记计算式：sofr-effr。当前演示数值不执行此公式。",
       "unit": {
-        "kind": "ratio",
-        "label": "%",
+        "kind": "spread",
+        "label": "bp",
         "precision": 2
       },
       "frequency": "weekly",
@@ -60,12 +60,12 @@
       "id": "sofr-tail-spread",
       "seriesId": "sofr-tail-spread",
       "categoryId": "category-1",
-      "name": "SOFR99分位−SOFR",
+      "name": "SOFR99分位 − SOFR",
       "role": "",
-      "explanation": "SOFR99分位−SOFR的合成示例，尚未接入登记的数据源。 登记计算式：sofr99-sofr。当前演示数值不执行此公式。",
+      "explanation": "SOFR99分位 − SOFR的合成示例，尚未接入登记的数据源。 登记计算式：sofr99-sofr。当前演示数值不执行此公式。",
       "unit": {
-        "kind": "ratio",
-        "label": "%",
+        "kind": "spread",
+        "label": "bp",
         "precision": 2
       },
       "frequency": "weekly",
@@ -115,7 +115,7 @@
       "frequency": "weekly",
       "nativeFrequency": "weekly",
       "source": {
-        "name": "FRED",
+        "name": "FRED · WRBWFRBL",
         "url": "https://fred.stlouisfed.org/series/WRBWFRBL",
         "status": "configured"
       },
@@ -126,9 +126,9 @@
       "id": "reserve-assets-ratio",
       "seriesId": "reserve-assets-ratio",
       "categoryId": "category-1",
-      "name": "准备金占商业银行总资产比例",
+      "name": "准备金/商业银行资产（跨口径比值）",
       "role": "",
-      "explanation": "准备金占商业银行总资产比例的合成示例，尚未接入登记的数据源。 登记计算式：100 * reserve-balances / bank-total-assets。当前演示数值不执行此公式。",
+      "explanation": "准备金/商业银行资产（跨口径比值）的合成示例，尚未接入登记的数据源。 登记计算式：100 * reserve-balances / bank-total-assets。当前演示数值不执行此公式。 H.4.1未季调准备金 / H.8季调商业银行资产；覆盖范围及季调口径不同，仅为跨口径研究比值，不是匹配银行总体的资产占比。",
       "unit": {
         "kind": "ratio",
         "label": "%",
@@ -159,7 +159,7 @@
       "frequency": "weekly",
       "nativeFrequency": "weekly",
       "source": {
-        "name": "FRED",
+        "name": "FRED · WDTGAL",
         "url": "https://fred.stlouisfed.org/series/WDTGAL",
         "status": "configured"
       },
@@ -181,8 +181,8 @@
       "frequency": "weekly",
       "nativeFrequency": "daily",
       "source": {
-        "name": "FRED",
-        "url": "https://fred.stlouisfed.org/series/rrpontsyd",
+        "name": "FRED · RRPONTSYD",
+        "url": "https://fred.stlouisfed.org/series/RRPONTSYD",
         "status": "configured"
       },
       "comparisonRule": "greater",
@@ -194,7 +194,7 @@
       "categoryId": "category-1",
       "name": "贴现窗口用量",
       "role": "",
-      "explanation": "贴现窗口用量的合成示例，尚未接入登记的数据源。 Pirmary credit",
+      "explanation": "贴现窗口用量的合成示例，尚未接入登记的数据源。 Primary credit only; excludes secondary and seasonal credit.",
       "unit": {
         "kind": "amount",
         "label": "百万美元",
@@ -203,7 +203,7 @@
       "frequency": "weekly",
       "nativeFrequency": "weekly",
       "source": {
-        "name": "FRED",
+        "name": "FRED · WLCFLPCL",
         "url": "https://fred.stlouisfed.org/series/WLCFLPCL",
         "status": "configured"
       },
@@ -269,8 +269,8 @@
       "frequency": "weekly",
       "nativeFrequency": "weekly",
       "source": {
-        "name": "FRED",
-        "url": "https://fred.stlouisfed.org/series/swpt",
+        "name": "FRED · SWPT",
+        "url": "https://fred.stlouisfed.org/series/SWPT",
         "status": "configured"
       },
       "comparisonRule": "less",
@@ -291,7 +291,7 @@
       "frequency": "weekly",
       "nativeFrequency": "weekly",
       "source": {
-        "name": "FRED",
+        "name": "FRED · H41RESPPALGTRFNWW",
         "url": "https://fred.stlouisfed.org/series/H41RESPPALGTRFNWW",
         "status": "configured"
       },
@@ -313,7 +313,7 @@
       "frequency": "weekly",
       "nativeFrequency": "daily",
       "source": {
-        "name": "FRED",
+        "name": "FRED · BAMLC0A0CM",
         "url": "https://fred.stlouisfed.org/series/BAMLC0A0CM",
         "status": "configured"
       },
@@ -335,7 +335,7 @@
       "frequency": "weekly",
       "nativeFrequency": "daily",
       "source": {
-        "name": "FRED",
+        "name": "FRED · BAMLH0A0HYM2",
         "url": "https://fred.stlouisfed.org/series/BAMLH0A0HYM2",
         "status": "configured"
       },
@@ -348,7 +348,7 @@
       "categoryId": "category-3",
       "name": "债券发行量",
       "role": "",
-      "explanation": "债券发行量的合成示例，尚未接入登记的数据源。",
+      "explanation": "债券发行量的合成示例，尚未接入登记的数据源。 Maintainer confirmed 2026-11-17: monthly gross issuance, all maturities, USD billions; Treasury and corporate are components of total, never sum all three. Month-end observation labels, not publication dates. Redistribution permission confirmed by maintainer.",
       "unit": {
         "kind": "amount",
         "label": "十亿美元",
@@ -357,7 +357,7 @@
       "frequency": "weekly",
       "nativeFrequency": "monthly",
       "source": {
-        "name": "SIFMA",
+        "name": "SIFMA · G1132499 · data/sources/wind/bond-issuance.xlsx; sheet bond-issuance; column bond-issuance; Wind EDB G1132499; SIFMA US Fixed Income Securities Statistics",
         "url": null,
         "status": "pending"
       },
@@ -370,7 +370,7 @@
       "categoryId": "category-3",
       "name": "国债发行量",
       "role": "",
-      "explanation": "国债发行量的合成示例，尚未接入登记的数据源。",
+      "explanation": "国债发行量的合成示例，尚未接入登记的数据源。 Maintainer confirmed 2026-11-17: monthly gross issuance, all maturities, USD billions; Treasury and corporate are components of total, never sum all three. Month-end observation labels, not publication dates. Redistribution permission confirmed by maintainer.",
       "unit": {
         "kind": "amount",
         "label": "十亿美元",
@@ -379,7 +379,7 @@
       "frequency": "weekly",
       "nativeFrequency": "monthly",
       "source": {
-        "name": "SIFMA",
+        "name": "SIFMA · G1132494 · data/sources/wind/bond-issuance.xlsx; sheet bond-issuance; column treasury-bond-issuance; Wind EDB G1132494; SIFMA US Fixed Income Securities Statistics",
         "url": null,
         "status": "pending"
       },
@@ -392,7 +392,7 @@
       "categoryId": "category-3",
       "name": "公司债发行量",
       "role": "",
-      "explanation": "公司债发行量的合成示例，尚未接入登记的数据源。",
+      "explanation": "公司债发行量的合成示例，尚未接入登记的数据源。 Maintainer confirmed 2026-11-17: monthly gross issuance, all maturities, USD billions; Treasury and corporate are components of total, never sum all three. Month-end observation labels, not publication dates. Redistribution permission confirmed by maintainer.",
       "unit": {
         "kind": "amount",
         "label": "十亿美元",
@@ -401,7 +401,7 @@
       "frequency": "weekly",
       "nativeFrequency": "monthly",
       "source": {
-        "name": "SIFMA",
+        "name": "SIFMA · G1132496 · data/sources/wind/bond-issuance.xlsx; sheet bond-issuance; column corporate-bond-issuance; Wind EDB G1132496; SIFMA US Fixed Income Securities Statistics",
         "url": null,
         "status": "pending"
       },
@@ -423,7 +423,7 @@
       "frequency": "weekly",
       "nativeFrequency": "quarterly",
       "source": {
-        "name": "FRED",
+        "name": "FRED · DRTSCILM",
         "url": "https://fred.stlouisfed.org/series/DRTSCILM",
         "status": "configured"
       },
@@ -445,7 +445,7 @@
       "frequency": "weekly",
       "nativeFrequency": "weekly",
       "source": {
-        "name": "FRED",
+        "name": "FRED · TOTLL",
         "url": "https://fred.stlouisfed.org/series/TOTLL",
         "status": "configured"
       },
@@ -467,7 +467,7 @@
       "frequency": "weekly",
       "nativeFrequency": "daily",
       "source": {
-        "name": "FRED",
+        "name": "FRED · VIXCLS",
         "url": "https://fred.stlouisfed.org/series/VIXCLS",
         "status": "configured"
       },

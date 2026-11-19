@@ -78,8 +78,8 @@ Project calculation: same-date normalized SOFR minus EFFR. Use the union of inpu
 observation dates, producing null wherever either input is missing or null. No
 forward-fill, nearest-date joins, or resampling. The earliest numeric result can
 only occur within the inputs' overlapping history. Input revisions require
-recalculation. Output retains the registry `%` label but is a **percentage-point
-difference**: 4.10 − 4.00 = 0.10, not 10. Provenance must identify both normalized
+recalculation. Multiply the percentage-point difference by 100 to report basis points.
+For example, (4.10 − 4.00) × 100 = 10 bp. Provenance must identify both normalized
 input hashes. Explain that secured and unsecured market populations differ; the
 spread is contextual information, not a pure credit-risk measure.
 
