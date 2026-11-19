@@ -1,7 +1,7 @@
 export const locale = 'zh-CN';
 export const messages = {
-  skip: '跳至指标图表', home: '美元流动性观察首页', brand: '流动性研究', brandEnglish: 'LIQUIDITY OBSERVATORY', mainNavigation: '主导航', rangeAria: '图表时间范围', close: '关闭详情', eyebrow: 'USD LIQUIDITY / WEEKLY MONITOR', readingEyebrow: 'READING THE DATA',
-  title: '美元流动性观察', mastheadNote: '独立研究 · 周度视角', dashboard: '数据看板', methodology: '数据与阅读说明', edition: '研究原型  /  01',
+  skip: '跳至指标图表', home: '美元流动性观察首页', brand: '流动性研究', brandEnglish: 'LIQUIDITY OBSERVATORY', rangeAria: '图表时间范围', close: '关闭详情', eyebrow: 'USD LIQUIDITY / WEEKLY MONITOR', readingEyebrow: 'READING THE DATA',
+  title: '美元流动性观察', mastheadNote: '独立研究 · 周度视角', methodology: '数据与阅读说明',
   demoBadge: '演示数据 · 非实时', intro: '以周度视角，观察美元流动性的变化。选择类别，探索指标与历史趋势。',
   weekly: '周度观测', observationDate: '观测日期', dataWindow: '样本区间', aboutData: '了解数据说明 ↗', overview: '流动性概览', overviewHint: '选择类别查看详细指标 · 缩略图为近一年',
   rangeLabel: '时间范围', ytd: 'YTD', '1y': '近1年', '5y': '近5年', all: '全部', syntheticSeries: '合成数据',
@@ -20,7 +20,7 @@ export const messages = {
 let mode = 'demo';
 const productionMessages = {
   mastheadNote: '独立研究 · 来源观测', eyebrow: 'USD LIQUIDITY / RESEARCH MONITOR',
-  edition: '美元流动性研究', demoBadge: '来源数据 · 非实时',
+  demoBadge: '来源数据 · 非实时',
   intro: '观察美元流动性的变化。保留各来源的原生频率与观测日期，选择类别探索指标与历史趋势。',
   weekly: '原生频率观测', syntheticSeries: '来源观测', demoShort: '来源数据',
   methodologyBody: '本页展示经复核来源的历史观测，包括经 FRED 获取的利率、联储余额、银行信贷及贷款标准，SIFMA / Wind 月度发行数据，以及同日输入计算的利差和准备金/资产比值。保留来源频率、季调口径、日期及缺失值，不填充、不插值。历史可能修订；观察期标签不等于发布日期，当前历史不代表当时可获得的信息。',
