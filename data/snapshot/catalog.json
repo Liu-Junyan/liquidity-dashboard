@@ -4,7 +4,7 @@
     "mode": "production",
     "isDemo": false,
     "publisher": "Junyan Liu",
-    "generatedAt": "2026-11-18T16:28:39.248661Z",
+    "generatedAt": "2026-11-19T02:08:18.324793Z",
     "observationStart": "2010-01-01",
     "observationEnd": "2026-11-17"
   },
@@ -39,11 +39,11 @@
       "id": "sofr-effr-spread",
       "seriesId": "sofr-effr-spread",
       "categoryId": "category-1",
-      "name": "SOFR与EFFR利差",
-      "unit": "%",
+      "name": "SOFR - EFFR",
+      "unit": "bp",
       "displayUnit": {
-        "kind": "ratio",
-        "label": "%",
+        "kind": "spread",
+        "label": "bp",
         "precision": 2
       },
       "nativeFrequency": "daily",
@@ -62,7 +62,7 @@
       "isDemo": false,
       "inputAvailable": true,
       "role": "",
-      "explanation": "相同观察日的SOFR减EFFR。先规范化输入单位；输出为百分点（沿用%标签），4.10减4.00为0.10；缺少任一输入时为空，不跨日填充。",
+      "explanation": "相同观察日的SOFR减EFFR。先规范化输入单位；将百分点差乘以100得到基点（bp），例如4.10减4.00为10 bp；缺少任一输入时为空，不跨日填充。",
       "availability": "numeric",
       "sources": [
         "https://fred.stlouisfed.org/series/SOFR",
@@ -107,11 +107,11 @@
       "id": "sofr-tail-spread",
       "seriesId": "sofr-tail-spread",
       "categoryId": "category-1",
-      "name": "SOFR99分位−SOFR",
-      "unit": "%",
+      "name": "SOFR99分位 − SOFR",
+      "unit": "bp",
       "displayUnit": {
-        "kind": "ratio",
-        "label": "%",
+        "kind": "spread",
+        "label": "bp",
         "precision": 2
       },
       "nativeFrequency": "daily",
@@ -130,7 +130,7 @@
       "isDemo": false,
       "inputAvailable": true,
       "role": "",
-      "explanation": "同日SOFR第99百分位减SOFR中位数，反映融资利率分布尾部；输出为百分点（沿用%标签），不乘100；缺少任一输入时为空，不跨日填充。",
+      "explanation": "同日SOFR第99百分位减SOFR中位数，反映融资利率分布尾部；将百分点差乘以100得到基点（bp），例如4.10减4.00为10 bp；缺少任一输入时为空，不跨日填充。",
       "availability": "numeric",
       "sources": [
         "https://fred.stlouisfed.org/series/SOFR99",
@@ -1096,5 +1096,5 @@
       "notices": []
     }
   ],
-  "snapshotId": "production-3c78fcd7996e1561f0614a00fc0ba5ba1d9952eb86fa1b516dd6186cce2f5896"
+  "snapshotId": "production-13920afba1d5ffc80529ff7bfb8c123854287a51f8978db8d24f05e49eda4b51"
 }
