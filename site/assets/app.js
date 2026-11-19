@@ -152,6 +152,12 @@ async function initialize() {
     catalog = displayCatalog(catalog);
     setDataMode(catalog.dataset.mode ?? 'demo');
     translatePage();
+    if (catalog.dataset.isDemo) {
+      document.querySelectorAll('.demo-badge').forEach(badge => {
+        badge.textContent = t('demoBadge');
+        badge.hidden = false;
+      });
+    }
     categories = catalog.categories.toSorted((a, b) => a.order - b.order);
     $('#dataset-date').textContent = `${t('observationDate')}：${formatDate(catalog.dataset.observationEnd)}`;
     $('#dataset-window').textContent = `${t('dataWindow')}：${formatDate(catalog.dataset.observationStart)} — ${formatDate(catalog.dataset.observationEnd)}`;

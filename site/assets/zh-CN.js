@@ -20,9 +20,8 @@ export const messages = {
 let mode = 'demo';
 const productionMessages = {
   mastheadNote: '独立研究 · 来源观测', eyebrow: 'USD LIQUIDITY / RESEARCH MONITOR',
-  demoBadge: '来源数据 · 非实时',
   intro: '观察美元流动性的变化。保留各来源的原生频率与观测日期，选择类别探索指标与历史趋势。',
-  weekly: '原生频率观测', syntheticSeries: '来源观测', demoShort: '来源数据',
+  weekly: '原生频率观测', syntheticSeries: '来源观测',
   methodologyBody: '本页展示经复核来源的历史观测，包括经 FRED 获取的利率、联储余额、银行信贷及贷款标准，SIFMA / Wind 月度发行数据，以及同日输入计算的利差和准备金/资产比值。保留来源频率、季调口径、日期及缺失值，不填充、不插值。历史可能修订；观察期标签不等于发布日期，当前历史不代表当时可获得的信息。',
   placeholderNote: '未接入的指标显示待接入。日度变化匹配目标日或此前不超过7天的观测，显式缺失不回退；周度要求精确日期；月度和季度匹配对应来源期。SOFR利差以百分点表示。准备金/资产比值存在覆盖范围和季调差异；国债与公司债发行量包含在总量中，三项不可相加。统计只计入有效观测，不补齐日期。',
   footerNote: 'Junyan Liu · 独立研究 · 不构成投资建议',
