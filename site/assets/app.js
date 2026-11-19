@@ -159,7 +159,6 @@ async function initialize() {
       });
     }
     categories = catalog.categories.toSorted((a, b) => a.order - b.order);
-    $('#dataset-date').textContent = `${t('observationDate')}：${formatDate(catalog.dataset.observationEnd)}`;
     $('#dataset-window').textContent = `${t('dataWindow')}：${formatDate(catalog.dataset.observationStart)} — ${formatDate(catalog.dataset.observationEnd)}`;
     $('#collection-time').hidden = !catalog.dataset.isDemo;
     if (catalog.dataset.isDemo) $('#collection-time').textContent = `${t('collectedAt')}：${formatDate(catalog.dataset.collectedAt, {hour: '2-digit', minute: '2-digit'})} UTC · ${t('collectionNote')}`;
