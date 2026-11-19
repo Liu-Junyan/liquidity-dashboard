@@ -17621,6 +17621,10 @@
     {
       "date": "2026-11-17",
       "value": 0.351
+    },
+    {
+      "date": "2026-11-18",
+      "value": 0.331
     }
   ],
   "metadata": {
@@ -17629,7 +17633,7 @@
     "frequency_short": "D",
     "seasonal_adjustment_short": "NSA",
     "observation_start": "2003-02-07",
-    "observation_end": "2026-11-17"
+    "observation_end": "2026-11-18"
   },
   "requestParameters": {
     "series_id": "RRPONTSYD",
@@ -17641,7 +17645,7 @@
     "limit": 100000,
     "offset": 0
   },
-  "sourceHash": "9df60a1c601f234236410de1b86257eff693f2d47f4c66e9e31a928080281170",
+  "sourceHash": "8221e80669e0f10288ca6934529233c8936b57952dbe506205cb7cc55fc4b80a",
   "revisionSummary": {
     "added": 1,
     "removed": 0,
@@ -17650,13 +17654,13 @@
   "error": null,
   "outcome": {
     "status": "updated",
-    "latestObservationDate": "2026-11-17",
-    "lastAttempt": "2026-11-18T16:28:27.574162Z",
-    "lastSuccessfulCheck": "2026-11-18T16:28:27.574162Z",
-    "lastDataChange": "2026-11-18T16:28:27.574162Z"
+    "latestObservationDate": "2026-11-18",
+    "lastAttempt": "2026-11-19T16:35:23.039586Z",
+    "lastSuccessfulCheck": "2026-11-19T16:35:23.039586Z",
+    "lastDataChange": "2026-11-19T16:35:23.039586Z"
   },
   "freshness": {
-    "latestNumericDate": "2026-11-17",
+    "latestNumericDate": "2026-11-18",
     "ageDays": 1,
     "maxAgeDays": 7,
     "status": "current"

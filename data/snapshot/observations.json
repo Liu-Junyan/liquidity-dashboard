@@ -17613,6 +17613,10 @@
       {
         "date": "2026-11-17",
         "value": 4.0
+      },
+      {
+        "date": "2026-11-18",
+        "value": 2.0
       }
     ],
     "sofr-tail-spread": [
@@ -26619,6 +26623,10 @@
       {
         "date": "2026-11-17",
         "value": 7.0
+      },
+      {
+        "date": "2026-11-18",
+        "value": 8.0
       }
     ],
     "fed-assets": [
@@ -58321,6 +58329,10 @@
       {
         "date": "2026-11-17",
         "value": 0.351
+      },
+      {
+        "date": "2026-11-18",
+        "value": 0.331
       }
     ],
     "discount-window": [
@@ -79457,6 +79469,10 @@
       {
         "date": "2026-11-17",
         "value": 0.104
+      },
+      {
+        "date": "2026-11-18",
+        "value": 0.0
       }
     ],
     "dollar-index": [],
@@ -89676,6 +89692,10 @@
       {
         "date": "2026-11-17",
         "value": 0.92
+      },
+      {
+        "date": "2026-11-18",
+        "value": 0.93
       }
     ],
     "credit-spreads-hy": [
@@ -92850,6 +92870,10 @@
       {
         "date": "2026-11-17",
         "value": 3.43
+      },
+      {
+        "date": "2026-11-18",
+        "value": 3.47
       }
     ],
     "bond-issuance": [
@@ -116542,11 +116566,15 @@
       {
         "date": "2026-11-17",
         "value": 25.46
+      },
+      {
+        "date": "2026-11-18",
+        "value": 24.56
       }
     ],
     "move": [],
     "bid-ask-spread": [],
     "price-impact": []
   },
-  "snapshotId": "production-f5c7dfaa28f9c7a2aa2078a8d23d933498e58b3d0caee539506bb60e52f23605"
+  "snapshotId": "production-1456604643ee822c4b3bfd8c5e5ab33b2cbb095e84bb4811c0d7382c8c6fe37d"
 }
