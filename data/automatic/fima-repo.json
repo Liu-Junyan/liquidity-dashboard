@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "policyVersion": "5",
+  "policyVersion": "7",
   "seriesId": "fima-repo",
   "specHash": "0cc2a51c6a895c2175faede2940a3eb3e34eab392414b9b9dbf16023c3cbb1ae",
   "provider": "FRED",
@@ -3551,21 +3551,21 @@
   },
   "sourceHash": "9db1a802040f74c60260e3276832def42321a2fdc45fe1b06c0602ebe2452c9f",
   "revisionSummary": {
-    "added": 880,
+    "added": 0,
     "removed": 0,
     "revised": 0
   },
   "error": null,
   "outcome": {
-    "status": "updated",
+    "status": "unchanged",
     "latestObservationDate": "2026-11-11",
-    "lastAttempt": "2026-11-17T07:49:52.018793Z",
-    "lastSuccessfulCheck": "2026-11-17T07:49:52.018793Z",
+    "lastAttempt": "2026-11-18T16:28:27.574162Z",
+    "lastSuccessfulCheck": "2026-11-18T16:28:27.574162Z",
     "lastDataChange": "2026-11-17T07:49:52.018793Z"
   },
   "freshness": {
     "latestNumericDate": "2026-11-11",
-    "ageDays": 6,
+    "ageDays": 7,
     "maxAgeDays": 14,
     "status": "current"
   }

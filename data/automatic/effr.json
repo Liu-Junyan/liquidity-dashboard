@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "policyVersion": "5",
+  "policyVersion": "7",
   "seriesId": "effr",
   "specHash": "d575afcd30030699d44a92ba4276aa89e2c288d0e983c8ebaf014fd468c1be24",
   "provider": "FRED",
@@ -17613,6 +17613,14 @@
     {
       "date": "2026-11-13",
       "value": 3.88
+    },
+    {
+      "date": "2026-11-16",
+      "value": 3.88
+    },
+    {
+      "date": "2026-11-17",
+      "value": 3.88
     }
   ],
   "metadata": {
@@ -17621,7 +17629,7 @@
     "frequency_short": "D",
     "seasonal_adjustment_short": "NSA",
     "observation_start": "2000-07-03",
-    "observation_end": "2026-11-13"
+    "observation_end": "2026-11-17"
   },
   "requestParameters": {
     "series_id": "EFFR",
@@ -17633,23 +17641,23 @@
     "limit": 100000,
     "offset": 0
   },
-  "sourceHash": "b961787daafe42e5eb61645a1af91d9d75806b518834d5509c5f6ccba09a484f",
+  "sourceHash": "0f6a9272607f522a1faa483277236802bd1b6d2d02b8cbe7f2cc8090c148d8eb",
   "revisionSummary": {
-    "added": 0,
+    "added": 2,
     "removed": 0,
     "revised": 0
   },
   "error": null,
   "outcome": {
-    "status": "unchanged",
-    "latestObservationDate": "2026-11-13",
-    "lastAttempt": "2026-11-17T07:49:52.018793Z",
-    "lastSuccessfulCheck": "2026-11-17T07:49:52.018793Z",
-    "lastDataChange": "2026-11-17T05:54:45.289045Z"
+    "status": "updated",
+    "latestObservationDate": "2026-11-17",
+    "lastAttempt": "2026-11-18T16:28:27.574162Z",
+    "lastSuccessfulCheck": "2026-11-18T16:28:27.574162Z",
+    "lastDataChange": "2026-11-18T16:28:27.574162Z"
   },
   "freshness": {
-    "latestNumericDate": "2026-11-13",
-    "ageDays": 4,
+    "latestNumericDate": "2026-11-17",
+    "ageDays": 1,
     "maxAgeDays": 7,
     "status": "current"
   }

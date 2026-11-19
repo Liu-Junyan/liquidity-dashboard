@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "policyVersion": "5",
+  "policyVersion": "7",
   "seriesId": "swap-line",
   "specHash": "5fca1a9a869c13a2a3d8eac3a8685aee38082b3566a670ea0ccc7a8b8cfc1508",
   "provider": "FRED",
@@ -3551,21 +3551,21 @@
   },
   "sourceHash": "8d0cf2a21bce7fbb67c8054b5a4f70d99af436ead1458b7c2639d32b45d6e40b",
   "revisionSummary": {
-    "added": 880,
+    "added": 0,
     "removed": 0,
     "revised": 0
   },
   "error": null,
   "outcome": {
-    "status": "updated",
+    "status": "unchanged",
     "latestObservationDate": "2026-11-11",
-    "lastAttempt": "2026-11-17T07:49:52.018793Z",
-    "lastSuccessfulCheck": "2026-11-17T07:49:52.018793Z",
+    "lastAttempt": "2026-11-18T16:28:27.574162Z",
+    "lastSuccessfulCheck": "2026-11-18T16:28:27.574162Z",
     "lastDataChange": "2026-11-17T07:49:52.018793Z"
   },
   "freshness": {
     "latestNumericDate": "2026-11-11",
-    "ageDays": 6,
+    "ageDays": 7,
     "maxAgeDays": 14,
     "status": "current"
   }

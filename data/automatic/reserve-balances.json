@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "policyVersion": "5",
+  "policyVersion": "7",
   "seriesId": "reserve-balances",
   "specHash": "ac8ca89cac12825b94ebe4059cd313a643360a9cdf273bd6f66931967279e023",
   "provider": "FRED",
@@ -3551,21 +3551,21 @@
   },
   "sourceHash": "53abcbb6c587f0adc8cb44ce612634e46279503e1db3fd63e26db51edaf54a23",
   "revisionSummary": {
-    "added": 880,
+    "added": 0,
     "removed": 0,
     "revised": 0
   },
   "error": null,
   "outcome": {
-    "status": "updated",
+    "status": "unchanged",
     "latestObservationDate": "2026-11-11",
-    "lastAttempt": "2026-11-17T07:49:52.018793Z",
-    "lastSuccessfulCheck": "2026-11-17T07:49:52.018793Z",
+    "lastAttempt": "2026-11-18T16:28:27.574162Z",
+    "lastSuccessfulCheck": "2026-11-18T16:28:27.574162Z",
     "lastDataChange": "2026-11-17T07:49:52.018793Z"
   },
   "freshness": {
     "latestNumericDate": "2026-11-11",
-    "ageDays": 6,
+    "ageDays": 7,
     "maxAgeDays": 14,
     "status": "current"
   }
