@@ -8,16 +8,7 @@ notices. `build.py --mode production` validates and copies the selected snapshot
 `dist/` without collecting data, invoking fixtures, or modifying `site/data/`.
 The existing demo remains schema version 1; scheduling/publication remain Slice 5.
 
-The local `build.py --mode preview` command is separate from this contract. Its
-schema-v2 envelope uses `dataset.mode: "manual-preview"`, `isDemo: false`, and
-`sourceReview: "pending"`, plus a matching snapshot ID in catalog, observations,
-and manifest. `scripts/preview.py` assembles only the three committed SIFMA inputs;
-other visible series have empty histories. Units retain the existing frontend
-display object, and the manifest records input paths, specification hashes, and
-the source commit. It deliberately has no production activation, normalized input
-hashes, or production outcomes. `validate_snapshot` rejects it as production.
-The frontend accepts the demo, preview, and production contracts with separate
-mode checks and matching snapshot identity; it never substitutes one for another.
+The frontend accepts schema version 1 demo data and schema version 2 production snapshots.
 
 All three documents carry integer `schemaVersion: 2` and the same slug `snapshotId`.
 The assembler computes a SHA-256 ID over all three documents without their

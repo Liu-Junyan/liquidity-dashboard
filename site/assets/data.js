@@ -121,51 +121,46 @@ export function unpackDataset(catalog, document) {
     return document;
   }
   if (catalog.schemaVersion !== 2 || document.schemaVersion !== 2 ||
-      !['manual-preview', 'production'].includes(catalog.dataset.mode) || catalog.dataset.isDemo !== false ||
+      catalog.dataset.mode !== 'production' || catalog.dataset.isDemo !== false ||
       !catalog.snapshotId || catalog.snapshotId !== document.snapshotId) {
     throw new Error('Unsupported dataset or mismatched snapshot');
   }
-  const production = catalog.dataset.mode === 'production';
-  if (production ? catalog.dataset.sourceReview === 'pending' || !catalog.dataset.publisher || !catalog.dataset.generatedAt
-    : catalog.dataset.sourceReview !== 'pending') throw new Error('Invalid dataset review/mode');
-  const allowed = new Set(['bond-issuance', 'treasury-bond-issuance', 'corporate-bond-issuance']);
+  if (catalog.dataset.sourceReview === 'pending' || !catalog.dataset.publisher || !catalog.dataset.generatedAt) {
+    throw new Error('Invalid production dataset metadata');
+  }
   const ids = catalog.indicators.map(item => item.id);
   if (!document.series || new Set(ids).size !== ids.length ||
-      Object.keys(document.series).length !== ids.length) throw new Error('Preview membership mismatch');
+      Object.keys(document.series).length !== ids.length) throw new Error('Production membership mismatch');
   for (const item of catalog.indicators) {
     const points = document.series[item.id];
-    if (item.isDemo !== false || !Array.isArray(points) || (!production && !allowed.has(item.seriesId) && points.length)) {
-      throw new Error('Invalid preview series');
+    if (item.isDemo !== false || !Array.isArray(points)) {
+      throw new Error('Invalid production series');
     }
     let previous = '';
     for (const point of points) {
       if (typeof point.date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(point.date) ||
           !Number.isFinite(timestamp(point.date)) || new Date(timestamp(point.date)).toISOString().slice(0, 10) !== point.date ||
           point.date <= previous || (point.value !== null && (typeof point.value !== 'number' || !Number.isFinite(point.value)))) {
-        throw new Error('Invalid preview observation');
+        throw new Error('Invalid production observation');
       }
       previous = point.date;
     }
-    if (production) {
-      const numeric = points.some(point => point.value !== null);
-      if (!['numeric', 'empty', 'nonnumeric'].includes(item.availability) ||
-          (item.availability === 'numeric') !== numeric ||
-          (item.availability === 'nonnumeric' && points.length) ||
-          typeof item.inputAvailable !== 'boolean' || (!item.inputAvailable && points.length) ||
-          !item.displayUnit || typeof item.displayUnit.label !== 'string' ||
-          !Number.isInteger(item.displayUnit.precision) || item.displayUnit.precision < 0 || item.displayUnit.precision > 6 ||
-          !Array.isArray(item.sources) || !Array.isArray(item.notices) || !item.source ||
-          !validProductionComparison(item) ||
-          !item.sources.every(safeReference) ||
-          (item.source.url !== null && (!item.source.url?.startsWith('https://') || !safeReference(item.source.url))) ||
-          !item.notices.every(notice => typeof notice.text === 'string' && notice.url?.startsWith('https://') && safeReference(notice.url))) throw new Error('Invalid production series');
-    }
+    const numeric = points.some(point => point.value !== null);
+    if (!['numeric', 'empty', 'nonnumeric'].includes(item.availability) ||
+        (item.availability === 'numeric') !== numeric ||
+        (item.availability === 'nonnumeric' && points.length) ||
+        typeof item.inputAvailable !== 'boolean' || (!item.inputAvailable && points.length) ||
+        !item.displayUnit || typeof item.displayUnit.label !== 'string' ||
+        !Number.isInteger(item.displayUnit.precision) || item.displayUnit.precision < 0 || item.displayUnit.precision > 6 ||
+        !Array.isArray(item.sources) || !Array.isArray(item.notices) || !item.source ||
+        !validProductionComparison(item) ||
+        !item.sources.every(safeReference) ||
+        (item.source.url !== null && (!item.source.url?.startsWith('https://') || !safeReference(item.source.url))) ||
+        !item.notices.every(notice => typeof notice.text === 'string' && notice.url?.startsWith('https://') && safeReference(notice.url))) throw new Error('Invalid production series');
   }
-  if (production) {
-    const dates = Object.values(document.series).flatMap(points => points.map(point => point.date)).sort();
-    if (catalog.dataset.observationStart !== (dates[0] ?? null) ||
-        catalog.dataset.observationEnd !== (dates.at(-1) ?? null)) throw new Error('Invalid dataset bounds');
-  }
+  const dates = Object.values(document.series).flatMap(points => points.map(point => point.date)).sort();
+  if (catalog.dataset.observationStart !== (dates[0] ?? null) ||
+      catalog.dataset.observationEnd !== (dates.at(-1) ?? null)) throw new Error('Invalid dataset bounds');
   return document.series;
 }
 

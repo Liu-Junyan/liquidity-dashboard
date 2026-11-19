@@ -31,7 +31,7 @@ class PublicationTests(unittest.TestCase):
         for name in ('registry.csv', 'categories.json', 'source-reviews.json'):
             shutil.copyfile(ROOT / 'data' / name, self.repo / 'data' / name)
         shutil.copytree(ROOT / 'data/manual', self.repo / 'data/manual')
-        (self.repo / '.gitignore').write_text('dist/\ndist-preview/\n__pycache__/\n.env\n')
+        (self.repo / '.gitignore').write_text('dist/\n__pycache__/\n.env\n')
         git(self.repo, 'init', '-b', 'main')
         git(self.repo, 'config', 'user.name', 'Release test')
         git(self.repo, 'config', 'user.email', 'release@example.test')

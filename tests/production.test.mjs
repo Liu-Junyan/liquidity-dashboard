@@ -72,11 +72,16 @@ test('weekly matching stays exact and bp values never scale twice', () => {
   assert.equal(changeAt([point('2026-10-19', 10), point('2026-11-16', 15)], 4, bp), 5);
   assert.equal(formatChange(5, bp), '+5.00 bp');
 });
-const monthly = {...daily, nativeFrequency: 'monthly', observationDateRule: 'month-end',
-  comparisonPolicy: {periods: [1, 12], periodUnit: 'month', match: 'source-period-date', valueScale: 1}};
+const monthly = display.indicators.find(item => item.seriesId === 'bond-issuance');
 const quarterly = {...monthly, nativeFrequency: 'quarterly', observationDateRule: 'quarter-start',
   comparisonPolicy: {periods: [1, 4], periodUnit: 'quarter', match: 'source-period-date', valueScale: 1}};
 test('monthly and quarterly policies preserve reviewed source dates', () => {
+  assert.deepEqual(comparisonPeriods(monthly), [1, 12]);
+  assert.equal(comparisonLabel(monthly, 12), '较上年同月变化');
+  const leapMonth = [point('2023-02-28', 5), point('2024-01-31', 0), point('2024-02-29', 20), point('2024-03-31', null)];
+  assert.equal(changeAt(leapMonth, 1, monthly), 20);
+  assert.equal(changeAt(leapMonth, 12, monthly), 15);
+  assert.equal(changeAt([point('2024-02-29', null), point('2024-03-31', 5)], 1, monthly), null);
   assert.equal(changeAt([point('2024-02-29', 2), point('2024-03-31', 5)], 1, monthly), 3);
   assert.equal(changeAt([point('2024-01-31', 2), point('2024-03-31', 5)], 1, monthly), null);
   assert.equal(changeAt([point('2024-01-01', 2), point('2024-04-01', 5)], 1, quarterly), 3);
@@ -119,7 +124,8 @@ test('production loader rejects mismatched IDs, modes, dates and comparison poli
   const bad = structuredClone(catalog);
   bad.indicators.find(item => item.id === daily.id).comparisonPolicy.valueScale = 100;
   assert.throws(() => unpackDataset(bad, payload));
-  assert.throws(() => unpackDataset({...catalog, dataset: {...catalog.dataset, mode: 'manual-preview'}}, payload));
+  const retiredDataset = {...catalog.dataset, mode: 'manual-preview', sourceReview: 'pending'};
+  assert.throws(() => unpackDataset({...catalog, dataset: retiredDataset}, payload), /Unsupported dataset/);
   assert.throws(() => unpackDataset({...catalog, dataset: {...catalog.dataset, observationEnd: '2030-01-01'}}, payload));
   assert.equal(parseRoute('#indicator=sofr-effr-spread&range=all', catalog.categories, catalog.indicators).category, daily.categoryId);
 });

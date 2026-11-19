@@ -24,7 +24,7 @@ Completion means these pilot series work through collection, normalization, deri
 | --- | --- | --- |
 | `data/registry.csv` and `scripts/registry.py` | Membership, specifications, dependency checks, optional JSON export | Add production completeness checks for activated series without requiring all draft sources to be finished |
 | `scripts/catalog.py` | Separate demo and reviewed production metadata | Extend reviewed sources in Slice 6 |
-| `scripts/build.py` | Demo, manual preview and validated production snapshot modes | Slice 5 publisher builds an exact artifact revision |
+| `scripts/build.py` | Demo and validated production snapshot modes | Slice 5 publisher builds an exact artifact revision |
 | `site/assets/data.js` | Native-frequency comparisons, labels and valid sample counts | Retain these checks as new sources activate |
 | `site/assets/app.js` and `charts.js` | Mode-specific labels, source notices, safe empty/short-history rendering | Mobile polish deferred by maintainer |
 | `.github/workflows/pages.yml` | Offline PR checks; saved-input pushes; daily/manual refresh, production publication and rollback | Verify first hosted release after merge |
@@ -214,14 +214,8 @@ Exit check: one real download matches its source; a provider revision changes de
 
 ### Slice 4 — Snapshot assembly and frontend migration
 
-Local SIFMA preview implemented November 17, 2026 as a focused precursor:
-`python3 scripts/build.py --mode preview` assembles the three audited, committed
-manual inputs into `dist-preview/`. Monthly month-end comparisons, native sample
-counts, empty dialogs/charts, single-point rendering, matching snapshot IDs, and
-preview-specific labels are supported. The default view puts available issuance
-series first in the credit category. Other series remain empty. This preview does
-not activate SIFMA, publish data, or complete the production contract below;
-source reference/coverage review and full production assembly remain pending.
+A local SIFMA preview preceded production assembly on November 17, 2026.
+It was retired after the three issuance series entered production.
 
 - [x] Assemble activated automatic/manual inputs and derived outputs into one validated version 2 snapshot. Unconnected categorized numeric entries emit empty arrays; unavailable entries are omitted; unquantified entries stay nonnumeric.
 - [x] Validate IDs, ownership, policy consistency, dates, finite/null values, units, provenance, and shared snapshot identity before replacing the publishable candidate.
@@ -330,8 +324,7 @@ Policy version 7 contains 24 activated series (18 automatic, three manual, three
 calculated), with 19 displayed charts and five hidden inputs. Versions 4–6 snapshots
 remain readable for exact rollback. Full live refresh validated all active automatic
 histories; the ICE and VIX inputs were fetched only after the maintainer recorded
-redistribution permission. The legacy local preview still
-bypasses production review gates and must not be used as a publication artifact.
+redistribution permission.
 
 Before release, commit the definitions and inputs together so manual assembly can
 bind to their audited revision, then run the full offline checks and publish from

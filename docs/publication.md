@@ -32,7 +32,7 @@ resolved before publication can proceed.
 
 | Trigger | Inputs | Network collection | Publication |
 | --- | --- | --- | --- |
-| Pull request | PR head, full first-parent history | None; no FRED secret | Offline Python tests, manual audit and demo/preview/production JS checks; no deployment |
+| Pull request | PR head, full first-parent history | None; no FRED secret | Offline Python tests, manual audit and demo/production JS checks; no deployment |
 | Push to `main` | Latest `main`, including manual edits | None | Validate saved automatic inputs, assemble and publish, or propose a data PR |
 | Daily schedule | Latest `main` | FRED refresh | Same assembly and publication path |
 | Manual `refresh` | Latest `main` | FRED refresh | Same as scheduled refresh |

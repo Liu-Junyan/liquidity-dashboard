@@ -17,15 +17,6 @@ export const messages = {
   demoShort: '演示', category: '类别', loading: '正在加载本地数据…', loadError: '数据加载失败。请通过 HTTP 本地服务器打开页面，或稍后重试。', chartUnavailable: '图表组件未能加载，仍可查看最新值与统计摘要。',
   rangeDates: '显示区间',
 };
-const previewMessages = {
-  mastheadNote: '独立研究 · 月度发行数据', eyebrow: 'USD LIQUIDITY / SIFMA PREVIEW',
-  edition: '本地数据预览', demoBadge: 'SIFMA 数据预览 · 定义待复核',
-  intro: '查看已保存的 SIFMA / Wind 月度发行数据。来源引用、覆盖范围及月度／年累计口径待复核。',
-  weekly: '月度观测', syntheticSeries: 'SIFMA / Wind 数据', demoShort: '本地预览',
-  methodologyBody: '本页展示已保存的 Wind 工作簿所导出的三项 SIFMA 发行数据，保留原始月末日期及十亿美元单位。数据未在此刷新；来源引用、覆盖范围、发行口径及月度／年累计定义尚待复核，不能视为已审核的生产数据。',
-  placeholderNote: '仅债券、国债及公司债发行量有真实输入；其他指标保留为空并显示待接入。三项发行量的覆盖范围可能重叠，不作加总。较上月和较上年同月变化按对应月末观测计算；缺失月份不替代、不插值。',
-  footerNote: 'SIFMA 本地预览 · 来源定义待复核',
-};
 let mode = 'demo';
 const productionMessages = {
   mastheadNote: '独立研究 · 来源观测', eyebrow: 'USD LIQUIDITY / RESEARCH MONITOR',
@@ -37,4 +28,4 @@ const productionMessages = {
   footerNote: 'Junyan Liu · 独立研究 · 不构成投资建议',
 };
 export function setDataMode(value) { mode = value; }
-export const t = key => (mode === 'manual-preview' ? previewMessages[key] : mode === 'production' ? productionMessages[key] : undefined) ?? messages[key] ?? key;
+export const t = key => (mode === 'production' ? productionMessages[key] : undefined) ?? messages[key] ?? key;
