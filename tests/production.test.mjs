@@ -178,7 +178,7 @@ try {
     assert.doesNotMatch(node('#charts').innerHTML, /source-notices|DTCC Solutions/);
     assert.match(node('#charts').innerHTML, /近4周变化/);
     assert.ok(labels.every(label => !/合成|演示|SIFMA 数据预览|定义待复核/.test(label.textContent)));
-    assert.match(labels.find(label => label.dataset.i18n === 'methodologyBody').textContent, /SIFMA/);
+    assert.equal(labels.find(label => label.dataset.i18n === 'methodologyBody').textContent, t('methodologyBody'));
     assert.doesNotMatch(node('#dialog-content').innerHTML, /最近检查|人工录入时间|自动更新|人工维护|生成时间/);
     assert.equal(node('#collection-time').hidden, true);
     const chart = charts.get(node('#expanded-chart'));
