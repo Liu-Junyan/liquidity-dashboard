@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-20T06:13:36.191032Z",
-  "sourceInputCommit": "66574dee1a823bae50df11f63598cb2397ac7ff9",
+  "generatedAt": "2026-11-20T16:10:52.319944Z",
+  "sourceInputCommit": "663817a427efea261f4e8710a9d11c62c8054e75",
   "sourceFileHashes": {
     "data/categories.json": "41b46e91bcbdfef69a4471b6fbdd3af84d6a1aa3ad01e1c09f57d9c20f89620c",
     "data/registry.csv": "6558a461a954b1dfd15d14caf7d08a86ea87347726cb76974f9e4af779f0396c",
@@ -34,23 +34,23 @@
     "bank-total-assets": "4d1ec602bd85a558e056b7b99be3f4a2c80ec12169c9a918f656e6dd3836abca",
     "bond-issuance": "be3b5905669341dba26c0b0ff70f97f67049feeb817223cec4f45969b444f237",
     "corporate-bond-issuance": "a67d94ceda4e9fc57f382f86dedb8ff5a9fc05c1c0d01cec01fee6fbc0705e36",
-    "credit-spreads-hy": "e882076266f96f31a3b17ada7666a1650b92ad9d6513f663e9831c16630f9feb",
-    "credit-spreads-ig": "b173e7c8cbc56e7477259d21bfd3673d000363a96dbab38c05032680c41fe11b",
-    "discount-window": "a18b16e73e29d8fa85b272232b7b04ca8c4141637d52e8d6ad0bbb44ea885c06",
-    "effr": "3f4f6da4548da4d16801dc4e415df5cd4402012d9eaaac607cc089311718cd79",
-    "fed-assets": "39cf997e0cea9ff7e1b7a18e9f4d81584c84fc584a7d0857f3dce0fd42197619",
-    "fed-repo": "0b2c14f77ddac92fb1642997907cdb5a155fac7413154985f09ae06581e91bea",
-    "fima-repo": "9db1a802040f74c60260e3276832def42321a2fdc45fe1b06c0602ebe2452c9f",
+    "credit-spreads-hy": "d3e3c47c80a6063cb9545e5ddad526dd231e75628b1d65786f698c9f3dafed5e",
+    "credit-spreads-ig": "1460fae311062c443456425f2f25f937a59ed67ec44d6d3b458c7b4fdbe8542c",
+    "discount-window": "50faac78b472fcaeb4ebe9698235a504ade582db697a660ab69a8f102ed809f0",
+    "effr": "5857c7c2e4593220bff56efc4821a4ae49998ca4b24efbb6a90938113117835a",
+    "fed-assets": "fc60d4414055586bb62cb078730d5b4307ce6562843eac7b6d098f7f2ce4af18",
+    "fed-repo": "3323485e02adb256a99a1a038832106e655f71970046e8fc7bf4d8a7806e9189",
+    "fima-repo": "b34af53ad4ed72cfb9d60ec71ea0a5d8b925042fc562152388b747d155aa4c1a",
     "lending-standards": "226bce049a52e917c76ac945a399ef8004b2babd623e03f6a316a1a0f5fdfaa4",
-    "reserve-balances": "d2a7040f162644d45a62650b98bdf57342aac59e303442ff7f04df641c25b4c5",
-    "reverse-repo": "8221e80669e0f10288ca6934529233c8936b57952dbe506205cb7cc55fc4b80a",
-    "sofr": "5edfe6f360de23544106869ecc2013266a17927383ab61b2c278805054880591",
-    "sofr99": "77a5986c99a5f66578232bfe3feec6642cf4e7744b16c7c661a4385b10cb018f",
-    "swap-line": "8d0cf2a21bce7fbb67c8054b5a4f70d99af436ead1458b7c2639d32b45d6e40b",
-    "treasury-account": "a360d2ea6ebf90f2efcdfaadadcace15d4f30ed8a6a3360db7722ccbc3392854",
+    "reserve-balances": "944cfabb284fa10674cd54ea174accc8fc9142f711e5772568a0c0f002b2992a",
+    "reverse-repo": "6475b5286aebba55e6eb87dcb7bb4a67562a98e2ec66d2cc2beae9bd4d17d0b8",
+    "sofr": "3a6f70e09d1b8a21c19676895546fee9240fbae43930cc4aee3e4be5edcd54a7",
+    "sofr99": "9bafb736ce0410f18f28d459b2fd2e885337385eda4179cfcadfd686291f82b9",
+    "swap-line": "4328ffdf3f82c6e9255ed8194343ae95be8b1e9e15cc8ec1a71276087115f245",
+    "treasury-account": "5187348bb6ce69688824ce3b767a6e15548671a7f5e62851a90604c4ef15358e",
     "treasury-bond-issuance": "d6a52169db8048f4fd1305735453f9f0568980edd5f274f3048e6d4b23ecec0c",
-    "treasury-yield-chg": "2bd0792361dfea0f4fe8628010983ff4a2aa66b598702dd6df54f229f357cdb7",
-    "vix": "975e847c2b652176eba9b0c3b842fe2604916ed5bae19477d6310ad75ea43f3e"
+    "treasury-yield-chg": "eac824147b745981edad0f546296306e0f33b4ce36c0cbc13ae1c5d308c81d59",
+    "vix": "457c09d110f4145ce0ccd7984be6f7f3a2718d6551053316691ad9c2b9c70961"
   },
   "normalizedInputs": {
     "bank-loans": [
@@ -8615,10 +8615,6 @@
     ],
     "credit-spreads-hy": [
       {
-        "date": "2023-11-20",
-        "value": 3.92
-      },
-      {
         "date": "2023-11-21",
         "value": 3.95
       },
@@ -11789,13 +11785,13 @@
       {
         "date": "2026-11-18",
         "value": 3.47
+      },
+      {
+        "date": "2026-11-19",
+        "value": 3.52
       }
     ],
     "credit-spreads-ig": [
-      {
-        "date": "2023-11-20",
-        "value": 1.18
-      },
       {
         "date": "2023-11-21",
         "value": 1.17
@@ -14967,6 +14963,10 @@
       {
         "date": "2026-11-18",
         "value": 0.93
+      },
+      {
+        "date": "2026-11-19",
+        "value": 0.94
       }
     ],
     "discount-window": [
@@ -18489,6 +18489,10 @@
       {
         "date": "2026-11-11",
         "value": 9268.0
+      },
+      {
+        "date": "2026-11-18",
+        "value": 9055.0
       }
     ],
     "effr": [
@@ -36107,6 +36111,10 @@
       {
         "date": "2026-11-18",
         "value": 3.88
+      },
+      {
+        "date": "2026-11-19",
+        "value": 3.88
       }
     ],
     "fed-assets": [
@@ -39629,6 +39637,10 @@
       {
         "date": "2026-11-11",
         "value": 6758.867
+      },
+      {
+        "date": "2026-11-18",
+        "value": 6741.452
       }
     ],
     "fed-repo": [
@@ -57247,6 +57259,10 @@
       {
         "date": "2026-11-18",
         "value": 0.0
+      },
+      {
+        "date": "2026-11-19",
+        "value": 0.003
       }
     ],
     "fima-repo": [
@@ -60769,6 +60785,10 @@
       {
         "date": "2026-11-11",
         "value": 0.0
+      },
+      {
+        "date": "2026-11-18",
+        "value": 1.0
       }
     ],
     "lending-standards": [
@@ -64565,6 +64585,10 @@
       {
         "date": "2026-11-11",
         "value": 2969.977
+      },
+      {
+        "date": "2026-11-18",
+        "value": 3001.79
       }
     ],
     "reverse-repo": [
@@ -82183,6 +82207,10 @@
       {
         "date": "2026-11-18",
         "value": 0.331
+      },
+      {
+        "date": "2026-11-19",
+        "value": 0.405
       }
     ],
     "sofr": [
@@ -91193,6 +91221,10 @@
       {
         "date": "2026-11-18",
         "value": 3.9
+      },
+      {
+        "date": "2026-11-19",
+        "value": 3.91
       }
     ],
     "sofr99": [
@@ -100203,6 +100235,10 @@
       {
         "date": "2026-11-18",
         "value": 3.98
+      },
+      {
+        "date": "2026-11-19",
+        "value": 3.98
       }
     ],
     "swap-line": [
@@ -103725,6 +103761,10 @@
       {
         "date": "2026-11-11",
         "value": 171.0
+      },
+      {
+        "date": "2026-11-18",
+        "value": 146.0
       }
     ],
     "treasury-account": [
@@ -107247,6 +107287,10 @@
       {
         "date": "2026-11-11",
         "value": 912.134
+      },
+      {
+        "date": "2026-11-18",
+        "value": 892.31
       }
     ],
     "treasury-bond-issuance": [
@@ -125623,6 +125667,10 @@
       {
         "date": "2026-11-17",
         "value": -2.0
+      },
+      {
+        "date": "2026-11-18",
+        "value": -3.0
       }
     ],
     "vix": [
@@ -143241,6 +143289,10 @@
       {
         "date": "2026-11-18",
         "value": 24.56
+      },
+      {
+        "date": "2026-11-19",
+        "value": 28.44
       }
     ]
   },
@@ -143311,7 +143363,7 @@
       "sourceUnit": "%",
       "normalizedUnit": "%",
       "sourceReference": "https://fred.stlouisfed.org/series/BAMLH0A0HYM2",
-      "sourceHash": "e882076266f96f31a3b17ada7666a1650b92ad9d6513f663e9831c16630f9feb",
+      "sourceHash": "d3e3c47c80a6063cb9545e5ddad526dd231e75628b1d65786f698c9f3dafed5e",
       "providerUnits": "Percent",
       "requestParameters": {
         "series_id": "BAMLH0A0HYM2",
@@ -143331,7 +143383,7 @@
       "sourceUnit": "%",
       "normalizedUnit": "%",
       "sourceReference": "https://fred.stlouisfed.org/series/BAMLC0A0CM",
-      "sourceHash": "b173e7c8cbc56e7477259d21bfd3673d000363a96dbab38c05032680c41fe11b",
+      "sourceHash": "1460fae311062c443456425f2f25f937a59ed67ec44d6d3b458c7b4fdbe8542c",
       "providerUnits": "Percent",
       "requestParameters": {
         "series_id": "BAMLC0A0CM",
@@ -143351,7 +143403,7 @@
       "sourceUnit": "Millions",
       "normalizedUnit": "Millions",
       "sourceReference": "https://fred.stlouisfed.org/series/WLCFLPCL",
-      "sourceHash": "a18b16e73e29d8fa85b272232b7b04ca8c4141637d52e8d6ad0bbb44ea885c06",
+      "sourceHash": "50faac78b472fcaeb4ebe9698235a504ade582db697a660ab69a8f102ed809f0",
       "providerUnits": "Millions of U.S. Dollars",
       "requestParameters": {
         "series_id": "WLCFLPCL",
@@ -143371,7 +143423,7 @@
       "sourceUnit": "%",
       "normalizedUnit": "%",
       "sourceReference": "https://fred.stlouisfed.org/series/EFFR",
-      "sourceHash": "3f4f6da4548da4d16801dc4e415df5cd4402012d9eaaac607cc089311718cd79",
+      "sourceHash": "5857c7c2e4593220bff56efc4821a4ae49998ca4b24efbb6a90938113117835a",
       "providerUnits": "Percent",
       "requestParameters": {
         "series_id": "EFFR",
@@ -143391,7 +143443,7 @@
       "sourceUnit": "Millions",
       "normalizedUnit": "Billions",
       "sourceReference": "https://fred.stlouisfed.org/series/WALCL",
-      "sourceHash": "f4e0214b2e3721ba8837b8a46b88d6693f4e88bed07343efb3336af8a6eabf84",
+      "sourceHash": "5c8cb0327873c3e662bc1343a3efaa73462cfc1d69609ce8d7207029ab625805",
       "providerUnits": "Millions of U.S. Dollars",
       "requestParameters": {
         "series_id": "WALCL",
@@ -143411,7 +143463,7 @@
       "sourceUnit": "Billions",
       "normalizedUnit": "Billions",
       "sourceReference": "https://fred.stlouisfed.org/series/RPONTTLD",
-      "sourceHash": "0b2c14f77ddac92fb1642997907cdb5a155fac7413154985f09ae06581e91bea",
+      "sourceHash": "3323485e02adb256a99a1a038832106e655f71970046e8fc7bf4d8a7806e9189",
       "providerUnits": "Billions of US Dollars",
       "requestParameters": {
         "series_id": "RPONTTLD",
@@ -143431,7 +143483,7 @@
       "sourceUnit": "Millions",
       "normalizedUnit": "Millions",
       "sourceReference": "https://fred.stlouisfed.org/series/H41RESPPALGTRFNWW",
-      "sourceHash": "9db1a802040f74c60260e3276832def42321a2fdc45fe1b06c0602ebe2452c9f",
+      "sourceHash": "b34af53ad4ed72cfb9d60ec71ea0a5d8b925042fc562152388b747d155aa4c1a",
       "providerUnits": "Millions of U.S. Dollars",
       "requestParameters": {
         "series_id": "H41RESPPALGTRFNWW",
@@ -143471,7 +143523,7 @@
       "sourceUnit": "Millions",
       "normalizedUnit": "Billions",
       "sourceReference": "https://fred.stlouisfed.org/series/WRBWFRBL",
-      "sourceHash": "53abcbb6c587f0adc8cb44ce612634e46279503e1db3fd63e26db51edaf54a23",
+      "sourceHash": "fc441e198a81d0e0fd325bf97e2a8d2d7e542d833960e21e70bd2abdd7bd849d",
       "providerUnits": "Millions of U.S. Dollars",
       "requestParameters": {
         "series_id": "WRBWFRBL",
@@ -143491,7 +143543,7 @@
       "sourceUnit": "Billions",
       "normalizedUnit": "Billions",
       "sourceReference": "https://fred.stlouisfed.org/series/RRPONTSYD",
-      "sourceHash": "8221e80669e0f10288ca6934529233c8936b57952dbe506205cb7cc55fc4b80a",
+      "sourceHash": "6475b5286aebba55e6eb87dcb7bb4a67562a98e2ec66d2cc2beae9bd4d17d0b8",
       "providerUnits": "Billions of US Dollars",
       "requestParameters": {
         "series_id": "RRPONTSYD",
@@ -143511,7 +143563,7 @@
       "sourceUnit": "%",
       "normalizedUnit": "%",
       "sourceReference": "https://fred.stlouisfed.org/series/SOFR",
-      "sourceHash": "5edfe6f360de23544106869ecc2013266a17927383ab61b2c278805054880591",
+      "sourceHash": "3a6f70e09d1b8a21c19676895546fee9240fbae43930cc4aee3e4be5edcd54a7",
       "providerUnits": "Percent",
       "requestParameters": {
         "series_id": "SOFR",
@@ -143531,7 +143583,7 @@
       "sourceUnit": "%",
       "normalizedUnit": "%",
       "sourceReference": "https://fred.stlouisfed.org/series/SOFR99",
-      "sourceHash": "77a5986c99a5f66578232bfe3feec6642cf4e7744b16c7c661a4385b10cb018f",
+      "sourceHash": "9bafb736ce0410f18f28d459b2fd2e885337385eda4179cfcadfd686291f82b9",
       "providerUnits": "Percent",
       "requestParameters": {
         "series_id": "SOFR99",
@@ -143551,7 +143603,7 @@
       "sourceUnit": "Millions",
       "normalizedUnit": "Millions",
       "sourceReference": "https://fred.stlouisfed.org/series/SWPT",
-      "sourceHash": "8d0cf2a21bce7fbb67c8054b5a4f70d99af436ead1458b7c2639d32b45d6e40b",
+      "sourceHash": "4328ffdf3f82c6e9255ed8194343ae95be8b1e9e15cc8ec1a71276087115f245",
       "providerUnits": "Millions of U.S. Dollars",
       "requestParameters": {
         "series_id": "SWPT",
@@ -143571,7 +143623,7 @@
       "sourceUnit": "Millions",
       "normalizedUnit": "Billions",
       "sourceReference": "https://fred.stlouisfed.org/series/WDTGAL",
-      "sourceHash": "f83dbe99b1971510cf888f961e2669b282a018e8d5131c7b5398cb6d0ad41543",
+      "sourceHash": "f902f45686d1c59a8ff17e46a0b0f0dcf7176c557bb570d2cb98caebe89f3fe9",
       "providerUnits": "Millions of U.S. Dollars",
       "requestParameters": {
         "series_id": "WDTGAL",
@@ -143601,7 +143653,7 @@
       "sourceUnit": "%",
       "normalizedUnit": "bp",
       "sourceReference": "https://fred.stlouisfed.org/series/DGS10",
-      "sourceHash": "ec06f6e41750ad5e77a39c8933f7d01c6cc82628970a58ca80f117f556f58aea",
+      "sourceHash": "b0a76595b7c80501dd78fabf284292f3c4ec4ad6a5747930595891f3cc8b7347",
       "providerUnits": "Percent",
       "requestParameters": {
         "series_id": "DGS10",
@@ -143621,7 +143673,7 @@
       "sourceUnit": "none",
       "normalizedUnit": "none",
       "sourceReference": "https://fred.stlouisfed.org/series/VIXCLS",
-      "sourceHash": "975e847c2b652176eba9b0c3b842fe2604916ed5bae19477d6310ad75ea43f3e",
+      "sourceHash": "457c09d110f4145ce0ccd7984be6f7f3a2718d6551053316691ad9c2b9c70961",
       "providerUnits": "Index",
       "requestParameters": {
         "series_id": "VIXCLS",
@@ -143642,7 +143694,7 @@
       "normalizedUnit": "%",
       "inputHashes": {
         "bank-total-assets": "4d1ec602bd85a558e056b7b99be3f4a2c80ec12169c9a918f656e6dd3836abca",
-        "reserve-balances": "d2a7040f162644d45a62650b98bdf57342aac59e303442ff7f04df641c25b4c5"
+        "reserve-balances": "944cfabb284fa10674cd54ea174accc8fc9142f711e5772568a0c0f002b2992a"
       },
       "missingInputs": [],
       "calculation": "100*reserve-balances/bank-total-assets"
@@ -143653,8 +143705,8 @@
       "sourceUnit": "%",
       "normalizedUnit": "bp",
       "inputHashes": {
-        "sofr": "5edfe6f360de23544106869ecc2013266a17927383ab61b2c278805054880591",
-        "effr": "3f4f6da4548da4d16801dc4e415df5cd4402012d9eaaac607cc089311718cd79"
+        "sofr": "3a6f70e09d1b8a21c19676895546fee9240fbae43930cc4aee3e4be5edcd54a7",
+        "effr": "5857c7c2e4593220bff56efc4821a4ae49998ca4b24efbb6a90938113117835a"
       },
       "missingInputs": [],
       "calculation": "sofr-effr"
@@ -143665,8 +143717,8 @@
       "sourceUnit": "%",
       "normalizedUnit": "bp",
       "inputHashes": {
-        "sofr99": "77a5986c99a5f66578232bfe3feec6642cf4e7744b16c7c661a4385b10cb018f",
-        "sofr": "5edfe6f360de23544106869ecc2013266a17927383ab61b2c278805054880591"
+        "sofr99": "9bafb736ce0410f18f28d459b2fd2e885337385eda4179cfcadfd686291f82b9",
+        "sofr": "3a6f70e09d1b8a21c19676895546fee9240fbae43930cc4aee3e4be5edcd54a7"
       },
       "missingInputs": [],
       "calculation": "sofr99-sofr"
@@ -143676,15 +143728,15 @@
     "bank-loans": {
       "status": "unchanged",
       "latestObservationDate": "2026-11-04",
-      "lastAttempt": "2026-11-19T16:35:23.039586Z",
-      "lastSuccessfulCheck": "2026-11-19T16:35:23.039586Z",
+      "lastAttempt": "2026-11-20T16:10:42.780069Z",
+      "lastSuccessfulCheck": "2026-11-20T16:10:42.780069Z",
       "lastDataChange": "2026-11-17T07:49:52.018793Z"
     },
     "bank-total-assets": {
       "status": "unchanged",
       "latestObservationDate": "2026-11-04",
-      "lastAttempt": "2026-11-19T16:35:23.039586Z",
-      "lastSuccessfulCheck": "2026-11-19T16:35:23.039586Z",
+      "lastAttempt": "2026-11-20T16:10:42.780069Z",
+      "lastSuccessfulCheck": "2026-11-20T16:10:42.780069Z",
       "lastDataChange": "2026-11-17T07:49:52.018793Z"
     },
     "bond-issuance": {
@@ -143703,101 +143755,101 @@
     },
     "credit-spreads-hy": {
       "status": "updated",
-      "latestObservationDate": "2026-11-18",
-      "lastAttempt": "2026-11-19T16:35:23.039586Z",
-      "lastSuccessfulCheck": "2026-11-19T16:35:23.039586Z",
-      "lastDataChange": "2026-11-19T16:35:23.039586Z"
+      "latestObservationDate": "2026-11-19",
+      "lastAttempt": "2026-11-20T16:10:42.780069Z",
+      "lastSuccessfulCheck": "2026-11-20T16:10:42.780069Z",
+      "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "credit-spreads-ig": {
       "status": "updated",
-      "latestObservationDate": "2026-11-18",
-      "lastAttempt": "2026-11-19T16:35:23.039586Z",
-      "lastSuccessfulCheck": "2026-11-19T16:35:23.039586Z",
-      "lastDataChange": "2026-11-19T16:35:23.039586Z"
+      "latestObservationDate": "2026-11-19",
+      "lastAttempt": "2026-11-20T16:10:42.780069Z",
+      "lastSuccessfulCheck": "2026-11-20T16:10:42.780069Z",
+      "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "discount-window": {
-      "status": "unchanged",
-      "latestObservationDate": "2026-11-11",
-      "lastAttempt": "2026-11-19T16:35:23.039586Z",
-      "lastSuccessfulCheck": "2026-11-19T16:35:23.039586Z",
-      "lastDataChange": "2026-11-17T07:49:52.018793Z"
+      "status": "updated",
+      "latestObservationDate": "2026-11-18",
+      "lastAttempt": "2026-11-20T16:10:42.780069Z",
+      "lastSuccessfulCheck": "2026-11-20T16:10:42.780069Z",
+      "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "effr": {
       "status": "updated",
-      "latestObservationDate": "2026-11-18",
-      "lastAttempt": "2026-11-19T16:35:23.039586Z",
-      "lastSuccessfulCheck": "2026-11-19T16:35:23.039586Z",
-      "lastDataChange": "2026-11-19T16:35:23.039586Z"
+      "latestObservationDate": "2026-11-19",
+      "lastAttempt": "2026-11-20T16:10:42.780069Z",
+      "lastSuccessfulCheck": "2026-11-20T16:10:42.780069Z",
+      "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "fed-assets": {
-      "status": "unchanged",
-      "latestObservationDate": "2026-11-11",
-      "lastAttempt": "2026-11-19T16:35:23.039586Z",
-      "lastSuccessfulCheck": "2026-11-19T16:35:23.039586Z",
-      "lastDataChange": "2026-11-17T05:54:45.289045Z"
+      "status": "updated",
+      "latestObservationDate": "2026-11-18",
+      "lastAttempt": "2026-11-20T16:10:42.780069Z",
+      "lastSuccessfulCheck": "2026-11-20T16:10:42.780069Z",
+      "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "fed-repo": {
       "status": "updated",
-      "latestObservationDate": "2026-11-18",
-      "lastAttempt": "2026-11-19T16:35:23.039586Z",
-      "lastSuccessfulCheck": "2026-11-19T16:35:23.039586Z",
-      "lastDataChange": "2026-11-19T16:35:23.039586Z"
+      "latestObservationDate": "2026-11-19",
+      "lastAttempt": "2026-11-20T16:10:42.780069Z",
+      "lastSuccessfulCheck": "2026-11-20T16:10:42.780069Z",
+      "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "fima-repo": {
-      "status": "unchanged",
-      "latestObservationDate": "2026-11-11",
-      "lastAttempt": "2026-11-19T16:35:23.039586Z",
-      "lastSuccessfulCheck": "2026-11-19T16:35:23.039586Z",
-      "lastDataChange": "2026-11-17T07:49:52.018793Z"
+      "status": "updated",
+      "latestObservationDate": "2026-11-18",
+      "lastAttempt": "2026-11-20T16:10:42.780069Z",
+      "lastSuccessfulCheck": "2026-11-20T16:10:42.780069Z",
+      "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "lending-standards": {
       "status": "unchanged",
       "latestObservationDate": "2026-10-01",
-      "lastAttempt": "2026-11-19T16:35:23.039586Z",
-      "lastSuccessfulCheck": "2026-11-19T16:35:23.039586Z",
+      "lastAttempt": "2026-11-20T16:10:42.780069Z",
+      "lastSuccessfulCheck": "2026-11-20T16:10:42.780069Z",
       "lastDataChange": "2026-11-17T07:49:52.018793Z"
     },
     "reserve-balances": {
-      "status": "unchanged",
-      "latestObservationDate": "2026-11-11",
-      "lastAttempt": "2026-11-19T16:35:23.039586Z",
-      "lastSuccessfulCheck": "2026-11-19T16:35:23.039586Z",
-      "lastDataChange": "2026-11-17T07:49:52.018793Z"
+      "status": "updated",
+      "latestObservationDate": "2026-11-18",
+      "lastAttempt": "2026-11-20T16:10:42.780069Z",
+      "lastSuccessfulCheck": "2026-11-20T16:10:42.780069Z",
+      "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "reverse-repo": {
       "status": "updated",
-      "latestObservationDate": "2026-11-18",
-      "lastAttempt": "2026-11-19T16:35:23.039586Z",
-      "lastSuccessfulCheck": "2026-11-19T16:35:23.039586Z",
-      "lastDataChange": "2026-11-19T16:35:23.039586Z"
+      "latestObservationDate": "2026-11-19",
+      "lastAttempt": "2026-11-20T16:10:42.780069Z",
+      "lastSuccessfulCheck": "2026-11-20T16:10:42.780069Z",
+      "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "sofr": {
       "status": "updated",
-      "latestObservationDate": "2026-11-18",
-      "lastAttempt": "2026-11-19T16:35:23.039586Z",
-      "lastSuccessfulCheck": "2026-11-19T16:35:23.039586Z",
-      "lastDataChange": "2026-11-19T16:35:23.039586Z"
+      "latestObservationDate": "2026-11-19",
+      "lastAttempt": "2026-11-20T16:10:42.780069Z",
+      "lastSuccessfulCheck": "2026-11-20T16:10:42.780069Z",
+      "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "sofr99": {
       "status": "updated",
-      "latestObservationDate": "2026-11-18",
-      "lastAttempt": "2026-11-19T16:35:23.039586Z",
-      "lastSuccessfulCheck": "2026-11-19T16:35:23.039586Z",
-      "lastDataChange": "2026-11-19T16:35:23.039586Z"
+      "latestObservationDate": "2026-11-19",
+      "lastAttempt": "2026-11-20T16:10:42.780069Z",
+      "lastSuccessfulCheck": "2026-11-20T16:10:42.780069Z",
+      "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "swap-line": {
-      "status": "unchanged",
-      "latestObservationDate": "2026-11-11",
-      "lastAttempt": "2026-11-19T16:35:23.039586Z",
-      "lastSuccessfulCheck": "2026-11-19T16:35:23.039586Z",
-      "lastDataChange": "2026-11-17T07:49:52.018793Z"
+      "status": "updated",
+      "latestObservationDate": "2026-11-18",
+      "lastAttempt": "2026-11-20T16:10:42.780069Z",
+      "lastSuccessfulCheck": "2026-11-20T16:10:42.780069Z",
+      "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "treasury-account": {
-      "status": "unchanged",
-      "latestObservationDate": "2026-11-11",
-      "lastAttempt": "2026-11-19T16:35:23.039586Z",
-      "lastSuccessfulCheck": "2026-11-19T16:35:23.039586Z",
-      "lastDataChange": "2026-11-17T07:49:52.018793Z"
+      "status": "updated",
+      "latestObservationDate": "2026-11-18",
+      "lastAttempt": "2026-11-20T16:10:42.780069Z",
+      "lastSuccessfulCheck": "2026-11-20T16:10:42.780069Z",
+      "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "treasury-bond-issuance": {
       "status": "imported",
@@ -143808,17 +143860,17 @@
     },
     "treasury-yield-chg": {
       "status": "updated",
-      "latestObservationDate": "2026-11-17",
-      "lastAttempt": "2026-11-19T16:35:23.039586Z",
-      "lastSuccessfulCheck": "2026-11-19T16:35:23.039586Z",
-      "lastDataChange": "2026-11-19T16:35:23.039586Z"
+      "latestObservationDate": "2026-11-18",
+      "lastAttempt": "2026-11-20T16:10:42.780069Z",
+      "lastSuccessfulCheck": "2026-11-20T16:10:42.780069Z",
+      "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "vix": {
       "status": "updated",
-      "latestObservationDate": "2026-11-18",
-      "lastAttempt": "2026-11-19T16:35:23.039586Z",
-      "lastSuccessfulCheck": "2026-11-19T16:35:23.039586Z",
-      "lastDataChange": "2026-11-19T16:35:23.039586Z"
+      "latestObservationDate": "2026-11-19",
+      "lastAttempt": "2026-11-20T16:10:42.780069Z",
+      "lastSuccessfulCheck": "2026-11-20T16:10:42.780069Z",
+      "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "reserve-assets-ratio": {
       "status": "derived",
@@ -143829,30 +143881,30 @@
     },
     "sofr-effr-spread": {
       "status": "derived",
-      "latestObservationDate": "2026-11-18",
+      "latestObservationDate": "2026-11-19",
       "lastAttempt": null,
       "lastSuccessfulCheck": null,
       "lastDataChange": null
     },
     "sofr-tail-spread": {
       "status": "derived",
-      "latestObservationDate": "2026-11-18",
+      "latestObservationDate": "2026-11-19",
       "lastAttempt": null,
       "lastSuccessfulCheck": null,
       "lastDataChange": null
     }
   },
   "revisionSummary": {
-    "added": 579,
+    "added": 585,
     "revised": 0,
-    "removed": 0
+    "removed": 2
   },
   "diagnostics": {
     "bank-loans": {
       "error": null,
       "freshness": {
         "latestNumericDate": "2026-11-04",
-        "ageDays": 15,
+        "ageDays": 16,
         "maxAgeDays": 21,
         "status": "current"
       },
@@ -143866,7 +143918,7 @@
       "error": null,
       "freshness": {
         "latestNumericDate": "2026-11-04",
-        "ageDays": 15,
+        "ageDays": 16,
         "maxAgeDays": 21,
         "status": "current"
       },
@@ -143879,41 +143931,41 @@
     "credit-spreads-hy": {
       "error": null,
       "freshness": {
-        "latestNumericDate": "2026-11-18",
+        "latestNumericDate": "2026-11-19",
         "ageDays": 1,
         "maxAgeDays": 7,
         "status": "current"
       },
       "revisionSummary": {
         "added": 1,
-        "removed": 0,
+        "removed": 1,
         "revised": 0
       }
     },
     "credit-spreads-ig": {
       "error": null,
       "freshness": {
-        "latestNumericDate": "2026-11-18",
+        "latestNumericDate": "2026-11-19",
         "ageDays": 1,
         "maxAgeDays": 7,
         "status": "current"
       },
       "revisionSummary": {
         "added": 1,
-        "removed": 0,
+        "removed": 1,
         "revised": 0
       }
     },
     "discount-window": {
       "error": null,
       "freshness": {
-        "latestNumericDate": "2026-11-11",
-        "ageDays": 8,
+        "latestNumericDate": "2026-11-18",
+        "ageDays": 2,
         "maxAgeDays": 14,
         "status": "current"
       },
       "revisionSummary": {
-        "added": 0,
+        "added": 1,
         "removed": 0,
         "revised": 0
       }
@@ -143921,7 +143973,7 @@
     "effr": {
       "error": null,
       "freshness": {
-        "latestNumericDate": "2026-11-18",
+        "latestNumericDate": "2026-11-19",
         "ageDays": 1,
         "maxAgeDays": 7,
         "status": "current"
@@ -143935,13 +143987,13 @@
     "fed-assets": {
       "error": null,
       "freshness": {
-        "latestNumericDate": "2026-11-11",
-        "ageDays": 8,
+        "latestNumericDate": "2026-11-18",
+        "ageDays": 2,
         "maxAgeDays": 14,
         "status": "current"
       },
       "revisionSummary": {
-        "added": 0,
+        "added": 1,
         "removed": 0,
         "revised": 0
       }
@@ -143949,7 +144001,7 @@
     "fed-repo": {
       "error": null,
       "freshness": {
-        "latestNumericDate": "2026-11-18",
+        "latestNumericDate": "2026-11-19",
         "ageDays": 1,
         "maxAgeDays": 7,
         "status": "current"
@@ -143963,13 +144015,13 @@
     "fima-repo": {
       "error": null,
       "freshness": {
-        "latestNumericDate": "2026-11-11",
-        "ageDays": 8,
+        "latestNumericDate": "2026-11-18",
+        "ageDays": 2,
         "maxAgeDays": 14,
         "status": "current"
       },
       "revisionSummary": {
-        "added": 0,
+        "added": 1,
         "removed": 0,
         "revised": 0
       }
@@ -143978,7 +144030,7 @@
       "error": null,
       "freshness": {
         "latestNumericDate": "2026-10-01",
-        "ageDays": 49,
+        "ageDays": 50,
         "maxAgeDays": 150,
         "status": "current"
       },
@@ -143991,13 +144043,13 @@
     "reserve-balances": {
       "error": null,
       "freshness": {
-        "latestNumericDate": "2026-11-11",
-        "ageDays": 8,
+        "latestNumericDate": "2026-11-18",
+        "ageDays": 2,
         "maxAgeDays": 14,
         "status": "current"
       },
       "revisionSummary": {
-        "added": 0,
+        "added": 1,
         "removed": 0,
         "revised": 0
       }
@@ -144005,7 +144057,7 @@
     "reverse-repo": {
       "error": null,
       "freshness": {
-        "latestNumericDate": "2026-11-18",
+        "latestNumericDate": "2026-11-19",
         "ageDays": 1,
         "maxAgeDays": 7,
         "status": "current"
@@ -144019,7 +144071,7 @@
     "sofr": {
       "error": null,
       "freshness": {
-        "latestNumericDate": "2026-11-18",
+        "latestNumericDate": "2026-11-19",
         "ageDays": 1,
         "maxAgeDays": 7,
         "status": "current"
@@ -144033,7 +144085,7 @@
     "sofr99": {
       "error": null,
       "freshness": {
-        "latestNumericDate": "2026-11-18",
+        "latestNumericDate": "2026-11-19",
         "ageDays": 1,
         "maxAgeDays": 7,
         "status": "current"
@@ -144047,13 +144099,13 @@
     "swap-line": {
       "error": null,
       "freshness": {
-        "latestNumericDate": "2026-11-11",
-        "ageDays": 8,
+        "latestNumericDate": "2026-11-18",
+        "ageDays": 2,
         "maxAgeDays": 14,
         "status": "current"
       },
       "revisionSummary": {
-        "added": 0,
+        "added": 1,
         "removed": 0,
         "revised": 0
       }
@@ -144061,13 +144113,13 @@
     "treasury-account": {
       "error": null,
       "freshness": {
-        "latestNumericDate": "2026-11-11",
-        "ageDays": 8,
+        "latestNumericDate": "2026-11-18",
+        "ageDays": 2,
         "maxAgeDays": 14,
         "status": "current"
       },
       "revisionSummary": {
-        "added": 0,
+        "added": 1,
         "removed": 0,
         "revised": 0
       }
@@ -144075,7 +144127,7 @@
     "treasury-yield-chg": {
       "error": null,
       "freshness": {
-        "latestNumericDate": "2026-11-17",
+        "latestNumericDate": "2026-11-18",
         "ageDays": 2,
         "maxAgeDays": 7,
         "status": "current"
@@ -144089,7 +144141,7 @@
     "vix": {
       "error": null,
       "freshness": {
-        "latestNumericDate": "2026-11-18",
+        "latestNumericDate": "2026-11-19",
         "ageDays": 1,
         "maxAgeDays": 7,
         "status": "current"
@@ -144101,5 +144153,5 @@
       }
     }
   },
-  "snapshotId": "production-75c9c55f304ccbccf4133db20d932565becf81593588316b4458d790b4ad4b97"
+  "snapshotId": "production-31528f84ea19c2239d430655c12c60a63d28d65fd979c22d6ad80744e57f9759"
 }

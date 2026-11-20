@@ -3555,13 +3555,13 @@
   "outcome": {
     "status": "unchanged",
     "latestObservationDate": "2026-11-04",
-    "lastAttempt": "2026-11-19T16:35:23.039586Z",
-    "lastSuccessfulCheck": "2026-11-19T16:35:23.039586Z",
+    "lastAttempt": "2026-11-20T16:10:42.780069Z",
+    "lastSuccessfulCheck": "2026-11-20T16:10:42.780069Z",
     "lastDataChange": "2026-11-17T07:49:52.018793Z"
   },
   "freshness": {
     "latestNumericDate": "2026-11-04",
-    "ageDays": 15,
+    "ageDays": 16,
     "maxAgeDays": 21,
     "status": "current"
   }

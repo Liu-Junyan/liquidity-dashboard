@@ -3529,6 +3529,10 @@
     {
       "date": "2026-11-11",
       "value": 171.0
+    },
+    {
+      "date": "2026-11-18",
+      "value": 146.0
     }
   ],
   "metadata": {
@@ -3537,7 +3541,7 @@
     "frequency_short": "W",
     "seasonal_adjustment_short": "NSA",
     "observation_start": "2002-12-18",
-    "observation_end": "2026-11-11"
+    "observation_end": "2026-11-18"
   },
   "requestParameters": {
     "series_id": "SWPT",
@@ -3549,23 +3553,23 @@
     "limit": 100000,
     "offset": 0
   },
-  "sourceHash": "8d0cf2a21bce7fbb67c8054b5a4f70d99af436ead1458b7c2639d32b45d6e40b",
+  "sourceHash": "4328ffdf3f82c6e9255ed8194343ae95be8b1e9e15cc8ec1a71276087115f245",
   "revisionSummary": {
-    "added": 0,
+    "added": 1,
     "removed": 0,
     "revised": 0
   },
   "error": null,
   "outcome": {
-    "status": "unchanged",
-    "latestObservationDate": "2026-11-11",
-    "lastAttempt": "2026-11-19T16:35:23.039586Z",
-    "lastSuccessfulCheck": "2026-11-19T16:35:23.039586Z",
-    "lastDataChange": "2026-11-17T07:49:52.018793Z"
+    "status": "updated",
+    "latestObservationDate": "2026-11-18",
+    "lastAttempt": "2026-11-20T16:10:42.780069Z",
+    "lastSuccessfulCheck": "2026-11-20T16:10:42.780069Z",
+    "lastDataChange": "2026-11-20T16:10:42.780069Z"
   },
   "freshness": {
-    "latestNumericDate": "2026-11-11",
-    "ageDays": 8,
+    "latestNumericDate": "2026-11-18",
+    "ageDays": 2,
     "maxAgeDays": 14,
     "status": "current"
   }

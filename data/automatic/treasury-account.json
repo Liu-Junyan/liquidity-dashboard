@@ -3529,6 +3529,10 @@
     {
       "date": "2026-11-11",
       "value": 912134.0
+    },
+    {
+      "date": "2026-11-18",
+      "value": 892310.0
     }
   ],
   "metadata": {
@@ -3537,7 +3541,7 @@
     "frequency_short": "W",
     "seasonal_adjustment_short": "NSA",
     "observation_start": "2002-12-18",
-    "observation_end": "2026-11-11"
+    "observation_end": "2026-11-18"
   },
   "requestParameters": {
     "series_id": "WDTGAL",
@@ -3549,23 +3553,23 @@
     "limit": 100000,
     "offset": 0
   },
-  "sourceHash": "f83dbe99b1971510cf888f961e2669b282a018e8d5131c7b5398cb6d0ad41543",
+  "sourceHash": "f902f45686d1c59a8ff17e46a0b0f0dcf7176c557bb570d2cb98caebe89f3fe9",
   "revisionSummary": {
-    "added": 0,
+    "added": 1,
     "removed": 0,
     "revised": 0
   },
   "error": null,
   "outcome": {
-    "status": "unchanged",
-    "latestObservationDate": "2026-11-11",
-    "lastAttempt": "2026-11-19T16:35:23.039586Z",
-    "lastSuccessfulCheck": "2026-11-19T16:35:23.039586Z",
-    "lastDataChange": "2026-11-17T07:49:52.018793Z"
+    "status": "updated",
+    "latestObservationDate": "2026-11-18",
+    "lastAttempt": "2026-11-20T16:10:42.780069Z",
+    "lastSuccessfulCheck": "2026-11-20T16:10:42.780069Z",
+    "lastDataChange": "2026-11-20T16:10:42.780069Z"
   },
   "freshness": {
-    "latestNumericDate": "2026-11-11",
-    "ageDays": 8,
+    "latestNumericDate": "2026-11-18",
+    "ageDays": 2,
     "maxAgeDays": 14,
     "status": "current"
   }

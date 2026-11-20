@@ -3529,6 +3529,10 @@
     {
       "date": "2026-11-11",
       "value": 9268.0
+    },
+    {
+      "date": "2026-11-18",
+      "value": 9055.0
     }
   ],
   "metadata": {
@@ -3537,7 +3541,7 @@
     "frequency_short": "W",
     "seasonal_adjustment_short": "NSA",
     "observation_start": "2002-12-18",
-    "observation_end": "2026-11-11"
+    "observation_end": "2026-11-18"
   },
   "requestParameters": {
     "series_id": "WLCFLPCL",
@@ -3549,23 +3553,23 @@
     "limit": 100000,
     "offset": 0
   },
-  "sourceHash": "a18b16e73e29d8fa85b272232b7b04ca8c4141637d52e8d6ad0bbb44ea885c06",
+  "sourceHash": "50faac78b472fcaeb4ebe9698235a504ade582db697a660ab69a8f102ed809f0",
   "revisionSummary": {
-    "added": 0,
+    "added": 1,
     "removed": 0,
     "revised": 0
   },
   "error": null,
   "outcome": {
-    "status": "unchanged",
-    "latestObservationDate": "2026-11-11",
-    "lastAttempt": "2026-11-19T16:35:23.039586Z",
-    "lastSuccessfulCheck": "2026-11-19T16:35:23.039586Z",
-    "lastDataChange": "2026-11-17T07:49:52.018793Z"
+    "status": "updated",
+    "latestObservationDate": "2026-11-18",
+    "lastAttempt": "2026-11-20T16:10:42.780069Z",
+    "lastSuccessfulCheck": "2026-11-20T16:10:42.780069Z",
+    "lastDataChange": "2026-11-20T16:10:42.780069Z"
   },
   "freshness": {
-    "latestNumericDate": "2026-11-11",
-    "ageDays": 8,
+    "latestNumericDate": "2026-11-18",
+    "ageDays": 2,
     "maxAgeDays": 14,
     "status": "current"
   }
