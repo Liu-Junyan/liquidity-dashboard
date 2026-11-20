@@ -77,8 +77,7 @@ class AssemblyTests(unittest.TestCase):
         catalog, observations, manifest = self.candidate()
         self.assertEqual(observations['series']['fed-assets'][0]['value'], 6000)
         self.assertEqual(observations['series']['sofr-effr-spread'], [
-            {'date': '2026-11-12', 'value': 10}, {'date': '2026-11-13', 'value': 0},
-            {'date': '2026-11-16', 'value': None}])
+            {'date': '2026-11-12', 'value': 10}, {'date': '2026-11-13', 'value': 0}])
         self.assertNotIn('sofr', observations['series'])
         self.assertEqual(manifest['provenance']['sofr-effr-spread']['inputHashes']['sofr'],
                          content_hash(manifest['normalizedInputs']['sofr']))
@@ -98,13 +97,13 @@ class AssemblyTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'saved automatic input'):
             self.candidate()
 
-    def test_first_failed_source_preserves_null_derived_history(self):
+    def test_first_failed_source_leaves_derived_history_empty(self):
         self.records = collect(self.registry, SavedInputClient({'sofr'}), now=NOW)['automatic']
         self.save_inputs()
         catalog, observations, manifest = self.candidate()
         self.assertNotIn('sofr', manifest['inputHashes'])
         self.assertEqual(manifest['provenance']['sofr-effr-spread']['missingInputs'], ['sofr'])
-        self.assertTrue(all(point['value'] is None for point in observations['series']['sofr-effr-spread']))
+        self.assertEqual(observations['series']['sofr-effr-spread'], [])
         self.assertEqual(observations['series']['fed-assets'][0]['value'], 6000)
 
     def test_retained_input_can_assemble_without_a_network_request(self):

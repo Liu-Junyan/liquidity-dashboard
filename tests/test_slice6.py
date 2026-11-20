@@ -61,10 +61,13 @@ class CoverageTests(unittest.TestCase):
                                                       record['observations'])], [None, None, 5])
 
     def test_tail_difference_in_basis_points_preserves_missing_dates(self):
-        inputs = {'sofr99': [{'date': '2026-11-12', 'value': 4.3}, {'date': '2026-11-13', 'value': None}],
-                  'sofr': [{'date': '2026-11-12', 'value': 4.1}, {'date': '2026-11-16', 'value': 4}]}
+        def points(*rows):
+            return [{'date': f'2026-11-{day}', 'value': value} for day, value in rows]
+
+        inputs = {'sofr99': points((12, 4.3), (13, None), (17, 4)),
+                  'sofr': points((11, 4), (12, 4.1), (13, 4), (16, 4), (17, 4), (18, 4))}
         result = derive(self.registry, inputs, {'sofr-tail-spread'})['sofr-tail-spread']
-        self.assertEqual([p['value'] for p in result['observations']], [20, None, None])
+        self.assertEqual(result['observations'], points((12, 20), (13, None), (16, None), (17, 0)))
         self.assertEqual(set(result['inputHashes']), {'sofr99', 'sofr'})
 
     def test_ice_credit_spreads_preserve_weekend_month_ends_and_rolling_window(self):

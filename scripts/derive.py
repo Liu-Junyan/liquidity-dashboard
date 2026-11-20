@@ -54,7 +54,15 @@ def derive(registry, inputs, selected):
             validate_points(points)
             aligned[dependency] = {point['date']: point['value'] for point in points}
         points = []
-        for day in sorted(set().union(*(set(values) for values in aligned.values()))):
+        observed_dates = [{day for day, value in mapping.items() if value is not None}
+                          for mapping in aligned.values()]
+        shared_dates = set.intersection(*observed_dates)
+        if shared_dates:
+            start, end = min(shared_dates), max(shared_dates)
+            dates = sorted(day for day in set().union(*aligned.values()) if start <= day <= end)
+        else:
+            dates = []
+        for day in dates:
             values = {key: mapping.get(day) for key, mapping in aligned.items()}
             value = None if any(value is None for value in values.values()) else FUNCTIONS[identifier](
                 {key: Decimal(str(value)) for key, value in values.items()})

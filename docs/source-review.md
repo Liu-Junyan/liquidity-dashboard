@@ -74,10 +74,8 @@ Evidence: [FRED metadata](https://fred.stlouisfed.org/series/EFFR),
 
 ## sofr-effr-spread
 
-Project calculation: same-date normalized SOFR minus EFFR. Use the union of input
-observation dates, producing null wherever either input is missing or null. No
-forward-fill, nearest-date joins, or resampling. The earliest numeric result can
-only occur within the inputs' overlapping history. Input revisions require
+Project calculation: same-date normalized SOFR minus EFFR. Keep dates from the first through the last day with numeric observations for both inputs.
+Within that range, preserve a null wherever either input is missing or null. Input revisions require
 recalculation. Multiply the percentage-point difference by 100 to report basis points.
 For example, (4.10 − 4.00) × 100 = 10 bp. Provenance must identify both normalized
 input hashes. Explain that secured and unsecured market populations differ; the

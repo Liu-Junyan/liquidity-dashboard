@@ -323,7 +323,7 @@ class CollectionTests(unittest.TestCase):
         )
         self.assertEqual(
             second["derived"]["sofr-effr-spread"]["observations"],
-            points((12, 30), (13, None), (16, None)),
+            points((12, 30)),
         )
         self.assertEqual(
             second["derived"]["sofr-effr-spread"]["inputHashes"]["sofr"],
@@ -358,14 +358,7 @@ class CollectionTests(unittest.TestCase):
         self.assertEqual(
             first_failure["derived"]["sofr-effr-spread"]["missingInputs"], ["effr"]
         )
-        self.assertTrue(
-            all(
-                point["value"] is None
-                for point in first_failure["derived"]["sofr-effr-spread"][
-                    "observations"
-                ]
-            )
-        )
+        self.assertEqual(first_failure["derived"]["sofr-effr-spread"]["observations"], [])
 
     def test_cutoff_cache_keeps_original_metadata_and_survives_failure(self):
         first = self.run_collect()
@@ -477,7 +470,7 @@ class CollectionTests(unittest.TestCase):
         result = derive(self.registry, inputs, {"reserve-assets-ratio"})
         self.assertEqual(
             result["reserve-assets-ratio"]["observations"],
-            points((12, 12), (13, None), (16, None)),
+            points((12, 12), (13, None)),
         )
         self.registry["series"]["reserve-assets-ratio"]["formula"] = "eval(anything)"
         with self.assertRaisesRegex(ValueError, "calculation"):
