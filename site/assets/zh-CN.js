@@ -3,7 +3,7 @@ export const messages = {
   skip: '跳至指标图表', rangeAria: '图表时间范围', close: '关闭详情', readingEyebrow: 'READING THE DATA',
   title: '美元流动性观察', methodology: '数据与阅读说明',
   demoBadge: '演示数据 · 非实时',
-  observationDate: '观测日期', dataWindow: '样本区间', aboutData: '数据说明', overview: '流动性概览', overviewHint: '选择类别查看详细指标 · 缩略图为近一年',
+  observationDate: '观测日期', aboutData: '数据说明', overview: '流动性概览', overviewHint: '选择类别查看详细指标', sparklineHint: ' · 缩略图为近一年',
   rangeLabel: '时间范围', ytd: 'YTD', '1y': '近1年', '5y': '近5年', all: '全部', syntheticSeries: '合成数据',
   latest: '最新值', change4: '近4周变化', change13: '近13周变化', unit: '单位', weeklyFrequency: '每周',
   expand: '展开指标', statistics: '查看统计摘要', hideStatistics: '收起统计摘要', average3m: '近3个月均值', average1y: '近1年均值', percentile: '当前值历史分位', validCount: '有效观测', statisticsAsOf: '统计截至', statisticsNote: '均值按最新有效观测日期向前3个月、1年计算，不受图表范围限制；仅计入可用观测。历史分位为当前图表区间内小于或等于最新值的有效观测占比（含最新值）。缺失值不参与计算。',

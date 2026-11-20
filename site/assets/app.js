@@ -22,10 +22,9 @@ function navigate(patch) {
   location.hash = params.toString();
 }
 function pointsFor(indicator, range = state.range) { return inRange(observations[indicator.id], range, catalog.dataset.observationEnd); }
-function secondarySummary(indicator, primaryDate) {
+function secondarySummary(indicator) {
   const latest = latestObservation(observations[indicator.id]);
-  const date = latest?.date !== primaryDate ? `<span class="secondary-date">${t('observationDate')} ${formatDate(latest?.date)}</span>` : '';
-  return `${escape(indicator.name)}<strong>${formatNumber(latest?.value, indicator.unit.precision)} <small>${escape(indicator.unit.label)}</small>${date}</strong>`;
+  return `${escape(indicator.name)}<strong>${formatNumber(latest?.value, indicator.unit.precision)} <small>${escape(indicator.unit.label)}</small></strong>`;
 }
 function metrics(indicator) {
   if (indicator.unit.kind === 'unquantified') return `<p class="definition-pending">${t('definitionPending')}</p>`;
@@ -54,19 +53,19 @@ function sourceSummary(indicator) {
   return `${provider}${calculated ? ' · 项目计算' : ''}`;
 }
 function sourceMarkup(indicator) {
-  if (indicator.sources?.length > 1) return `${escape(indicator.source.name)} · ${indicator.sources.map(reference => reference.startsWith('https://') ? `<a href="${escape(reference)}" target="_blank" rel="noopener noreferrer">${escape(reference.split('/').at(-1))} ↗</a>` : escape(reference)).join(' · ')}`;
-  return indicator.source.url ? `<a href="${escape(indicator.source.url)}" target="_blank" rel="noopener noreferrer">${escape(indicator.source.name)} ↗</a>` : escape(indicator.source.name);
+  if (indicator.sources?.length > 1) return `${escape(indicator.source.name)} · ${indicator.sources.map(reference => reference.startsWith('https://') ? `<a href="${escape(reference)}" target="_blank" rel="noopener noreferrer">${escape(reference.split('/').at(-1))}</a>` : escape(reference)).join(' · ')}`;
+  return indicator.source.url ? `<a href="${escape(indicator.source.url)}" target="_blank" rel="noopener noreferrer">${escape(indicator.source.name)}</a>` : escape(indicator.source.name);
 }
 function noticesMarkup(indicator) {
   if (!indicator.notices?.length) return '';
-  return `<aside class="source-notices" aria-label="来源与使用说明">${indicator.notices.map(notice => `<p>${escape(notice.text)} <a href="${escape(notice.url)}" target="_blank" rel="noopener noreferrer">来源与条款 ↗</a></p>`).join('')}</aside>`;
+  return `<aside class="source-notices" aria-label="来源与使用说明">${indicator.notices.map(notice => `<p>${escape(notice.text)} <a href="${escape(notice.url)}" target="_blank" rel="noopener noreferrer">来源与条款</a></p>`).join('')}</aside>`;
 }
 function renderOverview() {
   $('#categories').innerHTML = categories.map((category, index) => {
     const items = catalog.indicators.filter(item => item.categoryId === category.id);
-    if (!items.length) return `<button class="category-card" data-category="${category.id}" aria-pressed="false" aria-controls="charts"><span class="category-top"><span class="category-number">0${index + 1}</span><span class="category-name">${escape(category.name)}</span></span><span class="summary-label">${t('emptyCategory')}</span><span class="summary-date">0 ${t('indicatorCount')}</span></button>`;
+    if (!items.length) return `<button class="category-card" data-category="${category.id}" aria-pressed="false" aria-controls="charts"><span class="category-top"><span class="category-number">0${index + 1}</span><span class="category-name">${escape(category.name)}</span></span><span class="summary-label">${t('emptyCategory')}</span><span class="indicator-count">0 ${t('indicatorCount')}</span></button>`;
     const primary = items.find(item => item.availability === 'numeric') ?? items[0], latest = latestObservation(observations[primary.id]);
-    return `<button class="category-card" data-category="${category.id}" aria-pressed="false" aria-controls="charts"><span class="category-top"><span class="category-number">0${index + 1}</span><span class="category-name">${escape(category.name)}</span><span class="category-arrow" aria-hidden="true">↗</span></span><span class="summary-label">${escape(primary.name)}</span><span class="summary-value">${primary.unit.kind === 'unquantified' ? '待定义' : primary.inputAvailable === false ? '待接入' : formatNumber(latest?.value, primary.unit.precision)}<small>${escape(primary.unit.label)}</small></span><span class="sparkline" id="spark-${category.id}" aria-hidden="true"></span><span class="secondary-summary">${items.filter(item => item !== primary && (item.isDemo || item.inputAvailable)).slice(0, 1).map(item => secondarySummary(item, latest?.date)).join('<br>')}</span><span class="summary-date">${t('observationDate')} ${formatDate(latest?.date)} · ${items.length} ${t('indicatorCount')}${catalog.dataset.isDemo ? ` · ${t('demoShort')}` : ''}</span></button>`;
+    return `<button class="category-card" data-category="${category.id}" aria-pressed="false" aria-controls="charts"><span class="category-top"><span class="category-number">0${index + 1}</span><span class="category-name">${escape(category.name)}</span></span><span class="summary-label">${escape(primary.name)}</span><span class="summary-value">${primary.unit.kind === 'unquantified' ? '待定义' : primary.inputAvailable === false ? '待接入' : formatNumber(latest?.value, primary.unit.precision)}<small>${escape(primary.unit.label)}</small></span><span class="sparkline" id="spark-${category.id}" aria-hidden="true"></span><span class="secondary-summary">${items.filter(item => item !== primary && (item.isDemo || item.inputAvailable)).slice(0, 1).map(secondarySummary).join('<br>')}</span><span class="indicator-count">${items.length} ${t('indicatorCount')}${catalog.dataset.isDemo ? `<span class="category-demo"> · ${t('demoShort')}</span>` : ''}</span></button>`;
   }).join('');
   categories.forEach(category => {
     const items = catalog.indicators.filter(item => item.categoryId === category.id);
@@ -93,7 +92,7 @@ function renderCharts() {
     parent.innerHTML = `<p class="empty-category">${t('emptyCategory')}</p>`;
     return;
   }
-  parent.innerHTML = indicators.map(indicator => `<article class="indicator-card" aria-labelledby="heading-${indicator.id}"><div class="card-heading"><h3 id="heading-${indicator.id}">${escape(indicator.name)}</h3>${indicator.isDemo ? `<span class="card-demo">${t('demoShort')}</span>` : `<span class="card-demo">${frequencyLabel(indicator.frequency)}</span>`}</div><p class="indicator-role">${escape(indicator.role ?? '')}</p>${metrics(indicator)}<div class="chart-unit">${t('unit')}：${escape(indicator.unit.label)}</div><div class="detail-chart" id="chart-${indicator.id}" role="img" aria-label="${escape(indicator.name)} · ${t(state.range)} · ${seriesLabel(indicator)}"></div><div class="card-actions"><button class="text-button" data-statistics="${indicator.id}" aria-expanded="${statisticsOpen.has(indicator.id)}" aria-controls="statistics-${indicator.id}"><span aria-hidden="true">▦</span> ${t(statisticsOpen.has(indicator.id) ? 'hideStatistics' : 'statistics')}</button><button class="text-button" data-expand="${indicator.id}">${t('expand')} <span aria-hidden="true">↗</span></button></div><div id="statistics-${indicator.id}" ${statisticsOpen.has(indicator.id) ? '' : 'hidden'}>${statisticsMarkup(indicator)}</div><p class="source-summary">数据来源：${escape(sourceSummary(indicator))}</p></article>`).join('');
+  parent.innerHTML = indicators.map(indicator => `<article class="indicator-card" aria-labelledby="heading-${indicator.id}"><div class="card-heading"><h3 id="heading-${indicator.id}">${escape(indicator.name)}</h3>${indicator.isDemo ? `<span class="card-demo">${t('demoShort')}</span>` : `<span class="card-demo">${frequencyLabel(indicator.frequency)}</span>`}</div><p class="indicator-role">${escape(indicator.role ?? '')}</p>${metrics(indicator)}<div class="chart-unit">${t('unit')}：${escape(indicator.unit.label)}</div><div class="detail-chart" id="chart-${indicator.id}" role="img" aria-label="${escape(indicator.name)} · ${t(state.range)} · ${seriesLabel(indicator)}"></div><div class="card-actions"><button class="text-button" data-statistics="${indicator.id}" aria-expanded="${statisticsOpen.has(indicator.id)}" aria-controls="statistics-${indicator.id}"><span aria-hidden="true">▦</span> ${t(statisticsOpen.has(indicator.id) ? 'hideStatistics' : 'statistics')}</button><button class="text-button" data-expand="${indicator.id}">${t('expand')}</button></div><div id="statistics-${indicator.id}" ${statisticsOpen.has(indicator.id) ? '' : 'hidden'}>${statisticsMarkup(indicator)}</div><p class="source-summary">数据来源：${escape(sourceSummary(indicator))}</p></article>`).join('');
   indicators.forEach(indicator => drawChart($(`#chart-${indicator.id}`), pointsFor(indicator), indicator));
 }
 function renderDialog(range = state.range) {
@@ -169,7 +168,6 @@ async function initialize() {
       });
     }
     categories = catalog.categories.toSorted((a, b) => a.order - b.order);
-    $('#dataset-window').textContent = `${t('dataWindow')}：${formatDate(catalog.dataset.observationStart)} — ${formatDate(catalog.dataset.observationEnd)}`;
     $('#collection-time').hidden = !catalog.dataset.isDemo;
     if (catalog.dataset.isDemo) $('#collection-time').textContent = `${t('collectedAt')}：${formatDate(catalog.dataset.collectedAt, {hour: '2-digit', minute: '2-digit'})} UTC · ${t('collectionNote')}`;
     renderOverview();
