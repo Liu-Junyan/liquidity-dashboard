@@ -1,11 +1,11 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-20T02:12:07.150095Z",
-  "sourceInputCommit": "56db2fce155b222d7ceafefe148cefcda7221430",
+  "generatedAt": "2026-11-20T02:45:37.133275Z",
+  "sourceInputCommit": "ae3ddc45d18f642e5b57b300dae94c662768f83c",
   "sourceFileHashes": {
     "data/categories.json": "41b46e91bcbdfef69a4471b6fbdd3af84d6a1aa3ad01e1c09f57d9c20f89620c",
     "data/registry.csv": "6558a461a954b1dfd15d14caf7d08a86ea87347726cb76974f9e4af779f0396c",
-    "data/source-reviews.json": "9927b87d145e6b8a1ec50d9374eb8602dbbe2041afb6bbe4883f0eba1ff8ef7d",
+    "data/source-reviews.json": "33714a7789d3432b68e217b6d2eff7c40bace4199d04197723ddc5a25ef5f41a",
     "scripts/artifacts.py": "ae83fd0771cc6a4e44e110960249e7c9d816246d629513165ccfa4fd86ab591a",
     "scripts/assemble.py": "f21817ce6d771d6b984aca84537630bef9a33d8b6a56ede26c20305b8aad3c96",
     "scripts/assets.py": "f7a16d925aa2bd22e58cfb8f57fd813207a005e67fa7e88fd1463aba54b3dc7a",
@@ -144101,5 +144101,5 @@
       }
     }
   },
-  "snapshotId": "production-287173764b607796a1a36c6eeb21209628e18844aec756faf8824771a96ef92d"
+  "snapshotId": "production-d0271684fb0432c5a8b65a419d343829e526bce99635acedc4c9d7d1a8ac7eb6"
 }

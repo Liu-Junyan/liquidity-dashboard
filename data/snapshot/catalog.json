@@ -4,7 +4,7 @@
     "mode": "production",
     "isDemo": false,
     "publisher": "Junyan Liu",
-    "generatedAt": "2026-11-20T02:12:07.150095Z",
+    "generatedAt": "2026-11-20T02:45:37.133275Z",
     "observationStart": "2010-01-01",
     "observationEnd": "2026-11-18"
   },
@@ -62,7 +62,7 @@
       "isDemo": false,
       "inputAvailable": true,
       "role": "",
-      "explanation": "相同观察日的SOFR减EFFR。先规范化输入单位；将百分点差乘以100得到基点（bp），例如4.10减4.00为10 bp；缺少任一输入时为空，不跨日填充。",
+      "explanation": "相同观察日的SOFR减EFFR。缺少任一输入时为空，不跨日填充。",
       "availability": "numeric",
       "sources": [
         "https://fred.stlouisfed.org/series/SOFR",
@@ -130,7 +130,7 @@
       "isDemo": false,
       "inputAvailable": true,
       "role": "",
-      "explanation": "同日SOFR第99百分位减SOFR中位数，反映融资利率分布尾部；将百分点差乘以100得到基点（bp），例如4.10减4.00为10 bp；缺少任一输入时为空，不跨日填充。",
+      "explanation": "同日SOFR第99百分位减SOFR中位数，反映融资利率分布尾部；缺少任一输入时为空，不跨日填充。",
       "availability": "numeric",
       "sources": [
         "https://fred.stlouisfed.org/series/SOFR99",
@@ -192,7 +192,7 @@
       "isDemo": false,
       "inputAvailable": true,
       "role": "",
-      "explanation": "美联储合并资产负债表总资产（扣除合并抵销），每周三时点值；原始百万美元除以1000后展示为十亿美元，非周平均。",
+      "explanation": "美联储合并资产负债表总资产（扣除合并抵销），每周三时点值，非周平均。",
       "availability": "numeric",
       "sources": [
         "https://fred.stlouisfed.org/series/WALCL"
@@ -237,7 +237,7 @@
       "isDemo": false,
       "inputAvailable": true,
       "role": "",
-      "explanation": "H.4.1存款机构在联储的准备金余额，未季调、周三时点值；百万美元除以1000为十亿美元。",
+      "explanation": "H.4.1存款机构在联储的准备金余额，未季调、周三时点值。",
       "availability": "numeric",
       "sources": [
         "https://fred.stlouisfed.org/series/WRBWFRBL"
@@ -282,7 +282,7 @@
       "isDemo": false,
       "inputAvailable": true,
       "role": "",
-      "explanation": "同日H.4.1未季调准备金（先由百万转十亿美元）除以H.8季调商业银行总资产，再乘100。两者覆盖范围与季调口径不同，仅为跨口径研究比值，不是同一银行总体的资产占比；缺值或分母为零时为空，不填充。",
+      "explanation": "同日H.4.1未季调准备金除以H.8季调商业银行总资产，以百分比表示。两者覆盖范围与季调口径不同，仅为跨口径研究比值，不是同一银行总体的资产占比；缺值或分母为零时为空，不填充。",
       "availability": "numeric",
       "sources": [
         "https://fred.stlouisfed.org/series/TLAACBW027SBOG",
@@ -340,7 +340,7 @@
       "isDemo": false,
       "inputAvailable": true,
       "role": "",
-      "explanation": "H.4.1美国财政部一般账户余额，未季调、周三时点值；百万美元除以1000为十亿美元，非每日余额。",
+      "explanation": "H.4.1美国财政部一般账户余额，未季调、周三时点值，非每日余额。",
       "availability": "numeric",
       "sources": [
         "https://fred.stlouisfed.org/series/WDTGAL"
@@ -387,7 +387,7 @@
       "isDemo": false,
       "inputAvailable": true,
       "role": "",
-      "explanation": "纽约联储临时公开市场操作中的美国国债抵押隔夜逆回购每日交易总额；原始单位为十亿美元，保持来源日期及零值，缺失不视为零；不含其他抵押品或期限。",
+      "explanation": "纽约联储临时公开市场操作中的美国国债抵押隔夜逆回购每日交易总额；保留来源日期及零值，缺失不视为零；不含其他抵押品或期限。",
       "availability": "numeric",
       "sources": [
         "https://fred.stlouisfed.org/series/RRPONTSYD"
@@ -483,7 +483,7 @@
       "isDemo": false,
       "inputAvailable": true,
       "role": "",
-      "explanation": "FRED发布的隔夜正回购每日总量，来源为纽约联储临时公开市场操作；覆盖美国国债、联邦机构债及机构MBS。原始单位已为十亿美元，保持原值及来源日期；为每日交易量而非未偿余额；缺失值不视为零。",
+      "explanation": "FRED发布的隔夜正回购每日总量，来源为纽约联储临时公开市场操作；覆盖美国国债、联邦机构债及机构MBS。保留来源日期；为每日交易量而非未偿余额；缺失值不视为零。",
       "availability": "numeric",
       "sources": [
         "https://fred.stlouisfed.org/series/RPONTTLD"
@@ -660,7 +660,7 @@
       "isDemo": false,
       "inputAvailable": true,
       "role": "",
-      "explanation": "ICE BofA美国公司债券指数期权调整利差（OAS），日度收盘、未季调，百分比原值。FRED仅提供滚动三年历史（当前起于2023-11-20），月末观察值即使落在周末也保留来源日期。",
+      "explanation": "ICE BofA美国公司债券指数期权调整利差（OAS），日度收盘、未季调。FRED仅提供滚动三年历史，月末观察值即使落在周末也保留来源日期。",
       "availability": "numeric",
       "sources": [
         "https://fred.stlouisfed.org/series/BAMLC0A0CM"
@@ -707,7 +707,7 @@
       "isDemo": false,
       "inputAvailable": true,
       "role": "",
-      "explanation": "ICE BofA美国高收益债券指数期权调整利差（OAS），日度收盘、未季调，百分比原值。FRED仅提供滚动三年历史（当前起于2023-11-20），月末观察值即使落在周末也保留来源日期。",
+      "explanation": "ICE BofA美国高收益债券指数期权调整利差（OAS），日度收盘、未季调。FRED仅提供滚动三年历史，月末观察值即使落在周末也保留来源日期。",
       "availability": "numeric",
       "sources": [
         "https://fred.stlouisfed.org/series/BAMLH0A0HYM2"
@@ -752,7 +752,7 @@
       "isDemo": false,
       "inputAvailable": true,
       "role": "",
-      "explanation": "SIFMA经Wind EDB G1132499提供的总债券月度发行额，十亿美元原值。维护者确认口径为全期限、总发行额（非净额、非年初累计）；月末为观察期标签。国债与公司债已包含在总量中，三项不可相加。保存工作簿与CSV同步更新；缺失保留为空。",
+      "explanation": "SIFMA经Wind EDB提供的债券月度总发行额。口径为全期限、总发行额（非净额、非年初累计）。国债与公司债已包含在总量中，三项不可相加。",
       "availability": "numeric",
       "sources": [
         "data/sources/wind/bond-issuance.xlsx; sheet bond-issuance; column bond-issuance; Wind EDB G1132499; SIFMA US Fixed Income Securities Statistics"
@@ -793,7 +793,7 @@
       "isDemo": false,
       "inputAvailable": true,
       "role": "",
-      "explanation": "SIFMA经Wind EDB G1132494提供的美国国债月度发行额，十亿美元原值。维护者确认口径为全期限、总发行额（非净额、非年初累计）；月末为观察期标签。国债与公司债已包含在总量中，三项不可相加。保存工作簿与CSV同步更新；缺失保留为空。",
+      "explanation": "SIFMA经Wind EDB提供的美国国债月度发行额。口径为全期限、总发行额（非净额、非年初累计）。",
       "availability": "numeric",
       "sources": [
         "data/sources/wind/bond-issuance.xlsx; sheet bond-issuance; column treasury-bond-issuance; Wind EDB G1132494; SIFMA US Fixed Income Securities Statistics"
@@ -834,7 +834,7 @@
       "isDemo": false,
       "inputAvailable": true,
       "role": "",
-      "explanation": "SIFMA经Wind EDB G1132496提供的公司债月度发行额，十亿美元原值。维护者确认口径为全期限、总发行额（非净额、非年初累计）；月末为观察期标签。国债与公司债已包含在总量中，三项不可相加。保存工作簿与CSV同步更新；缺失保留为空。",
+      "explanation": "SIFMA经Wind EDB提供的公司债月度发行额。口径为全期限、总发行额（非净额、非年初累计）。",
       "availability": "numeric",
       "sources": [
         "data/sources/wind/bond-issuance.xlsx; sheet bond-issuance; column corporate-bond-issuance; Wind EDB G1132496; SIFMA US Fixed Income Securities Statistics"
@@ -967,7 +967,7 @@
       "isDemo": false,
       "inputAvailable": true,
       "role": "",
-      "explanation": "芝加哥期权交易所波动率指数（VIX），日度收盘、未季调，指数点位原值。反映标普500指数期权隐含的近月波动率预期，不是已实现波动率；来源缺失值保留为空，不视为零，也不跨日填充。",
+      "explanation": "芝加哥期权交易所波动率指数（VIX），日度收盘、未季调。反映标普500指数期权隐含的近月波动率预期，不是已实现波动率；来源缺失值保留为空，不视为零，也不跨日填充。",
       "availability": "numeric",
       "sources": [
         "https://fred.stlouisfed.org/series/VIXCLS"
@@ -1096,5 +1096,5 @@
       "notices": []
     }
   ],
-  "snapshotId": "production-287173764b607796a1a36c6eeb21209628e18844aec756faf8824771a96ef92d"
+  "snapshotId": "production-d0271684fb0432c5a8b65a419d343829e526bce99635acedc4c9d7d1a8ac7eb6"
 }
