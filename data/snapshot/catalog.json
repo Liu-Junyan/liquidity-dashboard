@@ -4,9 +4,9 @@
     "mode": "production",
     "isDemo": false,
     "publisher": "Junyan Liu",
-    "generatedAt": "2026-11-20T16:10:52.319944Z",
+    "generatedAt": "2026-11-21T15:23:25.831860Z",
     "observationStart": "2010-01-01",
-    "observationEnd": "2026-11-19"
+    "observationEnd": "2026-11-20"
   },
   "categories": [
     {
@@ -94,11 +94,11 @@
           "url": "https://fred.stlouisfed.org/series/SOFR"
         },
         {
-          "text": "FRED citation: SOFR; retrieved 2026-11-20 (UTC).",
+          "text": "FRED citation: SOFR; retrieved 2026-11-21 (UTC).",
           "url": "https://fred.stlouisfed.org/series/SOFR"
         },
         {
-          "text": "FRED citation: EFFR; retrieved 2026-11-20 (UTC).",
+          "text": "FRED citation: EFFR; retrieved 2026-11-21 (UTC).",
           "url": "https://fred.stlouisfed.org/series/EFFR"
         }
       ]
@@ -158,11 +158,11 @@
           "url": "https://www.newyorkfed.org/markets/reference-rates/sofr"
         },
         {
-          "text": "FRED citation: SOFR99; retrieved 2026-11-20 (UTC).",
+          "text": "FRED citation: SOFR99; retrieved 2026-11-21 (UTC).",
           "url": "https://fred.stlouisfed.org/series/SOFR99"
         },
         {
-          "text": "FRED citation: SOFR; retrieved 2026-11-20 (UTC).",
+          "text": "FRED citation: SOFR; retrieved 2026-11-21 (UTC).",
           "url": "https://fred.stlouisfed.org/series/SOFR"
         }
       ]
@@ -207,7 +207,7 @@
           "url": "https://fred.stlouisfed.org/series/WALCL"
         },
         {
-          "text": "FRED citation: WALCL; retrieved 2026-11-20 (UTC).",
+          "text": "FRED citation: WALCL; retrieved 2026-11-21 (UTC).",
           "url": "https://fred.stlouisfed.org/series/WALCL"
         }
       ]
@@ -252,7 +252,7 @@
           "url": "https://fred.stlouisfed.org/series/WRBWFRBL"
         },
         {
-          "text": "FRED citation: WRBWFRBL; retrieved 2026-11-20 (UTC).",
+          "text": "FRED citation: WRBWFRBL; retrieved 2026-11-21 (UTC).",
           "url": "https://fred.stlouisfed.org/series/WRBWFRBL"
         }
       ]
@@ -306,11 +306,11 @@
           "url": "https://www.federalreserve.gov/releases/h8/about.htm"
         },
         {
-          "text": "FRED citation: TLAACBW027SBOG; retrieved 2026-11-20 (UTC).",
+          "text": "FRED citation: TLAACBW027SBOG; retrieved 2026-11-21 (UTC).",
           "url": "https://fred.stlouisfed.org/series/TLAACBW027SBOG"
         },
         {
-          "text": "FRED citation: WRBWFRBL; retrieved 2026-11-20 (UTC).",
+          "text": "FRED citation: WRBWFRBL; retrieved 2026-11-21 (UTC).",
           "url": "https://fred.stlouisfed.org/series/WRBWFRBL"
         }
       ]
@@ -355,7 +355,7 @@
           "url": "https://fred.stlouisfed.org/series/WDTGAL"
         },
         {
-          "text": "FRED citation: WDTGAL; retrieved 2026-11-20 (UTC).",
+          "text": "FRED citation: WDTGAL; retrieved 2026-11-21 (UTC).",
           "url": "https://fred.stlouisfed.org/series/WDTGAL"
         }
       ]
@@ -406,7 +406,7 @@
           "url": "https://www.newyorkfed.org/privacy/termsofuse"
         },
         {
-          "text": "FRED citation: RRPONTSYD; retrieved 2026-11-20 (UTC).",
+          "text": "FRED citation: RRPONTSYD; retrieved 2026-11-21 (UTC).",
           "url": "https://fred.stlouisfed.org/series/RRPONTSYD"
         }
       ]
@@ -451,7 +451,7 @@
           "url": "https://fred.stlouisfed.org/series/WLCFLPCL"
         },
         {
-          "text": "FRED citation: WLCFLPCL; retrieved 2026-11-20 (UTC).",
+          "text": "FRED citation: WLCFLPCL; retrieved 2026-11-21 (UTC).",
           "url": "https://fred.stlouisfed.org/series/WLCFLPCL"
         }
       ]
@@ -502,7 +502,7 @@
           "url": "https://fred.stlouisfed.org/series/RPONTTLD"
         },
         {
-          "text": "FRED citation: RPONTTLD; retrieved 2026-11-20 (UTC).",
+          "text": "FRED citation: RPONTTLD; retrieved 2026-11-21 (UTC).",
           "url": "https://fred.stlouisfed.org/series/RPONTTLD"
         }
       ]
@@ -583,7 +583,7 @@
           "url": "https://fred.stlouisfed.org/series/SWPT"
         },
         {
-          "text": "FRED citation: SWPT; retrieved 2026-11-20 (UTC).",
+          "text": "FRED citation: SWPT; retrieved 2026-11-21 (UTC).",
           "url": "https://fred.stlouisfed.org/series/SWPT"
         }
       ]
@@ -628,7 +628,7 @@
           "url": "https://fred.stlouisfed.org/series/H41RESPPALGTRFNWW"
         },
         {
-          "text": "FRED citation: H41RESPPALGTRFNWW; retrieved 2026-11-20 (UTC).",
+          "text": "FRED citation: H41RESPPALGTRFNWW; retrieved 2026-11-21 (UTC).",
           "url": "https://fred.stlouisfed.org/series/H41RESPPALGTRFNWW"
         }
       ]
@@ -675,7 +675,7 @@
           "url": "https://fred.stlouisfed.org/series/BAMLC0A0CM"
         },
         {
-          "text": "FRED citation: BAMLC0A0CM; retrieved 2026-11-20 (UTC).",
+          "text": "FRED citation: BAMLC0A0CM; retrieved 2026-11-21 (UTC).",
           "url": "https://fred.stlouisfed.org/series/BAMLC0A0CM"
         }
       ]
@@ -722,7 +722,7 @@
           "url": "https://fred.stlouisfed.org/series/BAMLH0A0HYM2"
         },
         {
-          "text": "FRED citation: BAMLH0A0HYM2; retrieved 2026-11-20 (UTC).",
+          "text": "FRED citation: BAMLH0A0HYM2; retrieved 2026-11-21 (UTC).",
           "url": "https://fred.stlouisfed.org/series/BAMLH0A0HYM2"
         }
       ]
@@ -890,7 +890,7 @@
           "url": "https://fred.stlouisfed.org/series/DRTSCILM"
         },
         {
-          "text": "FRED citation: DRTSCILM; retrieved 2026-11-20 (UTC).",
+          "text": "FRED citation: DRTSCILM; retrieved 2026-11-21 (UTC).",
           "url": "https://fred.stlouisfed.org/series/DRTSCILM"
         }
       ]
@@ -935,7 +935,7 @@
           "url": "https://fred.stlouisfed.org/series/TOTLL"
         },
         {
-          "text": "FRED citation: TOTLL; retrieved 2026-11-20 (UTC).",
+          "text": "FRED citation: TOTLL; retrieved 2026-11-21 (UTC).",
           "url": "https://fred.stlouisfed.org/series/TOTLL"
         }
       ]
@@ -982,7 +982,7 @@
           "url": "https://fred.stlouisfed.org/series/VIXCLS"
         },
         {
-          "text": "FRED citation: VIXCLS; retrieved 2026-11-20 (UTC).",
+          "text": "FRED citation: VIXCLS; retrieved 2026-11-21 (UTC).",
           "url": "https://fred.stlouisfed.org/series/VIXCLS"
         }
       ]
@@ -1096,5 +1096,5 @@
       "notices": []
     }
   ],
-  "snapshotId": "production-31528f84ea19c2239d430655c12c60a63d28d65fd979c22d6ad80744e57f9759"
+  "snapshotId": "production-60ee67676e91e3d92c9afaf9a728ea163c1a365725b45fa28993fd48d3112169"
 }

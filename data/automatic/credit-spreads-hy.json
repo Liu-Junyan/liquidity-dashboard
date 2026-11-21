@@ -3207,21 +3207,21 @@
   },
   "sourceHash": "d3e3c47c80a6063cb9545e5ddad526dd231e75628b1d65786f698c9f3dafed5e",
   "revisionSummary": {
-    "added": 1,
-    "removed": 1,
+    "added": 0,
+    "removed": 0,
     "revised": 0
   },
   "error": null,
   "outcome": {
-    "status": "updated",
+    "status": "unchanged",
     "latestObservationDate": "2026-11-19",
-    "lastAttempt": "2026-11-20T16:10:42.780069Z",
-    "lastSuccessfulCheck": "2026-11-20T16:10:42.780069Z",
+    "lastAttempt": "2026-11-21T15:23:15.125636Z",
+    "lastSuccessfulCheck": "2026-11-21T15:23:15.125636Z",
     "lastDataChange": "2026-11-20T16:10:42.780069Z"
   },
   "freshness": {
     "latestNumericDate": "2026-11-19",
-    "ageDays": 1,
+    "ageDays": 2,
     "maxAgeDays": 7,
     "status": "current"
   }
