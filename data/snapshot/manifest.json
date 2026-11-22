@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-21T15:23:25.831860Z",
-  "sourceInputCommit": "9f6447bbabac357b408ae6644113432518757ef7",
+  "generatedAt": "2026-11-22T15:19:19.634762Z",
+  "sourceInputCommit": "4856dafd5551eb94beb44da0a03599e3c497e82f",
   "sourceFileHashes": {
     "data/categories.json": "41b46e91bcbdfef69a4471b6fbdd3af84d6a1aa3ad01e1c09f57d9c20f89620c",
     "data/registry.csv": "6558a461a954b1dfd15d14caf7d08a86ea87347726cb76974f9e4af779f0396c",
@@ -143746,17 +143746,17 @@
   },
   "outcomes": {
     "bank-loans": {
-      "status": "updated",
+      "status": "unchanged",
       "latestObservationDate": "2026-11-11",
-      "lastAttempt": "2026-11-21T15:23:15.125636Z",
-      "lastSuccessfulCheck": "2026-11-21T15:23:15.125636Z",
+      "lastAttempt": "2026-11-22T15:19:07.833890Z",
+      "lastSuccessfulCheck": "2026-11-22T15:19:07.833890Z",
       "lastDataChange": "2026-11-21T15:23:15.125636Z"
     },
     "bank-total-assets": {
-      "status": "updated",
+      "status": "unchanged",
       "latestObservationDate": "2026-11-11",
-      "lastAttempt": "2026-11-21T15:23:15.125636Z",
-      "lastSuccessfulCheck": "2026-11-21T15:23:15.125636Z",
+      "lastAttempt": "2026-11-22T15:19:07.833890Z",
+      "lastSuccessfulCheck": "2026-11-22T15:19:07.833890Z",
       "lastDataChange": "2026-11-21T15:23:15.125636Z"
     },
     "bond-issuance": {
@@ -143776,99 +143776,99 @@
     "credit-spreads-hy": {
       "status": "unchanged",
       "latestObservationDate": "2026-11-19",
-      "lastAttempt": "2026-11-21T15:23:15.125636Z",
-      "lastSuccessfulCheck": "2026-11-21T15:23:15.125636Z",
+      "lastAttempt": "2026-11-22T15:19:07.833890Z",
+      "lastSuccessfulCheck": "2026-11-22T15:19:07.833890Z",
       "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "credit-spreads-ig": {
       "status": "unchanged",
       "latestObservationDate": "2026-11-19",
-      "lastAttempt": "2026-11-21T15:23:15.125636Z",
-      "lastSuccessfulCheck": "2026-11-21T15:23:15.125636Z",
+      "lastAttempt": "2026-11-22T15:19:07.833890Z",
+      "lastSuccessfulCheck": "2026-11-22T15:19:07.833890Z",
       "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "discount-window": {
       "status": "unchanged",
       "latestObservationDate": "2026-11-18",
-      "lastAttempt": "2026-11-21T15:23:15.125636Z",
-      "lastSuccessfulCheck": "2026-11-21T15:23:15.125636Z",
+      "lastAttempt": "2026-11-22T15:19:07.833890Z",
+      "lastSuccessfulCheck": "2026-11-22T15:19:07.833890Z",
       "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "effr": {
       "status": "unchanged",
       "latestObservationDate": "2026-11-19",
-      "lastAttempt": "2026-11-21T15:23:15.125636Z",
-      "lastSuccessfulCheck": "2026-11-21T15:23:15.125636Z",
+      "lastAttempt": "2026-11-22T15:19:07.833890Z",
+      "lastSuccessfulCheck": "2026-11-22T15:19:07.833890Z",
       "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "fed-assets": {
       "status": "unchanged",
       "latestObservationDate": "2026-11-18",
-      "lastAttempt": "2026-11-21T15:23:15.125636Z",
-      "lastSuccessfulCheck": "2026-11-21T15:23:15.125636Z",
+      "lastAttempt": "2026-11-22T15:19:07.833890Z",
+      "lastSuccessfulCheck": "2026-11-22T15:19:07.833890Z",
       "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "fed-repo": {
-      "status": "updated",
+      "status": "unchanged",
       "latestObservationDate": "2026-11-20",
-      "lastAttempt": "2026-11-21T15:23:15.125636Z",
-      "lastSuccessfulCheck": "2026-11-21T15:23:15.125636Z",
+      "lastAttempt": "2026-11-22T15:19:07.833890Z",
+      "lastSuccessfulCheck": "2026-11-22T15:19:07.833890Z",
       "lastDataChange": "2026-11-21T15:23:15.125636Z"
     },
     "fima-repo": {
       "status": "unchanged",
       "latestObservationDate": "2026-11-18",
-      "lastAttempt": "2026-11-21T15:23:15.125636Z",
-      "lastSuccessfulCheck": "2026-11-21T15:23:15.125636Z",
+      "lastAttempt": "2026-11-22T15:19:07.833890Z",
+      "lastSuccessfulCheck": "2026-11-22T15:19:07.833890Z",
       "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "lending-standards": {
       "status": "unchanged",
       "latestObservationDate": "2026-10-01",
-      "lastAttempt": "2026-11-21T15:23:15.125636Z",
-      "lastSuccessfulCheck": "2026-11-21T15:23:15.125636Z",
+      "lastAttempt": "2026-11-22T15:19:07.833890Z",
+      "lastSuccessfulCheck": "2026-11-22T15:19:07.833890Z",
       "lastDataChange": "2026-11-17T07:49:52.018793Z"
     },
     "reserve-balances": {
       "status": "unchanged",
       "latestObservationDate": "2026-11-18",
-      "lastAttempt": "2026-11-21T15:23:15.125636Z",
-      "lastSuccessfulCheck": "2026-11-21T15:23:15.125636Z",
+      "lastAttempt": "2026-11-22T15:19:07.833890Z",
+      "lastSuccessfulCheck": "2026-11-22T15:19:07.833890Z",
       "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "reverse-repo": {
-      "status": "updated",
+      "status": "unchanged",
       "latestObservationDate": "2026-11-20",
-      "lastAttempt": "2026-11-21T15:23:15.125636Z",
-      "lastSuccessfulCheck": "2026-11-21T15:23:15.125636Z",
+      "lastAttempt": "2026-11-22T15:19:07.833890Z",
+      "lastSuccessfulCheck": "2026-11-22T15:19:07.833890Z",
       "lastDataChange": "2026-11-21T15:23:15.125636Z"
     },
     "sofr": {
       "status": "unchanged",
       "latestObservationDate": "2026-11-19",
-      "lastAttempt": "2026-11-21T15:23:15.125636Z",
-      "lastSuccessfulCheck": "2026-11-21T15:23:15.125636Z",
+      "lastAttempt": "2026-11-22T15:19:07.833890Z",
+      "lastSuccessfulCheck": "2026-11-22T15:19:07.833890Z",
       "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "sofr99": {
       "status": "unchanged",
       "latestObservationDate": "2026-11-19",
-      "lastAttempt": "2026-11-21T15:23:15.125636Z",
-      "lastSuccessfulCheck": "2026-11-21T15:23:15.125636Z",
+      "lastAttempt": "2026-11-22T15:19:07.833890Z",
+      "lastSuccessfulCheck": "2026-11-22T15:19:07.833890Z",
       "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "swap-line": {
       "status": "unchanged",
       "latestObservationDate": "2026-11-18",
-      "lastAttempt": "2026-11-21T15:23:15.125636Z",
-      "lastSuccessfulCheck": "2026-11-21T15:23:15.125636Z",
+      "lastAttempt": "2026-11-22T15:19:07.833890Z",
+      "lastSuccessfulCheck": "2026-11-22T15:19:07.833890Z",
       "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "treasury-account": {
       "status": "unchanged",
       "latestObservationDate": "2026-11-18",
-      "lastAttempt": "2026-11-21T15:23:15.125636Z",
-      "lastSuccessfulCheck": "2026-11-21T15:23:15.125636Z",
+      "lastAttempt": "2026-11-22T15:19:07.833890Z",
+      "lastSuccessfulCheck": "2026-11-22T15:19:07.833890Z",
       "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "treasury-bond-issuance": {
@@ -143879,17 +143879,17 @@
       "lastDataChange": null
     },
     "treasury-yield-chg": {
-      "status": "updated",
+      "status": "unchanged",
       "latestObservationDate": "2026-11-19",
-      "lastAttempt": "2026-11-21T15:23:15.125636Z",
-      "lastSuccessfulCheck": "2026-11-21T15:23:15.125636Z",
+      "lastAttempt": "2026-11-22T15:19:07.833890Z",
+      "lastSuccessfulCheck": "2026-11-22T15:19:07.833890Z",
       "lastDataChange": "2026-11-21T15:23:15.125636Z"
     },
     "vix": {
       "status": "unchanged",
       "latestObservationDate": "2026-11-19",
-      "lastAttempt": "2026-11-21T15:23:15.125636Z",
-      "lastSuccessfulCheck": "2026-11-21T15:23:15.125636Z",
+      "lastAttempt": "2026-11-22T15:19:07.833890Z",
+      "lastSuccessfulCheck": "2026-11-22T15:19:07.833890Z",
       "lastDataChange": "2026-11-20T16:10:42.780069Z"
     },
     "reserve-assets-ratio": {
@@ -143915,8 +143915,8 @@
     }
   },
   "revisionSummary": {
-    "added": 575,
-    "revised": 38,
+    "added": 570,
+    "revised": 0,
     "removed": 0
   },
   "diagnostics": {
@@ -143924,35 +143924,35 @@
       "error": null,
       "freshness": {
         "latestNumericDate": "2026-11-11",
-        "ageDays": 10,
+        "ageDays": 11,
         "maxAgeDays": 21,
         "status": "current"
       },
       "revisionSummary": {
-        "added": 1,
+        "added": 0,
         "removed": 0,
-        "revised": 19
+        "revised": 0
       }
     },
     "bank-total-assets": {
       "error": null,
       "freshness": {
         "latestNumericDate": "2026-11-11",
-        "ageDays": 10,
+        "ageDays": 11,
         "maxAgeDays": 21,
         "status": "current"
       },
       "revisionSummary": {
-        "added": 1,
+        "added": 0,
         "removed": 0,
-        "revised": 19
+        "revised": 0
       }
     },
     "credit-spreads-hy": {
       "error": null,
       "freshness": {
         "latestNumericDate": "2026-11-19",
-        "ageDays": 2,
+        "ageDays": 3,
         "maxAgeDays": 7,
         "status": "current"
       },
@@ -143966,7 +143966,7 @@
       "error": null,
       "freshness": {
         "latestNumericDate": "2026-11-19",
-        "ageDays": 2,
+        "ageDays": 3,
         "maxAgeDays": 7,
         "status": "current"
       },
@@ -143980,7 +143980,7 @@
       "error": null,
       "freshness": {
         "latestNumericDate": "2026-11-18",
-        "ageDays": 3,
+        "ageDays": 4,
         "maxAgeDays": 14,
         "status": "current"
       },
@@ -143994,7 +143994,7 @@
       "error": null,
       "freshness": {
         "latestNumericDate": "2026-11-19",
-        "ageDays": 2,
+        "ageDays": 3,
         "maxAgeDays": 7,
         "status": "current"
       },
@@ -144008,7 +144008,7 @@
       "error": null,
       "freshness": {
         "latestNumericDate": "2026-11-18",
-        "ageDays": 3,
+        "ageDays": 4,
         "maxAgeDays": 14,
         "status": "current"
       },
@@ -144022,12 +144022,12 @@
       "error": null,
       "freshness": {
         "latestNumericDate": "2026-11-20",
-        "ageDays": 1,
+        "ageDays": 2,
         "maxAgeDays": 7,
         "status": "current"
       },
       "revisionSummary": {
-        "added": 1,
+        "added": 0,
         "removed": 0,
         "revised": 0
       }
@@ -144036,7 +144036,7 @@
       "error": null,
       "freshness": {
         "latestNumericDate": "2026-11-18",
-        "ageDays": 3,
+        "ageDays": 4,
         "maxAgeDays": 14,
         "status": "current"
       },
@@ -144050,7 +144050,7 @@
       "error": null,
       "freshness": {
         "latestNumericDate": "2026-10-01",
-        "ageDays": 51,
+        "ageDays": 52,
         "maxAgeDays": 150,
         "status": "current"
       },
@@ -144064,7 +144064,7 @@
       "error": null,
       "freshness": {
         "latestNumericDate": "2026-11-18",
-        "ageDays": 3,
+        "ageDays": 4,
         "maxAgeDays": 14,
         "status": "current"
       },
@@ -144078,12 +144078,12 @@
       "error": null,
       "freshness": {
         "latestNumericDate": "2026-11-20",
-        "ageDays": 1,
+        "ageDays": 2,
         "maxAgeDays": 7,
         "status": "current"
       },
       "revisionSummary": {
-        "added": 1,
+        "added": 0,
         "removed": 0,
         "revised": 0
       }
@@ -144092,7 +144092,7 @@
       "error": null,
       "freshness": {
         "latestNumericDate": "2026-11-19",
-        "ageDays": 2,
+        "ageDays": 3,
         "maxAgeDays": 7,
         "status": "current"
       },
@@ -144106,7 +144106,7 @@
       "error": null,
       "freshness": {
         "latestNumericDate": "2026-11-19",
-        "ageDays": 2,
+        "ageDays": 3,
         "maxAgeDays": 7,
         "status": "current"
       },
@@ -144120,7 +144120,7 @@
       "error": null,
       "freshness": {
         "latestNumericDate": "2026-11-18",
-        "ageDays": 3,
+        "ageDays": 4,
         "maxAgeDays": 14,
         "status": "current"
       },
@@ -144134,7 +144134,7 @@
       "error": null,
       "freshness": {
         "latestNumericDate": "2026-11-18",
-        "ageDays": 3,
+        "ageDays": 4,
         "maxAgeDays": 14,
         "status": "current"
       },
@@ -144148,12 +144148,12 @@
       "error": null,
       "freshness": {
         "latestNumericDate": "2026-11-19",
-        "ageDays": 2,
+        "ageDays": 3,
         "maxAgeDays": 7,
         "status": "current"
       },
       "revisionSummary": {
-        "added": 1,
+        "added": 0,
         "removed": 0,
         "revised": 0
       }
@@ -144162,7 +144162,7 @@
       "error": null,
       "freshness": {
         "latestNumericDate": "2026-11-19",
-        "ageDays": 2,
+        "ageDays": 3,
         "maxAgeDays": 7,
         "status": "current"
       },
@@ -144173,5 +144173,5 @@
       }
     }
   },
-  "snapshotId": "production-60ee67676e91e3d92c9afaf9a728ea163c1a365725b45fa28993fd48d3112169"
+  "snapshotId": "production-16dc0ce1035b462c1098d60d78c46f72905305874ac88f40786db415768f746b"
 }

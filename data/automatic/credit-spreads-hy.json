@@ -3215,13 +3215,13 @@
   "outcome": {
     "status": "unchanged",
     "latestObservationDate": "2026-11-19",
-    "lastAttempt": "2026-11-21T15:23:15.125636Z",
-    "lastSuccessfulCheck": "2026-11-21T15:23:15.125636Z",
+    "lastAttempt": "2026-11-22T15:19:07.833890Z",
+    "lastSuccessfulCheck": "2026-11-22T15:19:07.833890Z",
     "lastDataChange": "2026-11-20T16:10:42.780069Z"
   },
   "freshness": {
     "latestNumericDate": "2026-11-19",
-    "ageDays": 2,
+    "ageDays": 3,
     "maxAgeDays": 7,
     "status": "current"
   }
