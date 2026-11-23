@@ -9021,6 +9021,10 @@
     {
       "date": "2026-11-19",
       "value": 3.91
+    },
+    {
+      "date": "2026-11-20",
+      "value": 3.92
     }
   ],
   "metadata": {
@@ -9029,7 +9033,7 @@
     "frequency_short": "D",
     "seasonal_adjustment_short": "NSA",
     "observation_start": "2018-04-03",
-    "observation_end": "2026-11-19"
+    "observation_end": "2026-11-20"
   },
   "requestParameters": {
     "series_id": "SOFR",
@@ -9041,22 +9045,22 @@
     "limit": 100000,
     "offset": 0
   },
-  "sourceHash": "3a6f70e09d1b8a21c19676895546fee9240fbae43930cc4aee3e4be5edcd54a7",
+  "sourceHash": "0c8675eeaa98d4ae413282b04b3b0369cb87ce1d2a4768dc011ff5b3ad5009f6",
   "revisionSummary": {
-    "added": 0,
+    "added": 1,
     "removed": 0,
     "revised": 0
   },
   "error": null,
   "outcome": {
-    "status": "unchanged",
-    "latestObservationDate": "2026-11-19",
-    "lastAttempt": "2026-11-22T15:19:07.833890Z",
-    "lastSuccessfulCheck": "2026-11-22T15:19:07.833890Z",
-    "lastDataChange": "2026-11-20T16:10:42.780069Z"
+    "status": "updated",
+    "latestObservationDate": "2026-11-20",
+    "lastAttempt": "2026-11-23T19:15:17.583789Z",
+    "lastSuccessfulCheck": "2026-11-23T19:15:17.583789Z",
+    "lastDataChange": "2026-11-23T19:15:17.583789Z"
   },
   "freshness": {
-    "latestNumericDate": "2026-11-19",
+    "latestNumericDate": "2026-11-20",
     "ageDays": 3,
     "maxAgeDays": 7,
     "status": "current"

@@ -11,18 +11,6 @@
   "transformation": "lin",
   "observations": [
     {
-      "date": "2023-11-21",
-      "value": 1.17
-    },
-    {
-      "date": "2023-11-22",
-      "value": 1.15
-    },
-    {
-      "date": "2023-11-23",
-      "value": 1.15
-    },
-    {
       "date": "2023-11-24",
       "value": 1.14
     },
@@ -3185,6 +3173,10 @@
     {
       "date": "2026-11-19",
       "value": 0.94
+    },
+    {
+      "date": "2026-11-20",
+      "value": 0.98
     }
   ],
   "metadata": {
@@ -3192,8 +3184,8 @@
     "units": "Percent",
     "frequency_short": "D",
     "seasonal_adjustment_short": "NSA",
-    "observation_start": "2023-11-21",
-    "observation_end": "2026-11-19"
+    "observation_start": "2023-11-24",
+    "observation_end": "2026-11-20"
   },
   "requestParameters": {
     "series_id": "BAMLC0A0CM",
@@ -3205,22 +3197,22 @@
     "limit": 100000,
     "offset": 0
   },
-  "sourceHash": "1460fae311062c443456425f2f25f937a59ed67ec44d6d3b458c7b4fdbe8542c",
+  "sourceHash": "99d42a9995576f757b4f4bfbcdcaf642977db2860e963c9a9e76da3b03ee478a",
   "revisionSummary": {
-    "added": 0,
-    "removed": 0,
+    "added": 1,
+    "removed": 3,
     "revised": 0
   },
   "error": null,
   "outcome": {
-    "status": "unchanged",
-    "latestObservationDate": "2026-11-19",
-    "lastAttempt": "2026-11-22T15:19:07.833890Z",
-    "lastSuccessfulCheck": "2026-11-22T15:19:07.833890Z",
-    "lastDataChange": "2026-11-20T16:10:42.780069Z"
+    "status": "updated",
+    "latestObservationDate": "2026-11-20",
+    "lastAttempt": "2026-11-23T19:15:17.583789Z",
+    "lastSuccessfulCheck": "2026-11-23T19:15:17.583789Z",
+    "lastDataChange": "2026-11-23T19:15:17.583789Z"
   },
   "freshness": {
-    "latestNumericDate": "2026-11-19",
+    "latestNumericDate": "2026-11-20",
     "ageDays": 3,
     "maxAgeDays": 7,
     "status": "current"

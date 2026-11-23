@@ -17633,6 +17633,10 @@
     {
       "date": "2026-11-20",
       "value": 0.001
+    },
+    {
+      "date": "2026-11-23",
+      "value": 0.0
     }
   ],
   "metadata": {
@@ -17641,7 +17645,7 @@
     "frequency_short": "D",
     "seasonal_adjustment_short": "NSA",
     "observation_start": "2000-01-03",
-    "observation_end": "2026-11-20"
+    "observation_end": "2026-11-23"
   },
   "requestParameters": {
     "series_id": "RPONTTLD",
@@ -17653,23 +17657,23 @@
     "limit": 100000,
     "offset": 0
   },
-  "sourceHash": "b506fc0491e5ccb16545e48bcaa781808a20cb0027d09cab839752e5f3fce25a",
+  "sourceHash": "d6bec8a4b284bfbbceff0a560535ec8b00b3dc36312c10fcc3e10c4754a2eadc",
   "revisionSummary": {
-    "added": 0,
+    "added": 1,
     "removed": 0,
     "revised": 0
   },
   "error": null,
   "outcome": {
-    "status": "unchanged",
-    "latestObservationDate": "2026-11-20",
-    "lastAttempt": "2026-11-22T15:19:07.833890Z",
-    "lastSuccessfulCheck": "2026-11-22T15:19:07.833890Z",
-    "lastDataChange": "2026-11-21T15:23:15.125636Z"
+    "status": "updated",
+    "latestObservationDate": "2026-11-23",
+    "lastAttempt": "2026-11-23T19:15:17.583789Z",
+    "lastSuccessfulCheck": "2026-11-23T19:15:17.583789Z",
+    "lastDataChange": "2026-11-23T19:15:17.583789Z"
   },
   "freshness": {
-    "latestNumericDate": "2026-11-20",
-    "ageDays": 2,
+    "latestNumericDate": "2026-11-23",
+    "ageDays": 0,
     "maxAgeDays": 7,
     "status": "current"
   }
