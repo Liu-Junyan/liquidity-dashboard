@@ -17659,21 +17659,21 @@
   },
   "sourceHash": "d6bec8a4b284bfbbceff0a560535ec8b00b3dc36312c10fcc3e10c4754a2eadc",
   "revisionSummary": {
-    "added": 1,
+    "added": 0,
     "removed": 0,
     "revised": 0
   },
   "error": null,
   "outcome": {
-    "status": "updated",
+    "status": "unchanged",
     "latestObservationDate": "2026-11-23",
-    "lastAttempt": "2026-11-23T19:15:17.583789Z",
-    "lastSuccessfulCheck": "2026-11-23T19:15:17.583789Z",
+    "lastAttempt": "2026-11-24T18:54:30.620741Z",
+    "lastSuccessfulCheck": "2026-11-24T18:54:30.620741Z",
     "lastDataChange": "2026-11-23T19:15:17.583789Z"
   },
   "freshness": {
     "latestNumericDate": "2026-11-23",
-    "ageDays": 0,
+    "ageDays": 1,
     "maxAgeDays": 7,
     "status": "current"
   }
