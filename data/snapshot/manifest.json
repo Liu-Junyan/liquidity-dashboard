@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-25T06:59:39.978165Z",
-  "sourceInputCommit": "5ee3fa7d29cfe949942c342c2df8f4ec955d41d7",
+  "generatedAt": "2026-11-25T07:27:02.347276Z",
+  "sourceInputCommit": "3d55f9fa3694400b0fd434cf6ee856c684856eff",
   "sourceFileHashes": {
     "data/categories.json": "41b46e91bcbdfef69a4471b6fbdd3af84d6a1aa3ad01e1c09f57d9c20f89620c",
     "data/registry.csv": "b50012137659cb3493d275c3c1ac7a8c4e4d1b63f026674c3463a7620b963d92",
@@ -179473,5 +179473,5 @@
       }
     }
   },
-  "snapshotId": "production-5a04844827117afe3eb8359af3c764e19bd9e9a28f839dc7b17b3440c4eff760"
+  "snapshotId": "production-5bdc3af38ed9427f4cbf2edc05501a675de4cd7039d0aa49d47ceed908c5080f"
 }
