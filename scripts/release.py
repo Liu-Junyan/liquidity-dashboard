@@ -62,7 +62,7 @@ def validate_restored_artifact(repo, target, documents):
     require(previous['snapshotId'] == documents[0]['snapshotId'], 'Rollback snapshot identity differs')
 
 
-def reusable_record(repo):
+def reusable_record(repo, *, manual=None):
     """Recognize a merged data PR without creating a second data PR forever.
 
     Any intervening source/manual/UI change invalidates reuse. The next run
@@ -96,7 +96,7 @@ def reusable_record(repo):
         require(documents[2]['sourceInputCommit'] == base, 'Snapshot source commit differs from publication base')
         # Recompute against saved inputs, including manual audits, without changing
         # the original timestamp/base identity. This also detects forged hashes.
-        expected = assemble(repo, now=documents[2]['generatedAt'])
+        expected = assemble(repo, now=documents[2]['generatedAt'], manual=manual)
         expected[2]['sourceInputCommit'] = base
         for actual, candidate in zip(documents, expected):
             require({key: value for key, value in actual.items() if key != 'snapshotId'} ==
@@ -109,16 +109,16 @@ def prepare(repo=ROOT, *, mode='publish', client=None):
     repo = Path(repo)
     require(mode in {'publish', 'refresh'}, 'Unknown publication mode')
     require(not git(repo, 'status', '--porcelain').strip(), 'Publication requires a clean checkout')
-    import_manual(repo)  # Audit even inactive manual inputs before any publication.
+    manual = import_manual(repo)  # Audit even inactive manual inputs before any publication.
     base = git(repo, 'rev-parse', 'HEAD').strip()
     if mode == 'publish':
-        reusable = reusable_record(repo)
+        reusable = reusable_record(repo, manual=manual)
         if reusable:
             return reusable
     if mode == 'refresh':
         selected = [key for key in ACTIVE_SERIES if POLICIES[key].method == 'automatic']
         refresh(repo, client or FredClient(load_api_key()), selected=selected)
-    documents = assemble(repo)
+    documents = assemble(repo, manual=manual)
     require(not documents[2]['modifiedSourceFiles'], 'Commit source changes before publication')
     promote_snapshot(repo / 'data/snapshot', documents)
     record = {'schemaVersion': 1, 'mode': mode, 'baseCommit': base,

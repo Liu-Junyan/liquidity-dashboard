@@ -76,6 +76,16 @@ class PublicationTests(unittest.TestCase):
         release.validate_public_tree(self.repo / 'dist')
         self.assertEqual(git(self.repo, 'status', '--porcelain'), '')
 
+    def test_fresh_and_reused_publications_each_audit_manual_inputs_once(self):
+        with patch('scripts.release.import_manual', wraps=release.import_manual) as audit, \
+             patch('scripts.assemble.import_manual', side_effect=AssertionError('Repeated audit')):
+            fresh = release.prepare(self.repo)
+            audit.assert_called_once_with(self.repo)
+            self.commit('Prepared data')
+            audit.reset_mock()
+            self.assertEqual(release.prepare(self.repo), fresh)
+            audit.assert_called_once_with(self.repo)
+
     def test_old_queued_run_uses_current_branch_and_preserves_local_work(self):
         (self.repo / 'local-note.txt').write_text('Keep my local edits')
         original_head = git(self.repo, 'rev-parse', 'HEAD')

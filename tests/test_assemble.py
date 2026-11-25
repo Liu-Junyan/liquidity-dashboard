@@ -94,6 +94,12 @@ class AssemblyTests(unittest.TestCase):
                 self.assertEqual(observations['series'][item['id']], [])
         self.assertEqual(self.records['fed-assets']['observations'][0]['value'], 6000000)
 
+    def test_assembly_rejects_manual_audit_from_an_earlier_commit(self):
+        manual = assemble.import_manual(self.root)
+        self.git('commit', '--allow-empty', '-qm', 'Advance assembly input')
+        with self.assertRaisesRegex(ValueError, 'Manual audit must match'):
+            self.candidate(manual=manual)
+
     def test_missing_input_blocks_without_inventing_history(self):
         (self.root / 'data/automatic/sofr.json').unlink()
         with self.assertRaisesRegex(ValueError, 'saved automatic input'):

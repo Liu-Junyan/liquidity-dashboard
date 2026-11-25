@@ -205,12 +205,24 @@ def import_manual(repo=ROOT, *, revision='HEAD', base=None, working_tree=False, 
     if base is None and previous:
         raise ValueError('Missing previous Git baseline: root commit contains manual inputs; '
                          'select an explicitly trusted --base commit')
+    revisions = f'{baseline}..{commit}'
+    changed_commits = set(git(repo, 'rev-list', '--first-parent', revisions, '--',
+                              'data/manual', 'data/registry.csv').splitlines())
+    # Read every message, including malformed reason trailers on input-neutral commits.
+    log = git(repo, 'log', '--first-parent', '--reverse', '--no-patch', '--no-notes',
+              '--no-show-signature', '-z', '--format=%H%n%B', revisions)
     audits = []
-    for current_commit in history[history.index(baseline) + 1:]:
+    for record in log.split('\0'):
+        if not record:
+            continue
+        current_commit, body = record.split('\n', 1)
         try:
+            if current_commit not in changed_commits:
+                require_reasons({}, body)
+                continue
             current, registry = committed_inputs(repo, current_commit)
             changes = revision_changes(previous, current)
-            require_reasons(changes, git(repo, 'show', '-s', '--format=%B', current_commit))
+            require_reasons(changes, body)
         except ValueError as error:
             raise ValueError(f'{current_commit[:12]}: {error}') from None
         if any(dates for change in changes.values() for dates in change.values()):

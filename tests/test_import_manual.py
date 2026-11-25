@@ -4,6 +4,7 @@ import tempfile
 import unittest
 from decimal import Decimal
 from pathlib import Path
+from unittest.mock import patch
 
 from scripts.import_manual import import_manual, parse_csv, validate_owner
 from scripts.registry import FIELDS, load_registry
@@ -92,6 +93,27 @@ class ManualGitTests(unittest.TestCase):
         self.commit('Append new observation')
         result = import_manual(self.repo, base=self.baseline)
         self.assertEqual(result['revisionSummary'], {'added': 1, 'revised': 0, 'removed': 0})
+
+    def test_automatic_commit_adds_no_csv_parse_but_still_checks_its_message(self):
+        automatic = self.repo / 'data/automatic'
+        automatic.mkdir()
+        (automatic / 'sample.json').write_text('{}')
+        commit = self.commit('Automatic refresh')
+        with patch('scripts.import_manual.parse_csv', wraps=parse_csv) as parse:
+            result = import_manual(self.repo)
+        parse.assert_called_once()  # The initial manual input.
+        self.assertEqual(result['sourceInputCommit'], commit)
+        self.assertEqual([entry['commit'] for entry in result['audit']], [self.baseline])
+        self.git('commit', '--amend', '-m', 'Automatic refresh\n\nManual-Reason: malformed')
+        with self.assertRaisesRegex(ValueError, 'Use Manual-Reason'):
+            import_manual(self.repo)
+
+    def test_registry_only_commit_revalidates_manual_ownership(self):
+        self.entry['update_method'] = 'automatic'
+        self.write_registry()
+        commit = self.commit('Transfer ownership')
+        with self.assertRaisesRegex(ValueError, commit[:12] + '.*conflicting ownership'):
+            import_manual(self.repo)
 
     def test_committed_correction_nulling_and_removal_require_exact_coverage(self):
         self.write('date,value\n2024-01-01,\n2024-04-30,3\n')

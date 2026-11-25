@@ -20,7 +20,8 @@ def check(repo=ROOT, *, snapshot=None):
     try:
         run(sys.executable, 'scripts/registry.py')
         run(sys.executable, 'scripts/policies.py', '--check-activation')
-        run(sys.executable, 'scripts/import_manual.py')
+        if snapshot is not None:  # Fresh assembly runs the full manual audit itself.
+            run(sys.executable, 'scripts/import_manual.py')
         run(sys.executable, '-m', 'unittest', 'discover', '-s', 'tests', '-p', 'test_*.py')
         run(sys.executable, 'scripts/build.py', '--mode', 'demo')
         run('node', '--test', 'tests/data.test.mjs')

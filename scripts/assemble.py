@@ -107,7 +107,7 @@ def validate_source_dates(points, rule):
         require(len({day.day for day in dates}) <= 1, 'Inconsistent source day-of-month')
 
 
-def assemble(repo=ROOT, *, selected=ACTIVE_SERIES, now=None):
+def assemble(repo=ROOT, *, selected=ACTIVE_SERIES, now=None, manual=None):
     repo = Path(repo)
     registry = load_registry(repo / 'data/registry.csv')
     reviews = json.loads((repo / 'data/source-reviews.json').read_text(encoding='utf-8'))
@@ -118,8 +118,10 @@ def assemble(repo=ROOT, *, selected=ACTIVE_SERIES, now=None):
     normalized, histories, provenance, outcomes, diagnostics = {}, {}, {}, {}, {}
     revisions = dict.fromkeys(('added', 'revised', 'removed'), 0)
     manual_ids = [key for key in order if POLICIES[key].method == 'manual']
-    manual = import_manual(repo) if manual_ids else None
-    if manual:
+    if manual is None and manual_ids:
+        manual = import_manual(repo, revision=commit)
+    if manual is not None:
+        require(manual['sourceInputCommit'] == commit, 'Manual audit must match the committed assembly input')
         for audit in manual['audit']:
             for identifier in manual_ids:
                 for key in revisions:
@@ -209,7 +211,7 @@ def main():
         output = validate_snapshot_destination(args.output)
         require(output == ROOT / 'data/snapshot' or not output.is_relative_to(ROOT),
                 'Use data/snapshot or an external output directory; never overwrite source inputs')
-        documents = assemble()
+        documents = assemble(manual=import_manual(ROOT))
         promote_snapshot(output, documents)
     except (ValueError, OSError, KeyError, TypeError) as error:
         parser.exit(1, f'Assembly failed: {error}\n')
