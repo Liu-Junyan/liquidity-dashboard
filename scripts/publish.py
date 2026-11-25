@@ -4,6 +4,7 @@ The caller's checkout is never reset. Only a validated fast-forward is pushed.
 Builds and rollback restoration happen in temporary, disposable worktrees.
 """
 import argparse
+import hashlib
 import json
 import os
 import shutil
@@ -21,7 +22,8 @@ from scripts.artifacts import replace_directory
 from scripts.contracts import require
 from scripts.import_manual import git
 from scripts.registry import ROOT
-from scripts.release import GENERATED, RECORD, generated, summary
+from scripts.release import (GENERATED, RECORD, SHA, artifact_hashes, generated, is_ancestor,
+                             summary, validate_public_tree)
 
 
 def run(repo, *command, env=None):
@@ -48,8 +50,7 @@ def create_data_pr(branch, base, artifact):
             'body': f'Publish validated data from artifact commit `{artifact}`.\n\n'
                     'The publication job has run offline checks and built the production artifact. '
                     'Merge this PR to publish from the default branch. Concurrent source or manual '
-                    'changes cause reassembly before deployment. For rollback candidates, the '
-                    'publication record identifies the restored revision.\n\n'
+                    'changes cause reassembly before deployment.\n\n'
                     'GitHub may require approval to run checks on PRs created with GITHUB_TOKEN.'}
     request = Request(f'https://api.github.com/repos/{repository}/pulls',
                       data=json.dumps(body).encode(), method='POST',
@@ -65,12 +66,82 @@ def create_data_pr(branch, base, artifact):
                          'or open a PR from the pushed automation branch manually') from None
 
 
+def stage_output(repo, source):
+    with tempfile.TemporaryDirectory(prefix='.publish-output-', dir=repo) as staging:
+        stage = Path(staging) / 'dist'
+        shutil.copytree(source, stage)
+        replace_directory(stage, repo / 'dist')
+
+
+def redeploy(repo, branch, target):
+    require(isinstance(target, str) and SHA.fullmatch(target), 'Rollback requires a full 40-character commit SHA')
+    base = remote_head(repo, branch)
+    require(is_ancestor(repo, target, base) and git(repo, 'cat-file', '-t', target).strip() == 'commit',
+            'Rollback commit must be in default-branch history')
+    record = json.loads(git(repo, 'show', f'{target}:{RECORD}'))
+    publication_base = record.get('baseCommit', '')
+    require(record.get('schemaVersion') == 1 and record.get('mode') in {'publish', 'refresh', 'rollback'}
+            and SHA.fullmatch(publication_base) and is_ancestor(repo, publication_base, target),
+            'Invalid historic publication record')
+    changes = git(repo, 'diff', '--name-only', publication_base, target).splitlines()
+    require(RECORD in changes and all(generated(path) for path in changes),
+            'Target includes changes outside its recorded publication')
+
+    with tempfile.TemporaryDirectory(prefix='liquidity-rollback-') as temporary:
+        work = Path(temporary) / 'checkout'
+        git(repo, 'worktree', 'add', '--detach', str(work), target)
+        try:
+            hashes = record['artifactHashes']
+            require(hashes == artifact_hashes(work), 'Rollback inputs differ from the historic publication record')
+            manifest = json.loads((work / 'data/snapshot/manifest.json').read_bytes())
+            snapshot_id = record['snapshotId']
+            require(manifest['snapshotId'] == snapshot_id and not manifest['modifiedSourceFiles'],
+                    'Rollback snapshot identity or source state differs')
+
+            if record['mode'] != 'rollback':
+                require(manifest['sourceInputCommit'] == publication_base, 'Snapshot source differs from publication base')
+
+            # The archived builder validates its own calculations. On Actions it gets
+            # only its checkout, without the runner environment or Git credentials.
+            command = ['scripts/build.py', '--mode', 'production']
+            if os.environ.get('GITHUB_ACTIONS') == 'true':
+                run(work, 'docker', 'run', '--rm', '--network=none', '--user', f'{os.getuid()}:{os.getgid()}',
+                    '--volume', f'{work}:/build', '--workdir', '/build', 'python:3.12-slim', 'python', *command)
+            else:
+                run(work, sys.executable, *command, env={'PATH': os.defpath, 'HOME': temporary})
+
+            output = work / 'dist'
+            require(output.is_dir() and not output.is_symlink(), 'Invalid rollback build directory')
+            validate_public_tree(output, stamped=False)
+            for name in ('catalog', 'observations', 'manifest'):
+                data = (output / f'data/{name}.json').read_bytes()
+                require(hashlib.sha256(data).hexdigest() == hashes[f'data/snapshot/{name}.json'],
+                        'Rollback build differs from committed snapshot')
+                require(json.loads(data)['snapshotId'] == snapshot_id, 'Rollback snapshot identity differs')
+            release = {'artifactCommit': target, 'sourceInputCommit': manifest['sourceInputCommit'],
+                       'snapshotId': snapshot_id, 'restoredFrom': target}
+            (output / 'data/release.json').write_text(json.dumps(release, indent=2) + '\n')
+            validate_public_tree(output)
+            ready = remote_head(repo, branch) == base
+            outcome = 'Ready for Pages' if ready else 'Superseded; deployment skipped'
+            rollback_record = {**record, 'mode': 'rollback', 'restoredFrom': target}
+            report = summary(work, rollback_record, target, outcome, manifest=manifest)
+            if ready:
+                stage_output(repo, output)
+            return {'deploy': ready, 'artifact': target, 'summary': report}
+        finally:
+            git(repo, 'worktree', 'remove', '--force', str(work))
+
+
 def publish(repo=ROOT, *, branch='main', mode='publish', rollback=None, delivery='auto',
             attempts=3, verify=verify_candidate, open_pr=create_data_pr):
     repo = Path(repo)
     require(delivery in {'auto', 'direct', 'pull-request'}, 'Unknown delivery mode')
     require(1 <= attempts <= 5, 'Use 1–5 publication attempts')
     git(repo, 'check-ref-format', '--branch', branch)
+    if mode == 'rollback':
+        return redeploy(repo, branch, rollback)
+    require(not rollback, 'rollback_commit is only valid with rollback mode')
     for attempt in range(attempts):
         base = remote_head(repo, branch)
         with tempfile.TemporaryDirectory(prefix='liquidity-publish-') as temporary:
@@ -78,8 +149,7 @@ def publish(repo=ROOT, *, branch='main', mode='publish', rollback=None, delivery
             git(repo, 'worktree', 'add', '--detach', str(work), base)
             try:
                 # Fresh processes load the latest source and policies on every retry.
-                run(work, sys.executable, 'scripts/release.py', 'prepare', '--mode', mode,
-                    *(['--rollback', rollback] if rollback else []))
+                run(work, sys.executable, 'scripts/release.py', 'prepare', '--mode', mode)
                 record = json.loads((work / RECORD).read_text())
                 verify(work)
                 changed = git(work, 'diff', '--name-only').splitlines()
@@ -120,10 +190,7 @@ def publish(repo=ROOT, *, branch='main', mode='publish', rollback=None, delivery
                 if remote_head(repo, branch) != artifact:
                     report = summary(work, record, artifact, 'Superseded; deployment skipped')
                     return {'deploy': False, 'artifact': artifact, 'summary': report}
-                with tempfile.TemporaryDirectory(prefix='.publish-output-', dir=repo) as staging:
-                    stage = Path(staging) / 'dist'
-                    shutil.copytree(work / 'dist', stage)
-                    replace_directory(stage, repo / 'dist')
+                stage_output(repo, work / 'dist')
                 return {'deploy': True, 'artifact': artifact,
                         'summary': summary(work, record, artifact, 'Validated artifact ready for Pages')}
             finally:

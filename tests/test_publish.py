@@ -252,50 +252,47 @@ class PublicationTests(unittest.TestCase):
         self.assertEqual(before, self.current())
         self.assertTrue(prs[0][0].startswith('automation/data-'))
 
-    def test_rollback_restores_exact_snapshot_and_automatic_inputs(self):
+    def test_rollback_redeploys_release_then_publish_resumes_current_release(self):
         first = self.publish()
         self.sync()
-        old = {path: git(self.repo, 'show', f'{first["artifact"]}:{path}')
-               for path in ('data/snapshot/manifest.json', 'data/automatic/sofr.json')}
+        output = self.repo / 'dist'
+        original = {p.relative_to(output): p.read_bytes() for p in output.rglob('*')
+                    if p.is_file() and p.name != 'release.json'}
         refresh(self.repo, SavedInputClient(), now=self.later_time)
-        self.commit('Saved automatic refresh')
+        index = self.repo / 'site/index.html'
+        index.write_text(index.read_text() + '\n<!-- Updated dashboard -->\n')
+        self.commit('Update dashboard and saved inputs')
         git(self.repo, 'push', 'origin', 'main')
         second = self.publish()
+        current_release = (output / 'data/release.json').read_bytes()
         self.assertNotEqual(first['artifact'], second['artifact'])
-        rolled_back = self.publish(mode='rollback', rollback=first['artifact'])
-        self.assertTrue(rolled_back['deploy'])
-        for path, content in old.items():
-            self.assertEqual(git(self.repo, 'show', f'{rolled_back["artifact"]}:{path}'), content)
-        self.assertIn('no collection', rolled_back['summary'])
-        self.assertEqual(json.loads((self.repo / 'dist/data/release.json').read_text())['restoredFrom'], first['artifact'])
-        reused = self.publish()
-        self.assertEqual(reused['artifact'], rolled_back['artifact'])
+        result = self.publish(mode='rollback', rollback=first['artifact'], delivery='pull-request',
+                              open_pr=lambda *args: self.fail('Rollback opened a PR'))
+        self.assertTrue(result['deploy'])
+        self.assertEqual(result['artifact'], first['artifact'])
+        self.assertEqual(self.current(), second['artifact'])
+        self.assertEqual(original, {path: (output / path).read_bytes() for path in original})
+        stamp = json.loads((output / 'data/release.json').read_text())
+        self.assertEqual(stamp['artifactCommit'], first['artifact'])
+        self.assertEqual(stamp['restoredFrom'], first['artifact'])
+        self.assertEqual(self.publish()['artifact'], second['artifact'])
+        self.assertEqual((output / 'data/release.json').read_bytes(), current_release)
+        self.assertIn('Updated dashboard', (output / 'index.html').read_text())
 
-    def test_rollback_pr_merge_keeps_original_snapshot(self):
+    def test_branch_advance_during_rollback_skips_output(self):
         first = self.publish()
         self.sync()
-        refresh(self.repo, SavedInputClient(), now=self.later_time)
-        self.commit('New saved inputs')
-        git(self.repo, 'push', 'origin', 'main')
-        self.publish()
-        self.sync()
-        prs = []
-        self.publish(mode='rollback', rollback=first['artifact'], delivery='pull-request',
-                     open_pr=lambda *args: prs.append(args) or 'test-pr')
-        git(self.repo, 'fetch', 'origin', prs[0][0])
-        git(self.repo, 'merge', '--squash', 'FETCH_HEAD')
-        merged = self.commit('Squash rollback data PR')
-        git(self.repo, 'push', 'origin', 'main')
-        result = self.publish(delivery='pull-request', open_pr=lambda *args: self.fail('Recursive PR'))
-        self.assertTrue(result['deploy'])
-        self.assertEqual(result['artifact'], merged)
-        self.assertEqual(git(self.repo, 'show', f'{merged}:data/snapshot/manifest.json'),
-                         git(self.repo, 'show', f'{first["artifact"]}:data/snapshot/manifest.json'))
+        previous = (self.repo / 'dist/data/release.json').read_bytes()
+        with patch('scripts.publish.remote_head', side_effect=[first['artifact'], 'b' * 40]):
+            result = self.publish(mode='rollback', rollback=first['artifact'])
+        self.assertFalse(result['deploy'])
+        self.assertEqual(self.current(), first['artifact'])
+        self.assertEqual((self.repo / 'dist/data/release.json').read_bytes(), previous)
 
     def test_dirty_sources_and_untrusted_rollback_refs_are_rejected(self):
         for ref in ('main', '--help', 'a' * 40):
             with self.subTest(ref=ref), self.assertRaises(ValueError):
-                release.prepare(self.repo, mode='rollback', rollback=ref)
+                self.publish(mode='rollback', rollback=ref)
         (self.repo / 'data/categories.json').write_text('[]')
         with self.assertRaisesRegex(ValueError, 'clean checkout'):
             release.prepare(self.repo)
@@ -306,8 +303,9 @@ class PublicationTests(unittest.TestCase):
         path = self.repo / 'data/automatic/sofr.json'
         path.write_text(path.read_text() + '\n')
         tampered = self.commit('Unvalidated automatic input change')
+        git(self.repo, 'push', 'origin', 'main')
         with self.assertRaisesRegex(ValueError, 'historic publication record'):
-            release.prepare(self.repo, mode='rollback', rollback=tampered)
+            self.publish(mode='rollback', rollback=tampered)
 
     def test_private_files_and_symlinks_cannot_enter_public_artifact(self):
         result = self.publish()
@@ -343,6 +341,33 @@ class PublicationTests(unittest.TestCase):
         self.assertIsNone(release.reusable_record(self.repo))
         release.prepare(self.repo)
         self.assertEqual(release.read_snapshot(self.repo)[2]['sourceInputCommit'], changed)
+
+
+class HistoricalReleaseTests(unittest.TestCase):
+    def test_november_release_uses_its_original_calculation_policy(self):
+        target = '7f8c7c9305bf2a898515056d8c5ac892ad5f7fe6'
+        snapshot = 'production-911b528875316300d1275b0d0c01980964477ba3903a9898fa5a1ebb78584300'
+        with tempfile.TemporaryDirectory() as directory:
+            repo = Path(directory) / 'repo'
+            remote = Path(directory) / 'remote.git'
+            git(ROOT, 'init', '--bare', str(remote))
+            # A check can run in a detached worktree. Give the test remote its own main.
+            git(remote, 'fetch', str(ROOT), 'HEAD:refs/heads/main')
+            git(ROOT, 'clone', '--branch', 'main', str(remote), str(repo))
+            before = publish.remote_head(repo, 'main')
+            result = publish.publish(repo, mode='rollback', rollback=target)
+            self.assertTrue(result['deploy'])
+            public = repo / 'dist/data'
+            stamp = json.loads((public / 'release.json').read_bytes())
+            self.assertEqual(stamp['snapshotId'], snapshot)
+            self.assertEqual(stamp['artifactCommit'], target)
+            self.assertEqual(stamp['restoredFrom'], target)
+            for name in ('catalog.json', 'observations.json', 'manifest.json'):
+                archived = subprocess.check_output(['git', '-C', str(repo), 'show', f'{target}:data/snapshot/{name}'])
+                self.assertEqual((public / name).read_bytes(), archived)
+            observations = json.loads((public / 'observations.json').read_bytes())
+            self.assertEqual(len(observations['series']['sofr-effr-spread']), 4401)
+            self.assertEqual(publish.remote_head(repo, 'main'), before)
 
 
 if __name__ == '__main__':

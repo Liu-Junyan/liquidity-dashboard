@@ -105,47 +105,36 @@ def reusable_record(repo):
     return record
 
 
-def prepare(repo=ROOT, *, mode='publish', rollback=None, client=None):
+def prepare(repo=ROOT, *, mode='publish', client=None):
     repo = Path(repo)
-    require(mode in {'publish', 'refresh', 'rollback'}, 'Unknown publication mode')
+    require(mode in {'publish', 'refresh'}, 'Unknown publication mode')
     require(not git(repo, 'status', '--porcelain').strip(), 'Publication requires a clean checkout')
     import_manual(repo)  # Audit even inactive manual inputs before any publication.
     base = git(repo, 'rev-parse', 'HEAD').strip()
     if mode == 'publish':
-        require(not rollback, 'rollback_commit is only valid with rollback mode')
         reusable = reusable_record(repo)
         if reusable:
             return reusable
-    if mode == 'rollback':
-        require(isinstance(rollback, str) and bool(SHA.fullmatch(rollback)),
-                'Rollback requires a full 40-character commit SHA')
-        require(is_ancestor(repo, rollback), 'Rollback commit must be in default-branch history')
-        # Use Git restoration, not arbitrary paths or shell interpolation. This
-        # restores automatic inputs too, so the next offline build starts here.
-        git(repo, 'restore', '--source', rollback, '--worktree', '--', *GENERATED[:2])
-        documents = read_snapshot(repo)
-        validate_restored_artifact(repo, rollback, documents)
-    else:
-        require(not rollback, 'rollback_commit is only valid with rollback mode')
-        if mode == 'refresh':
-            selected = [key for key in ACTIVE_SERIES if POLICIES[key].method == 'automatic']
-            refresh(repo, client or FredClient(load_api_key()), selected=selected)
-        documents = assemble(repo)
-        require(not documents[2]['modifiedSourceFiles'], 'Commit source changes before publication')
-        promote_snapshot(repo / 'data/snapshot', documents)
+    if mode == 'refresh':
+        selected = [key for key in ACTIVE_SERIES if POLICIES[key].method == 'automatic']
+        refresh(repo, client or FredClient(load_api_key()), selected=selected)
+    documents = assemble(repo)
+    require(not documents[2]['modifiedSourceFiles'], 'Commit source changes before publication')
+    promote_snapshot(repo / 'data/snapshot', documents)
     record = {'schemaVersion': 1, 'mode': mode, 'baseCommit': base,
-              'snapshotId': documents[0]['snapshotId'], 'restoredFrom': rollback,
+              'snapshotId': documents[0]['snapshotId'], 'restoredFrom': None,
               'artifactHashes': artifact_hashes(repo)}
     (repo / RECORD).write_text(json.dumps(record, indent=2) + '\n')
     return record
 
 
-def validate_public_tree(directory):
+def validate_public_tree(directory, *, stamped=True):
     directory = Path(directory)
     paths = list(directory.rglob('*'))
     require(not any(path.is_symlink() for path in paths), 'Public artifact cannot contain symlinks')
     names = {path.relative_to(directory).as_posix() for path in paths if path.is_file()}
-    require(names == PUBLIC_FILES, f'Unexpected or missing public files: {sorted(names ^ PUBLIC_FILES)}')
+    expected = PUBLIC_FILES if stamped else PUBLIC_FILES - {'data/release.json'}
+    require(names == expected, f'Unexpected or missing public files: {sorted(names ^ expected)}')
 
 
 def stamp_output(repo=ROOT):
@@ -165,16 +154,17 @@ def stamp_output(repo=ROOT):
     return release
 
 
-def summary(repo, record, artifact, delivery):
-    documents = read_snapshot(repo)
+def summary(repo, record, artifact, delivery, *, manifest=None):
+    if manifest is None:
+        manifest = read_snapshot(repo)[2]
     lines = ['## Production candidate', '', f'- Result: {delivery}', f'- Artifact commit: `{artifact}`',
              f'- Snapshot: `{record["snapshotId"]}`', f'- Mode: {record["mode"]}']
     if record['restoredFrom']:
         lines.append(f'- Restored from: `{record["restoredFrom"]}` (no collection)')
     lines += ['', '| Source | Outcome | Latest observation | Freshness |', '| --- | --- | --- | --- |']
     warnings = []
-    for identifier, outcome in documents[2]['outcomes'].items():
-        diagnostic = documents[2]['diagnostics'].get(identifier, {})
+    for identifier, outcome in manifest['outcomes'].items():
+        diagnostic = manifest['diagnostics'].get(identifier, {})
         freshness = (diagnostic.get('freshness') or {}).get('status', 'n/a')
         lines.append(f'| {identifier} | {outcome["status"]} | {outcome["latestObservationDate"] or "—"} | {freshness} |')
         if outcome['status'] in {'retained', 'failed'}:
@@ -187,12 +177,11 @@ def summary(repo, record, artifact, delivery):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('command', choices=('prepare', 'stamp'))
-    parser.add_argument('--mode', choices=('publish', 'refresh', 'rollback'), default='publish')
-    parser.add_argument('--rollback')
+    parser.add_argument('--mode', choices=('publish', 'refresh'), default='publish')
     args = parser.parse_args()
     try:
         if args.command == 'prepare':
-            record = prepare(mode=args.mode, rollback=args.rollback)
+            record = prepare(mode=args.mode)
             print(f'Prepared {record["mode"]} snapshot {record["snapshotId"]}')
         else:
             print(json.dumps(stamp_output()))

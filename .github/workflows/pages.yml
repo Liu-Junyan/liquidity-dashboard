@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: Refresh FRED, publish saved inputs, or restore a committed snapshot
+        description: Refresh FRED, publish saved inputs, or redeploy a historical release
         type: choice
         options: [refresh, publish, rollback]
         default: refresh
@@ -78,7 +78,7 @@ jobs:
         with:
           node-version: '22'
       - run: python -m pip install -r requirements.txt
-      - name: Prepare, validate and commit the exact production artifact
+      - name: Prepare and validate the Pages artifact
         id: candidate
         env:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
