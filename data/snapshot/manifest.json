@@ -1,31 +1,31 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-25T07:27:02.347276Z",
-  "sourceInputCommit": "3d55f9fa3694400b0fd434cf6ee856c684856eff",
+  "generatedAt": "2026-11-25T07:58:56.224609Z",
+  "sourceInputCommit": "099f170bf6923fc778e7a90f2b5e020abcbfe344",
   "sourceFileHashes": {
     "data/categories.json": "41b46e91bcbdfef69a4471b6fbdd3af84d6a1aa3ad01e1c09f57d9c20f89620c",
     "data/registry.csv": "b50012137659cb3493d275c3c1ac7a8c4e4d1b63f026674c3463a7620b963d92",
     "data/source-reviews.json": "4830992fd4b03e3a42f1d4b5789b4f77b2308daebb88e39eada2068a6dc8deee",
-    "scripts/artifacts.py": "a5f69f58e16cc2a9713b89c5e2001bff1a2d05bb40a63c585d74caae11d946b7",
-    "scripts/assemble.py": "23ecd4e356875064a69ba4026ca737429ed3d42265798b72b5f2f56cec65a5ee",
+    "scripts/artifacts.py": "cbadda88901a46a49787837ac072dc8212accc96e4d95ae5c958c349c8448c25",
+    "scripts/assemble.py": "f18a86e9d2a60862b61bcda0f1491a134007d6acf14836cc49290df6119db71f",
     "scripts/assets.py": "f7a16d925aa2bd22e58cfb8f57fd813207a005e67fa7e88fd1463aba54b3dc7a",
     "scripts/build.py": "9d9f4144db9bc07c26e3cc0a163cc8bed19b046897faef9e910d470decc80c6b",
     "scripts/catalog.py": "6f64dd9ff4573b4555bbf3a56a3b1f0a0bce9bbb343949be629be5d4e532cd05",
-    "scripts/check.py": "7e112a55a4a27824736abee3972bb4feef12a46ee3786e71b50e042f40049907",
+    "scripts/check.py": "dd908301f9d2b90f1d5827f3ff59baefcacff7c2289ad85c6c4464046a81deef",
     "scripts/collect.py": "3dff88f223e641b90e2d1a2b447f407a5f36f9e9c02921b93eee61560d12e8ec",
     "scripts/contracts.py": "9264d5741007505c3525c3c51783cd40990b60d0f827a6b1278cc4bdfc9b9789",
     "scripts/derive.py": "2bc2416935204e513af5e6838353b73bec32cbacb304c07b1c65e7da7fec7d57",
     "scripts/export_wind_issuance.py": "43b9988866353e7c67fe534d3eb7de22b9018e1be8254c85bbc7ccaad33612ba",
     "scripts/generate_fixtures.py": "77b6093f6d75419df3f48204bec34d4b79e22f3a49c93bd94372737eea06eb35",
-    "scripts/import_manual.py": "c6e21c7ab4573c5ed7bf5f172975a0568154f69b994eb42303aacb9aaa1b848b",
+    "scripts/import_manual.py": "2cf2abea20ca938dc4b169acd2375dcbe758bbbfc8709c0a6e5a52071c6533ac",
     "scripts/normalize.py": "d49b7fabc1acc1f733107d9e29c1d1cb6f1cee4dc7228c26f3b95e6dcdeb2460",
     "scripts/notices.py": "272cc21829ce864bc092d5c845caa11968a7e52edd7feb787434cb6583d9f531",
     "scripts/policies.py": "89584ffae062dde145593838628ce566d8d8145535b6bf7b52382f413f577b46",
     "scripts/providers/__init__.py": "78e5397c274726362e57c18eeda036d2a7a90ff8221cf8cb407b6df93f17c4c5",
     "scripts/providers/fred.py": "58fb3454a7ba40c1ab75c95ba7b1c31f10047a02c9e5731439ff8ff137dfd92e",
-    "scripts/publish.py": "b72f86d3b1c2c95ea913d2b59067f0d7e0ff03c431fc038a6c30ed95b008bc72",
+    "scripts/publish.py": "8b072901236863511e18dd1d48b5a4c6993b522d61de69d30f1c0eead6dc2824",
     "scripts/registry.py": "cb598e9e3222f62a25c0d328e5c4a1142b3f32f8e69131804aa7de01885b7e29",
-    "scripts/release.py": "e1b0092e3af79bec59fdedfe626f73acf08c8f7ea71c64aa03fe2f4badb6e752"
+    "scripts/release.py": "f20d55cea165f690dc83ab6849fef25f4a786fb1ff464e851d0498d305f2dd4b"
   },
   "modifiedSourceFiles": [],
   "policyVersion": "8",
@@ -179214,10 +179214,11 @@
       "lastDataChange": null
     }
   },
+  "revisionBaselineSnapshotId": "production-5bdc3af38ed9427f4cbf2edc05501a675de4cd7039d0aa49d47ceed908c5080f",
   "revisionSummary": {
-    "added": 9385,
+    "added": 0,
     "revised": 0,
-    "removed": 2
+    "removed": 0
   },
   "diagnostics": {
     "bank-loans": {
@@ -179473,5 +179474,5 @@
       }
     }
   },
-  "snapshotId": "production-5bdc3af38ed9427f4cbf2edc05501a675de4cd7039d0aa49d47ceed908c5080f"
+  "snapshotId": "production-a502d7f8ae3d5222d87e0be9537796b4e716dfddcc6bc78f5a0bc91591189bcf"
 }
