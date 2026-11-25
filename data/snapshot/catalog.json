@@ -4,9 +4,9 @@
     "mode": "production",
     "isDemo": false,
     "publisher": "Junyan Liu",
-    "generatedAt": "2026-11-24T18:54:41.433007Z",
+    "generatedAt": "2026-11-25T02:47:05.413312Z",
     "observationStart": "2010-01-01",
-    "observationEnd": "2026-11-23"
+    "observationEnd": "2026-11-24"
   },
   "categories": [
     {
@@ -530,18 +530,25 @@
         "explicitMissing": "null",
         "valueScale": 1
       },
-      "observationDateRule": null,
+      "observationDateRule": "source-daily-level",
       "isDemo": false,
-      "inputAvailable": false,
+      "inputAvailable": true,
       "role": "",
-      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
-      "availability": "empty",
-      "sources": [],
+      "explanation": "Wind 日度美元指数（1973 年 3 月 = 100），衡量美元相对六种货币固定权重篮子的表现。",
+      "availability": "numeric",
+      "sources": [
+        "data/sources/wind/Wind-data.xlsx; sheet market; column USDX"
+      ],
       "source": {
-        "name": "待接入",
+        "name": "Wind · M0000271",
         "url": null
       },
-      "notices": []
+      "notices": [
+        {
+          "text": "ICE U.S. Dollar Index · ICE Data Indices · Wind EDB M0000271",
+          "url": "https://developer.ice.com/fixed-income-data-services/catalog/ice-data-indices-currency-indices"
+        }
+      ]
     },
     {
       "id": "swap-line",
@@ -755,7 +762,7 @@
       "explanation": "SIFMA经Wind EDB提供的债券月度总发行额。口径为全期限、总发行额（非净额、非年初累计）。国债与公司债已包含在总量中，三项不可相加。",
       "availability": "numeric",
       "sources": [
-        "data/sources/wind/bond-issuance.xlsx; sheet bond-issuance; column bond-issuance; Wind EDB G1132499; SIFMA US Fixed Income Securities Statistics"
+        "data/sources/wind/Wind-data.xlsx; sheet bond-issuance; column bond-issuance; Wind EDB G1132499; SIFMA US Fixed Income Securities Statistics"
       ],
       "source": {
         "name": "SIFMA · G1132499",
@@ -796,7 +803,7 @@
       "explanation": "SIFMA经Wind EDB提供的美国国债月度发行额。口径为全期限、总发行额（非净额、非年初累计）。",
       "availability": "numeric",
       "sources": [
-        "data/sources/wind/bond-issuance.xlsx; sheet bond-issuance; column treasury-bond-issuance; Wind EDB G1132494; SIFMA US Fixed Income Securities Statistics"
+        "data/sources/wind/Wind-data.xlsx; sheet bond-issuance; column treasury-bond-issuance; Wind EDB G1132494; SIFMA US Fixed Income Securities Statistics"
       ],
       "source": {
         "name": "SIFMA · G1132494",
@@ -837,7 +844,7 @@
       "explanation": "SIFMA经Wind EDB提供的公司债月度发行额。口径为全期限、总发行额（非净额、非年初累计）。",
       "availability": "numeric",
       "sources": [
-        "data/sources/wind/bond-issuance.xlsx; sheet bond-issuance; column corporate-bond-issuance; Wind EDB G1132496; SIFMA US Fixed Income Securities Statistics"
+        "data/sources/wind/Wind-data.xlsx; sheet bond-issuance; column corporate-bond-issuance; Wind EDB G1132496; SIFMA US Fixed Income Securities Statistics"
       ],
       "source": {
         "name": "SIFMA · G1132496",
@@ -1010,18 +1017,25 @@
         "explicitMissing": "null",
         "valueScale": 1
       },
-      "observationDateRule": null,
+      "observationDateRule": "source-daily-level",
       "isDemo": false,
-      "inputAvailable": false,
+      "inputAvailable": true,
       "role": "",
-      "explanation": "待接入：尚未接入已复核的数据源，不生成替代数值。",
-      "availability": "empty",
-      "sources": [],
+      "explanation": "Wind 日度 MOVE 指数（点），反映美国债券收益率未来一个月的期权隐含波动率。",
+      "availability": "numeric",
+      "sources": [
+        "data/sources/wind/Wind-data.xlsx; sheet market; column MOVE"
+      ],
       "source": {
-        "name": "待接入",
+        "name": "Wind · C7536898",
         "url": null
       },
-      "notices": []
+      "notices": [
+        {
+          "text": "ICE BofA MOVE Index · ICE Data Indices · Wind EDB C7536898",
+          "url": "https://developer.ice.com/fixed-income-data-services/catalog/ice-data-indices-move-index"
+        }
+      ]
     },
     {
       "id": "bid-ask-spread",
@@ -1096,5 +1110,5 @@
       "notices": []
     }
   ],
-  "snapshotId": "production-07014a0a7d11999844c48248e47097cb523941544f06745deeec24dce73f5ffb"
+  "snapshotId": "production-9f4bd9d9790fa366ca66f676c30cfe75181e1c5bbc9125c8967357a5ba4243f1"
 }
