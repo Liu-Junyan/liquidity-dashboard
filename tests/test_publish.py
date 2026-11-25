@@ -30,7 +30,10 @@ class PublicationTests(unittest.TestCase):
         (self.repo / 'data').mkdir()
         for name in ('registry.csv', 'categories.json', 'source-reviews.json'):
             shutil.copyfile(ROOT / 'data' / name, self.repo / 'data' / name)
-        shutil.copytree(ROOT / 'data/manual', self.repo / 'data/manual')
+        manual = self.repo / 'data/manual'
+        shutil.copytree(ROOT / 'data/manual', manual, ignore=shutil.ignore_patterns('bond-issuance.csv'))
+        # Seed the test repository before its first input commit so correction audits use a fixed history.
+        (manual / 'bond-issuance.csv').write_text('date,value\n2020-01-31,10\n')
         (self.repo / '.gitignore').write_text('dist/\n__pycache__/\n.env\n')
         git(self.repo, 'init', '-b', 'main')
         git(self.repo, 'config', 'user.name', 'Release test')
@@ -184,10 +187,10 @@ class PublicationTests(unittest.TestCase):
         self.assertEqual((self.repo / 'dist/previous').read_text(), 'Keep')
 
     def test_manual_addition_and_correction_publish_offline_but_unaudited_edit_blocks(self):
-        directory = self.repo / 'data/manual'
-        path = directory / 'bond-issuance.csv'
+        path = self.repo / 'data/manual/bond-issuance.csv'
+        month_end = '2020-02-29'
         original = path.read_text()
-        path.write_text(original + '2026-11-30,1\n')
+        path.write_text(original + f'{month_end},1\n')
         self.commit('Add manual observation')
         git(self.repo, 'push', 'origin', 'main')
         with patch.dict('os.environ', {'FRED_API_KEY': ''}):
@@ -195,29 +198,28 @@ class PublicationTests(unittest.TestCase):
             self.sync()
             self.assertEqual(json.loads((self.repo / 'dist/data/observations.json').read_text())
                              ['series']['bond-issuance'][-1]['value'], 1)
-            path.write_text(original + '2026-11-30,2\n')
-            self.commit('Correct manual input\n\nManual-Reason: bond-issuance 2026-11-30: source revision')
+            path.write_text(original + f'{month_end},2\n')
+            self.commit(f'Correct manual input\n\nManual-Reason: bond-issuance {month_end}: source revision')
             git(self.repo, 'push', 'origin', 'main')
             self.assertTrue(self.publish()['deploy'])
             self.sync()
-            before = (self.repo / 'dist/data/manifest.json').read_bytes()
             self.assertEqual(json.loads((self.repo / 'dist/data/observations.json').read_text())
                              ['series']['bond-issuance'][-1]['value'], 2)
             path.write_text(original)
-            self.commit('Remove erroneous month\n\nManual-Reason: bond-issuance 2026-11-30: '
+            self.commit(f'Remove erroneous month\n\nManual-Reason: bond-issuance {month_end}: '
                         'source withdrew preliminary observation')
             git(self.repo, 'push', 'origin', 'main')
             self.assertTrue(self.publish()['deploy'])
             self.sync()
             self.assertEqual(json.loads((self.repo / 'dist/data/observations.json').read_text())
-                             ['series']['bond-issuance'][-1]['date'], '2026-10-31')
-            path.write_text(original + '2026-11-30,2\n')
+                             ['series']['bond-issuance'], [{'date': '2020-01-31', 'value': 10}])
+            path.write_text(original + f'{month_end},2\n')
             self.commit('Restore month as a new observation')
             git(self.repo, 'push', 'origin', 'main')
             self.assertTrue(self.publish()['deploy'])
             self.sync()
             before = (self.repo / 'dist/data/manifest.json').read_bytes()
-            path.write_text(original + '2026-11-30,3\n')
+            path.write_text(original + f'{month_end},3\n')
             invalid = self.commit('Undocumented correction')
             git(self.repo, 'push', 'origin', 'main')
             with self.assertRaises(subprocess.CalledProcessError):
