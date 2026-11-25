@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-25T07:58:56.224609Z",
-  "sourceInputCommit": "099f170bf6923fc778e7a90f2b5e020abcbfe344",
+  "generatedAt": "2026-11-25T08:15:39.817798Z",
+  "sourceInputCommit": "9778487c48ade638aac1382755fe27aabbd75f7e",
   "sourceFileHashes": {
     "data/categories.json": "41b46e91bcbdfef69a4471b6fbdd3af84d6a1aa3ad01e1c09f57d9c20f89620c",
     "data/registry.csv": "b50012137659cb3493d275c3c1ac7a8c4e4d1b63f026674c3463a7620b963d92",
@@ -179214,7 +179214,7 @@
       "lastDataChange": null
     }
   },
-  "revisionBaselineSnapshotId": "production-5bdc3af38ed9427f4cbf2edc05501a675de4cd7039d0aa49d47ceed908c5080f",
+  "revisionBaselineSnapshotId": "production-a502d7f8ae3d5222d87e0be9537796b4e716dfddcc6bc78f5a0bc91591189bcf",
   "revisionSummary": {
     "added": 0,
     "revised": 0,
@@ -179474,5 +179474,5 @@
       }
     }
   },
-  "snapshotId": "production-a502d7f8ae3d5222d87e0be9537796b4e716dfddcc6bc78f5a0bc91591189bcf"
+  "snapshotId": "production-e12e8c68bf2095cb5e9730e2860ee15d91ec52fbdc31dace1cca8f7860c5e28c"
 }
