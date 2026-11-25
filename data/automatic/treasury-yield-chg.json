@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "policyVersion": "7",
+  "policyVersion": "8",
   "seriesId": "treasury-yield-chg",
   "specHash": "59927a15af131c04b8b0b77002b3ff9e36b7ac7c259a5cf7a0272d1ead8b0d0e",
   "provider": "FRED",
@@ -17633,6 +17633,10 @@
     {
       "date": "2026-11-20",
       "value": -0.12
+    },
+    {
+      "date": "2026-11-23",
+      "value": 0.0
     }
   ],
   "metadata": {
@@ -17641,7 +17645,7 @@
     "frequency_short": "D",
     "seasonal_adjustment_short": "NSA",
     "observation_start": "1962-01-02",
-    "observation_end": "2026-11-20"
+    "observation_end": "2026-11-23"
   },
   "requestParameters": {
     "series_id": "DGS10",
@@ -17653,7 +17657,7 @@
     "limit": 100000,
     "offset": 0
   },
-  "sourceHash": "3c04a1ae560cfd230411e70a87eec4e6ca24a6fd8e70917c8d603c5f75d5cd58",
+  "sourceHash": "72e0d2d2c2a9d871c1927c38d2be8316166bdaaf5b69cb5efe43a95f9bbbe586",
   "revisionSummary": {
     "added": 1,
     "removed": 0,
@@ -17662,14 +17666,14 @@
   "error": null,
   "outcome": {
     "status": "updated",
-    "latestObservationDate": "2026-11-20",
-    "lastAttempt": "2026-11-24T18:54:30.620741Z",
-    "lastSuccessfulCheck": "2026-11-24T18:54:30.620741Z",
-    "lastDataChange": "2026-11-24T18:54:30.620741Z"
+    "latestObservationDate": "2026-11-23",
+    "lastAttempt": "2026-11-25T17:59:06.621967Z",
+    "lastSuccessfulCheck": "2026-11-25T17:59:06.621967Z",
+    "lastDataChange": "2026-11-25T17:59:06.621967Z"
   },
   "freshness": {
-    "latestNumericDate": "2026-11-20",
-    "ageDays": 4,
+    "latestNumericDate": "2026-11-23",
+    "ageDays": 2,
     "maxAgeDays": 7,
     "status": "current"
   }

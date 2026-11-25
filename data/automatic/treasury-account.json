@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "policyVersion": "7",
+  "policyVersion": "8",
   "seriesId": "treasury-account",
   "specHash": "57983ec6dc46b685407bf8231539688545c70ce09d570e06b67c76bb4f46f178",
   "provider": "FRED",
@@ -3563,13 +3563,13 @@
   "outcome": {
     "status": "unchanged",
     "latestObservationDate": "2026-11-18",
-    "lastAttempt": "2026-11-24T18:54:30.620741Z",
-    "lastSuccessfulCheck": "2026-11-24T18:54:30.620741Z",
+    "lastAttempt": "2026-11-25T17:59:06.621967Z",
+    "lastSuccessfulCheck": "2026-11-25T17:59:06.621967Z",
     "lastDataChange": "2026-11-20T16:10:42.780069Z"
   },
   "freshness": {
     "latestNumericDate": "2026-11-18",
-    "ageDays": 6,
+    "ageDays": 7,
     "maxAgeDays": 14,
     "status": "current"
   }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "policyVersion": "7",
+  "policyVersion": "8",
   "seriesId": "reverse-repo",
   "specHash": "97c815ef9274b6748ef007ccb91d195ee6e54827319c0cd185a421ccd7303d54",
   "provider": "FRED",
@@ -17637,6 +17637,10 @@
     {
       "date": "2026-11-23",
       "value": 0.35
+    },
+    {
+      "date": "2026-11-24",
+      "value": 0.301
     }
   ],
   "metadata": {
@@ -17645,7 +17649,7 @@
     "frequency_short": "D",
     "seasonal_adjustment_short": "NSA",
     "observation_start": "2003-02-07",
-    "observation_end": "2026-11-23"
+    "observation_end": "2026-11-24"
   },
   "requestParameters": {
     "series_id": "RRPONTSYD",
@@ -17657,22 +17661,22 @@
     "limit": 100000,
     "offset": 0
   },
-  "sourceHash": "e49308fcaf51e10bce350528625eb11527324cc2327396b33d7f542e3beae024",
+  "sourceHash": "b84cc73eeabceb48590842f3b9469a3deaf6d274b0b19c095ec667692883ef6e",
   "revisionSummary": {
-    "added": 0,
+    "added": 1,
     "removed": 0,
     "revised": 0
   },
   "error": null,
   "outcome": {
-    "status": "unchanged",
-    "latestObservationDate": "2026-11-23",
-    "lastAttempt": "2026-11-24T18:54:30.620741Z",
-    "lastSuccessfulCheck": "2026-11-24T18:54:30.620741Z",
-    "lastDataChange": "2026-11-23T19:15:17.583789Z"
+    "status": "updated",
+    "latestObservationDate": "2026-11-24",
+    "lastAttempt": "2026-11-25T17:59:06.621967Z",
+    "lastSuccessfulCheck": "2026-11-25T17:59:06.621967Z",
+    "lastDataChange": "2026-11-25T17:59:06.621967Z"
   },
   "freshness": {
-    "latestNumericDate": "2026-11-23",
+    "latestNumericDate": "2026-11-24",
     "ageDays": 1,
     "maxAgeDays": 7,
     "status": "current"

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "policyVersion": "7",
+  "policyVersion": "8",
   "seriesId": "credit-spreads-hy",
   "specHash": "1e745d3e7f89b0d5780dc9e281297de26d6a2c2e7351bc61ef94eb8435ba0e1c",
   "provider": "FRED",
@@ -3177,6 +3177,10 @@
     {
       "date": "2026-11-23",
       "value": 3.63
+    },
+    {
+      "date": "2026-11-24",
+      "value": 3.72
     }
   ],
   "metadata": {
@@ -3185,7 +3189,7 @@
     "frequency_short": "D",
     "seasonal_adjustment_short": "NSA",
     "observation_start": "2023-11-27",
-    "observation_end": "2026-11-23"
+    "observation_end": "2026-11-24"
   },
   "requestParameters": {
     "series_id": "BAMLH0A0HYM2",
@@ -3197,22 +3201,22 @@
     "limit": 100000,
     "offset": 0
   },
-  "sourceHash": "e55107400171f7e5c302129034e79f10e644de50d78774ee8280a0fbe223ad31",
+  "sourceHash": "21f2398f3419ba279fe093e33f78e0db5b60074c7391d7ff247b72bada2384f8",
   "revisionSummary": {
     "added": 1,
-    "removed": 1,
+    "removed": 0,
     "revised": 0
   },
   "error": null,
   "outcome": {
     "status": "updated",
-    "latestObservationDate": "2026-11-23",
-    "lastAttempt": "2026-11-24T18:54:30.620741Z",
-    "lastSuccessfulCheck": "2026-11-24T18:54:30.620741Z",
-    "lastDataChange": "2026-11-24T18:54:30.620741Z"
+    "latestObservationDate": "2026-11-24",
+    "lastAttempt": "2026-11-25T17:59:06.621967Z",
+    "lastSuccessfulCheck": "2026-11-25T17:59:06.621967Z",
+    "lastDataChange": "2026-11-25T17:59:06.621967Z"
   },
   "freshness": {
-    "latestNumericDate": "2026-11-23",
+    "latestNumericDate": "2026-11-24",
     "ageDays": 1,
     "maxAgeDays": 7,
     "status": "current"

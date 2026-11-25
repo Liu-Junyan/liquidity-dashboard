@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "policyVersion": "7",
+  "policyVersion": "8",
   "seriesId": "bank-total-assets",
   "specHash": "33b70ce57aad536c9964578067883bcd3ae0919742ab14206ffb558a5eaa6481",
   "provider": "FRED",
@@ -3559,13 +3559,13 @@
   "outcome": {
     "status": "unchanged",
     "latestObservationDate": "2026-11-11",
-    "lastAttempt": "2026-11-24T18:54:30.620741Z",
-    "lastSuccessfulCheck": "2026-11-24T18:54:30.620741Z",
+    "lastAttempt": "2026-11-25T17:59:06.621967Z",
+    "lastSuccessfulCheck": "2026-11-25T17:59:06.621967Z",
     "lastDataChange": "2026-11-21T15:23:15.125636Z"
   },
   "freshness": {
     "latestNumericDate": "2026-11-11",
-    "ageDays": 13,
+    "ageDays": 14,
     "maxAgeDays": 21,
     "status": "current"
   }

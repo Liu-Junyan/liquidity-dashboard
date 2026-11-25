@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "policyVersion": "7",
+  "policyVersion": "8",
   "seriesId": "vix",
   "specHash": "b5c3c30fa5dd0eee49a3075cd50d09145476292e2ced746c494dd60feebaeb8b",
   "provider": "FRED",
@@ -17637,6 +17637,10 @@
     {
       "date": "2026-11-23",
       "value": 26.62
+    },
+    {
+      "date": "2026-11-24",
+      "value": 26.36
     }
   ],
   "metadata": {
@@ -17645,7 +17649,7 @@
     "frequency_short": "D",
     "seasonal_adjustment_short": "NSA",
     "observation_start": "1990-01-02",
-    "observation_end": "2026-11-23"
+    "observation_end": "2026-11-24"
   },
   "requestParameters": {
     "series_id": "VIXCLS",
@@ -17657,7 +17661,7 @@
     "limit": 100000,
     "offset": 0
   },
-  "sourceHash": "900a627c2f6ab173bda2d4db8484a665573dc072b7e06f4efb77a20882e822b7",
+  "sourceHash": "5937acf9ad4bb41a7110e2570dfa0cdd7a976797339c898b1ce3420eccf95fff",
   "revisionSummary": {
     "added": 1,
     "removed": 0,
@@ -17666,13 +17670,13 @@
   "error": null,
   "outcome": {
     "status": "updated",
-    "latestObservationDate": "2026-11-23",
-    "lastAttempt": "2026-11-24T18:54:30.620741Z",
-    "lastSuccessfulCheck": "2026-11-24T18:54:30.620741Z",
-    "lastDataChange": "2026-11-24T18:54:30.620741Z"
+    "latestObservationDate": "2026-11-24",
+    "lastAttempt": "2026-11-25T17:59:06.621967Z",
+    "lastSuccessfulCheck": "2026-11-25T17:59:06.621967Z",
+    "lastDataChange": "2026-11-25T17:59:06.621967Z"
   },
   "freshness": {
-    "latestNumericDate": "2026-11-23",
+    "latestNumericDate": "2026-11-24",
     "ageDays": 1,
     "maxAgeDays": 7,
     "status": "current"

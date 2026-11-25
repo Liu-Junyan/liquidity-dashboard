@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "policyVersion": "7",
+  "policyVersion": "8",
   "seriesId": "bank-loans",
   "specHash": "e98a5c29f5b8a3508dd1bf124ff9b591f4f0b7039114ac95c6ddaf2b9c2ad62b",
   "provider": "FRED",
@@ -3559,13 +3559,13 @@
   "outcome": {
     "status": "unchanged",
     "latestObservationDate": "2026-11-11",
-    "lastAttempt": "2026-11-24T18:54:30.620741Z",
-    "lastSuccessfulCheck": "2026-11-24T18:54:30.620741Z",
+    "lastAttempt": "2026-11-25T17:59:06.621967Z",
+    "lastSuccessfulCheck": "2026-11-25T17:59:06.621967Z",
     "lastDataChange": "2026-11-21T15:23:15.125636Z"
   },
   "freshness": {
     "latestNumericDate": "2026-11-11",
-    "ageDays": 13,
+    "ageDays": 14,
     "maxAgeDays": 21,
     "status": "current"
   }

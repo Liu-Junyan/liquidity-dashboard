@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "policyVersion": "7",
+  "policyVersion": "8",
   "seriesId": "lending-standards",
   "specHash": "f304471e29e8aa83dc235012caa03bfdb048a8660576227da2b49a353dd46bef",
   "provider": "FRED",
@@ -311,13 +311,13 @@
   "outcome": {
     "status": "unchanged",
     "latestObservationDate": "2026-10-01",
-    "lastAttempt": "2026-11-24T18:54:30.620741Z",
-    "lastSuccessfulCheck": "2026-11-24T18:54:30.620741Z",
+    "lastAttempt": "2026-11-25T17:59:06.621967Z",
+    "lastSuccessfulCheck": "2026-11-25T17:59:06.621967Z",
     "lastDataChange": "2026-11-17T07:49:52.018793Z"
   },
   "freshness": {
     "latestNumericDate": "2026-10-01",
-    "ageDays": 54,
+    "ageDays": 55,
     "maxAgeDays": 150,
     "status": "current"
   }
