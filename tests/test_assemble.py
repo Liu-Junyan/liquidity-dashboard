@@ -3,6 +3,7 @@ import csv
 import json
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -48,7 +49,7 @@ class AssemblyTests(unittest.TestCase):
     def setUp(self):
         temp = tempfile.TemporaryDirectory()
         self.addCleanup(temp.cleanup)
-        self.root = Path(temp.name)
+        self.root = Path(temp.name).resolve()
         (self.root / 'data/automatic').mkdir(parents=True)
         for name in ('registry.csv', 'categories.json', 'source-reviews.json'):
             shutil.copy(ROOT / 'data' / name, self.root / 'data' / name)
@@ -175,6 +176,63 @@ class AssemblyTests(unittest.TestCase):
         promote_snapshot(output, second)
         self.assertEqual(json.loads((output / 'manifest.json').read_text())['snapshotId'], second[2]['snapshotId'])
         self.assertFalse(list(output.parent.glob('.snapshot-*')))
+
+    def test_cli_rejects_unsafe_destinations_and_preserves_contents(self):
+        base = self.root / 'destinations'
+        base.mkdir()
+        snapshot = base / 'snapshot'
+        promote_snapshot(snapshot, self.candidate())
+        occupied = base / 'occupied'
+        shutil.copytree(snapshot, occupied)
+        (occupied / '.marker').write_bytes(b'keep this file')
+        partial = base / 'partial'
+        partial.mkdir()
+        (partial / 'catalog.json').write_bytes(b'partial catalog')
+        linked_member = base / 'linked-member'
+        shutil.copytree(snapshot, linked_member)
+        (linked_member / 'manifest.json').unlink()
+        (linked_member / 'manifest.json').symlink_to(snapshot / 'manifest.json')
+        (base / 'alias').symlink_to(snapshot, target_is_directory=True)
+        (base / 'dangling').symlink_to(base / 'missing')
+
+        def contents():
+            entries = {}
+            for path in base.rglob('*'):
+                if path.is_symlink():
+                    value = path.readlink()
+                elif path.is_dir():
+                    value = None
+                else:
+                    value = path.read_bytes()
+                entries[path.relative_to(base)] = value
+            return entries
+
+        before = contents()
+        for destination, reason in [
+                (occupied, '.marker'), (partial, 'missing'), (linked_member, 'manifest.json'),
+                (base / 'alias', 'symlink'), (base / 'alias/new/snapshot', 'symlink'),
+                (base / 'dangling', 'symlink'), (occupied / '.marker', 'must be a directory')]:
+            with self.subTest(destination=destination):
+                result = subprocess.run([sys.executable, ROOT / 'scripts/assemble.py', '--output', destination],
+                                        capture_output=True, text=True)
+                self.assertEqual(result.returncode, 1, result.stderr)
+                self.assertIn(reason, result.stderr)
+                self.assertEqual(contents(), before)
+
+    def test_cli_assembles_to_new_empty_and_existing_snapshot_directories(self):
+        shutil.copytree(ROOT / 'scripts', self.root / 'scripts', ignore=shutil.ignore_patterns('__pycache__'))
+        with tempfile.TemporaryDirectory() as temporary:
+            new = Path(temporary).resolve() / 'new' / 'snapshot'
+            empty = new.parent.parent / 'empty'
+            empty.mkdir()
+            for destination in (new, empty, new):
+                result = subprocess.run([sys.executable, self.root / 'scripts/assemble.py', '--output', destination],
+                                        capture_output=True, text=True)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                names = ('catalog.json', 'observations.json', 'manifest.json')
+                self.assertEqual({p.name for p in destination.iterdir()}, set(names))
+                documents = [json.loads((destination / name).read_bytes()) for name in names]
+                assemble.validate_assembled_snapshot(*documents)
 
     def test_production_build_copies_only_selected_snapshot_and_preserves_demo(self):
         shutil.copytree(ROOT / 'site', self.root / 'site')

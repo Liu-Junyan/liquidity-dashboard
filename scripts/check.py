@@ -26,7 +26,7 @@ def check(repo=ROOT, *, snapshot=None):
         run('node', '--test', 'tests/data.test.mjs')
         with tempfile.TemporaryDirectory(prefix='liquidity-check-') as temporary:
             if snapshot is None:
-                snapshot = Path(temporary) / 'snapshot'
+                snapshot = Path(temporary).resolve() / 'snapshot'
                 run(sys.executable, 'scripts/assemble.py', '--output', str(snapshot))
             run(sys.executable, 'scripts/build.py', '--mode', 'production', '--snapshot', str(snapshot))
             run('node', '--test', 'tests/production.test.mjs')

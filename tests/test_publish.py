@@ -22,7 +22,7 @@ class PublicationTests(unittest.TestCase):
         self.later_time = (now - timedelta(hours=2)).isoformat().replace('+00:00', 'Z')
         temporary = tempfile.TemporaryDirectory(prefix='publication-test-')
         self.addCleanup(temporary.cleanup)
-        self.directory = Path(temporary.name)
+        self.directory = Path(temporary.name).resolve()
         self.repo = self.directory / 'repo'
         self.repo.mkdir()
         for name in ('scripts', 'site'):

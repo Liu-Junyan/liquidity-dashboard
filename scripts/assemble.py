@@ -11,7 +11,7 @@ from pathlib import Path
 if not __package__:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from scripts.artifacts import promote_snapshot
+from scripts.artifacts import promote_snapshot, validate_snapshot_destination
 from scripts.catalog import build_production_catalog
 from scripts.collect import identity, validate_cached
 from scripts.contracts import require, utc_time, iso_date, validate_snapshot, validate_reference
@@ -206,7 +206,7 @@ def main():
     parser.add_argument('--output', type=Path, default=ROOT / 'data/snapshot')
     args = parser.parse_args()
     try:
-        output = args.output.resolve()
+        output = validate_snapshot_destination(args.output)
         require(output == ROOT / 'data/snapshot' or not output.is_relative_to(ROOT),
                 'Use data/snapshot or an external output directory; never overwrite source inputs')
         documents = assemble()
