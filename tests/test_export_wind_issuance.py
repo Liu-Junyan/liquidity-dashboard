@@ -67,6 +67,11 @@ class WindIssuanceExportTests(unittest.TestCase):
                 sheet[address] = '=' + formulas[address]
             if address.startswith('A') and int(address[1:]) >= 3:
                 sheet[address].number_format = 'yyyy-mm'
+        market = book.create_sheet('market')
+        market.append([None])
+        market.append(['指标名称', 'USDX', 'MOVE'])
+        market.append(['2026-11-24', 103.8241, 98.84])
+        market.append(['2026-11-23', 104, '#N/A'])
         book.save(self.source)
         book.close()
         # openpyxl cannot author formula caches or invalid non-finite numbers.
@@ -103,6 +108,10 @@ class WindIssuanceExportTests(unittest.TestCase):
         self.assertEqual((self.output / 'corporate-bond-issuance.csv').read_text(),
                          'date,value\n2026-09-30,\n2026-10-31,2.5\n')
         self.assertIn('2026-10-31,0\n', (self.output / 'treasury-bond-issuance.csv').read_text())
+        self.assertEqual((self.output / 'move.csv').read_text(),
+                         'date,value\n2026-11-23,\n2026-11-24,98.84\n')
+        self.assertEqual((self.output / 'dollar-index.csv').read_text(),
+                         'date,value\n2026-11-23,104\n2026-11-24,103.8241\n')
         before = {p.name: (p.read_bytes(), p.stat().st_mtime_ns) for p in self.output.iterdir()}
         self.export()
         self.assertEqual(before, {p.name: (p.read_bytes(), p.stat().st_mtime_ns)

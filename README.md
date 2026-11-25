@@ -50,7 +50,7 @@ mismatch. See the [Slice 6 review and remaining inputs](docs/source-review-slice
 The two ICE BofA credit-spread series use FRED's rolling three-year history, and
 VIX is a daily index level; all are published with the maintainer's confirmed
 redistribution permission recorded in the source review. Treasury bid–ask is
-deferred; iFind dollar index/MOVE and FINRA price impact still need source
+deferred; Wind USDX/MOVE and FINRA price impact still need source
 definitions. The first hosted production run and rollback remain to be verified
 after merge. Mobile UI polish remains deferred.
 
@@ -98,11 +98,11 @@ revalidate cached data. This prevents old demo scripts from reading a new produc
 snapshot after a rebuild. If an already-open page predates this fix, reload it once
 with **Cmd+Shift+R** on macOS (or **Ctrl+Shift+R** on Windows/Linux).
 
-For the three SIFMA issuance inputs, `python3 scripts/export_wind_issuance.py`
+For the three SIFMA issuance series, MOVE and USDX, `python3 scripts/export_wind_issuance.py`
 uses `openpyxl` to convert saved values from the Wind workbook into `data/manual/*.csv`.
-Keep the workbook in versioned `data/sources/wind/bond-issuance.xlsx` and commit
+Keep the workbook in versioned `data/sources/wind/Wind-data.xlsx` and commit
 workbook and CSV updates together for use on other machines. See the
-[refresh and export instructions](data/README.md#exporting-the-wind-issuance-workbook).
+[refresh and export instructions](data/README.md#exporting-the-wind-workbook).
 This prepares candidate manual inputs. Commit the workbook, CSVs and any reviewed
 definition changes before production assembly; corrections/removals need reasons.
 

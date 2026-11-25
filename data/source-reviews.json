@@ -40,7 +40,7 @@
     "redistribution": "NY Fed terms apply; attribution and applicable reference-rate notices required. See source review."
   },
   "bond-issuance": {
-    "specHash": "195c7d5e8ad9620328c7424400fe2b94e69fd4d464f31f0370743bf6fc6d84f5",
+    "specHash": "516071478ced036eab4fed7acb55524298d199ebf9417ed7dbe272e1ea0f8cbc",
     "reviewedOn": "2026-11-17",
     "reference": "docs/source-review-slice-6.md#bond-issuance",
     "explanation": "SIFMA经Wind EDB提供的债券月度总发行额。口径为全期限、总发行额（非净额、非年初累计）。国债与公司债已包含在总量中，三项不可相加。",
@@ -48,7 +48,7 @@
     "redistribution": "Maintainer confirmed public redistribution permission for Wind/SIFMA on 2026-11-17. Cite SIFMA and Wind."
   },
   "corporate-bond-issuance": {
-    "specHash": "76d8332840f5946d3bf4122534d1ce2c9f628c14c8b6e05e9429f6b43bfc30db",
+    "specHash": "d74503404ba2d01748820492174a4c38667198ae7b4b608716943e3df331affc",
     "reviewedOn": "2026-11-17",
     "reference": "docs/source-review-slice-6.md#corporate-bond-issuance",
     "explanation": "SIFMA经Wind EDB提供的公司债月度发行额。口径为全期限、总发行额（非净额、非年初累计）。",
@@ -163,7 +163,7 @@
     "seasonalAdjustment": "NSA"
   },
   "treasury-bond-issuance": {
-    "specHash": "9f91a2af4f178ff00c38316b44c4af0893c08c3e95d52a96ebd5bec7840a5805",
+    "specHash": "6c29c8837d7eb4a9161199a8ad8db9e76e234557926d8f72cf7b19d82432b400",
     "reviewedOn": "2026-11-17",
     "reference": "docs/source-review-slice-6.md#treasury-bond-issuance",
     "explanation": "SIFMA经Wind EDB提供的美国国债月度发行额。口径为全期限、总发行额（非净额、非年初累计）。",

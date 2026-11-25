@@ -69,12 +69,12 @@ Keep `data/registry.csv` authoritative; `data/registry.json` remains an optional
 | --- | --- |
 | `scripts/policies.py` | Activated-series set; provider request transforms; conversions; date, comparison, and freshness policies |
 | `scripts/import_manual.py` | Parse and validate manually maintained inputs and corrections |
-| `scripts/export_wind_issuance.py` (implemented) | Read saved Wind workbook values and prepare the three manual issuance CSVs |
+| `scripts/export_wind_issuance.py` (implemented) | Read saved Wind workbook values and prepare the five manual CSVs |
 | `scripts/collect.py` and `scripts/providers/fred.py` | Fetch, validate, and stage automatic inputs with bounded retries/timeouts |
 | `scripts/normalize.py` and `scripts/derive.py` | Convert source-scale values and calculate dependency-ordered outputs |
 | `scripts/assemble.py` | Validate the complete candidate dataset and create one snapshot |
 | `data/manual/<series-id>.csv` | Maintainer-owned source observations |
-| `data/sources/wind/bond-issuance.xlsx` | Refreshable Wind workbook; versioned with CSV updates for use across machines, outside published assets |
+| `data/sources/wind/Wind-data.xlsx` | Refreshable Wind workbook; versioned with CSV updates for use across machines, outside published assets |
 | `data/automatic/<series-id>.json` | Last validated automatic response values and sanitized provenance |
 | `data/snapshot/` | Current validated catalog, observations, and manifest; previous versions retained through Git |
 
@@ -132,7 +132,7 @@ The maintainer has selected the three SIFMA issuance series as manual test input
 samples can exercise the importer after their registry source, units, and monthly
 date conventions are specified. Their production activation remains in Slice 6.
 
-- [x] Prepare the SIFMA issuance CSVs from the saved Wind workbook with `scripts/export_wind_issuance.py` (November 17, 2026). This `openpyxl` adapter checks headers, billions units, manual ownership, month-end dates, and cached numeric values. The raw workbook is versioned in `data/sources/wind/`; outputs use `date,value` in `data/manual/`. This does not implement the CSV importer, Git-baseline correction checks, source activation, or publication. See the [export workflow](../data/README.md#exporting-the-wind-issuance-workbook).
+- [x] Prepare the SIFMA issuance CSVs from the saved Wind workbook with `scripts/export_wind_issuance.py` (November 17, 2026). This `openpyxl` adapter checks headers, billions units, manual ownership, month-end dates, and cached numeric values. The raw workbook is versioned in `data/sources/wind/`; outputs use `date,value` in `data/manual/`. This does not implement the CSV importer, Git-baseline correction checks, source activation, or publication. See the [export workflow](../data/README.md#exporting-the-wind-workbook).
 - [x] Implement UTF-8 CSV import with exactly `date,value` at `data/manual/<series-id>.csv`; blank values become null. Enforce the two-column schema, sorted unique ISO dates, finite numbers, and supported registry units. Resolve the shared source reference and table/measurement details from `data/registry.csv`, not individual observations. Require a reviewed source reference before activation; no publication-date or correction-note columns are maintained.
 - [x] Compare manual edits against the previous committed input. Changed values, nulling a prior value, and removed rows require a reason in the input commit message identifying the series and affected dates or range. New rows need no correction reason. CI fetches enough history for this comparison and reports a missing baseline rather than bypassing validation.
 - [x] Enforce input ownership: manual files cannot override automatic or derived inputs. The importer is read-only; a shared ownership gate rejects automatic access to manual series. Slice 3 collectors must use this gate and write only automatic paths.
@@ -315,8 +315,7 @@ Exit check: the first production milestone is published successfully; scheduled,
   deferred. Preserve FRED's rolling three-year window and month-end weekend dates,
   and retain VIX index levels with explicit missing markers.
 - [x] Leave cross-currency basis, CDS, ETFs, depth, positioning and leverage unavailable.
-- [ ] Add iFind exports when source identifiers/descriptions, date and adjustment
-  conventions and files are available. Permission is confirmed; definitions are not.
+- [ ] Complete the production source review for the Wind USDX and MOVE manual inputs.
 - [ ] Define FINRA coverage/units and the price-impact proxy methodology before activation.
 
 Implementation and evidence: [Slice 6 source review](source-review-slice-6.md).

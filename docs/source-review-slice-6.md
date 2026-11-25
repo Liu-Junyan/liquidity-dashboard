@@ -171,7 +171,7 @@ measurement definitions on November 17: **monthly, all maturities, gross issuanc
 Treasury and corporate are included in total. Definitions are maintainer-confirmed,
 not independently certified instrument descriptions. The source is
 [SIFMA US Fixed Income Securities Statistics](https://www.sifma.org/research/statistics/us-fixed-income-securities-statistics),
-supplied through `data/sources/wind/bond-issuance.xlsx`, sheet `bond-issuance`.
+supplied through `data/sources/wind/Wind-data.xlsx`, sheet `bond-issuance`.
 The workbook's embedded Wind EDB metadata identifies:
 
 | Registry ID | Wind ID | Workbook column | January 2011 | October 2026 |
@@ -202,10 +202,10 @@ separate ICE and Cboe confirmations cover only those index series.
 
 ## Deferred sources and maintainer follow-up
 
-- **iFind dollar index/MOVE:** permission confirmed, but identifiable source series,
-  instrument definitions, observation units/dates, adjustment conventions and input
-  files remain missing. Supply original export descriptions or table references;
-  a provider name alone cannot identify a measure.
+- **Wind USDX/MOVE:** The `market` sheet now supplies both daily manual CSVs.
+  Production source review is pending for the Wind series definitions, observation
+  conventions and redistribution terms. The earlier permission recorded for iFind
+  applied to that source.
 - **Treasury bid–ask:** deferred at the maintainer's request; no source substitution.
 - **Price impact/FINRA:** still need instrument coverage, volume units, matched dates,
   signed versus absolute yield change and a defensible proxy interpretation.

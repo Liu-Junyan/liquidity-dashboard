@@ -1,4 +1,4 @@
-"""Export saved Wind issuance values to the three manual date,value CSVs.
+"""Export saved Wind issuance and market values to manual date,value CSVs.
 
 Reads Excel files with openpyxl. Does not execute formulas, refresh Wind,
 modify the workbook, or assemble/publish a production snapshot.
@@ -26,14 +26,17 @@ else:
     from registry import DEFAULT_REGISTRY, load_registry
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_INPUT = ROOT / 'data/sources/wind/bond-issuance.xlsx'
+DEFAULT_INPUT = ROOT / 'data/sources/wind/Wind-data.xlsx'
 DEFAULT_OUTPUT = ROOT / 'data/manual'
 SERIES = ('bond-issuance', 'treasury-bond-issuance', 'corporate-bond-issuance')
+MARKET_HEADERS = {'MOVE': 'move', 'USDX': 'dollar-index'}
 
 
-def saved_value(cell, formula_cell):
+def saved_value(cell, formula_cell, *, allow_na=False):
     """Keep empty observations distinct from Excel errors and uncached formulas."""
     value = cell.value
+    if allow_na and cell.data_type == 'e' and value == '#N/A':
+        return None
     if cell.data_type == 'e':
         raise ValueError(f'{cell.coordinate}: Excel error {value}; refresh Wind and save in Excel')
     if formula_cell.data_type == 'f' and value is None:
@@ -45,7 +48,7 @@ def saved_value(cell, formula_cell):
     return None if value == '' else value
 
 
-def observation_date(value, epoch):
+def observation_date(value, epoch, *, month_end=True):
     """Use openpyxl's Excel date conversion; preserve source month-end dates."""
     try:
         if type(value) in (int, float):
@@ -64,7 +67,7 @@ def observation_date(value, epoch):
             raise ValueError
     except (ValueError, OverflowError):
         raise ValueError(f'Invalid observation date: {value!r}') from None
-    if value.day != calendar.monthrange(value.year, value.month)[1]:
+    if month_end and value.day != calendar.monthrange(value.year, value.month)[1]:
         raise ValueError(f'{value}: expected a month-end observation date; dates are not shifted')
     return value.isoformat()
 
@@ -81,58 +84,70 @@ def read_workbook(path, sheet_name='bond-issuance'):
                                                                  keep_links=False)))
         except (BadZipFile, InvalidFileException, KeyError, ValueError) as error:
             raise ValueError(f'Invalid XLSX workbook: {error}') from error
-        if sheet_name not in cached.sheetnames:
-            raise ValueError(f'Expected worksheet {sheet_name!r}')
-        sheet, formula_sheet = cached[sheet_name], formulas[sheet_name]
-
-        def value_at(row, column):
-            return saved_value(sheet.cell(row, column), formula_sheet.cell(row, column))
-
-        # A1's Wind control formula is not an observation and is never inspected.
-        if value_at(1, 2) != 'Billions $':
-            raise ValueError('B1 must declare "Billions $"; source units cannot be inferred')
-        headers = {column: value_at(2, column) for column in range(2, sheet.max_column + 1)
-                   if value_at(2, column) is not None}
-        if len(headers) != len(SERIES) or set(headers.values()) != set(SERIES):
-            raise ValueError(f'Row 2 must contain each series ID exactly once: {", ".join(SERIES)}')
-        if value_at(2, 1) not in ('指标名称', 'date'):
-            raise ValueError('A2 must be 指标名称 or date')
-        result = {identifier: [] for identifier in SERIES}
-        seen = set()
-        for row in range(3, sheet.max_row + 1):
-            populated = {column: value_at(row, column) for column in range(1, sheet.max_column + 1)}
-            populated = {column: value for column, value in populated.items() if value is not None}
-            if not populated:
-                continue
-            if set(populated) - {1, *headers}:
-                raise ValueError(f'Row {row}: data outside the date/series columns')
-            when = observation_date(populated.get(1), cached.epoch)
-            if when in seen:
-                raise ValueError(f'Row {row}: duplicate observation date {when}')
-            seen.add(when)
-            for column, identifier in headers.items():
-                value = populated.get(column)
-                if value is not None and type(value) not in (int, float):
-                    raise ValueError(f'{sheet.cell(row, column).coordinate}: expected numeric value or blank, got {value!r}')
-                # Keep numeric precision, without rounding to the cell's display
-                # format. Decimal renders float's round-trip representation plainly.
-                result[identifier].append((when, None if value is None else Decimal(str(value))))
-        for identifier, points in result.items():
-            if not any(value is not None for _, value in points):
-                raise ValueError(f'{identifier}: no numeric observations; refresh Wind and save in Excel')
-            points.sort()
+        result = read_sheet(cached, formulas, sheet_name, market=False)
+        result.update(read_sheet(cached, formulas, 'market', market=True))
         return result
+
+
+def read_sheet(cached, formulas, sheet_name, *, market):
+    if sheet_name not in cached.sheetnames:
+        raise ValueError(f'Expected worksheet {sheet_name!r}')
+    sheet, formula_sheet = cached[sheet_name], formulas[sheet_name]
+
+    def value_at(row, column, *, allow_na=False):
+        return saved_value(sheet.cell(row, column), formula_sheet.cell(row, column),
+                           allow_na=allow_na)
+
+    # A1's Wind control formula is not an observation and is never inspected.
+    if not market and value_at(1, 2) != 'Billions $':
+        raise ValueError('B1 must declare "Billions $"; source units cannot be inferred')
+    mapping = MARKET_HEADERS if market else {key: key for key in SERIES}
+    columns = range(1, sheet.max_column + 1)
+    headers = {column: value_at(2, column) for column in range(2, sheet.max_column + 1)
+               if value_at(2, column) is not None}
+    if len(headers) != len(mapping) or set(headers.values()) != set(mapping):
+        raise ValueError(f'Row 2 must contain each series ID exactly once: {", ".join(mapping)}')
+    if value_at(2, 1) not in ('指标名称', 'date'):
+        raise ValueError('A2 must be 指标名称 or date')
+    result = {identifier: [] for identifier in mapping.values()}
+    seen = set()
+    for row in range(3, sheet.max_row + 1):
+        populated = {column: value_at(row, column, allow_na=market and column in headers)
+                     for column in columns}
+        populated = {column: value for column, value in populated.items() if value is not None}
+        if not populated:
+            continue
+        if set(populated) - {1, *headers}:
+            raise ValueError(f'Row {row}: data outside the date/series columns')
+        when = observation_date(populated.get(1), cached.epoch, month_end=not market)
+        if when in seen:
+            raise ValueError(f'Row {row}: duplicate observation date {when}')
+        seen.add(when)
+        for column, identifier in headers.items():
+            value = populated.get(column)
+            if value is not None and type(value) not in (int, float):
+                raise ValueError(f'{sheet.cell(row, column).coordinate}: expected numeric value or blank, got {value!r}')
+            # Keep numeric precision, without rounding to the cell's display
+            # format. Decimal renders float's round-trip representation plainly.
+            result[mapping[identifier]].append((when, None if value is None else Decimal(str(value))))
+    for identifier, points in result.items():
+        if not any(value is not None for _, value in points):
+            raise ValueError(f'{identifier}: no numeric observations; refresh Wind and save in Excel')
+        points.sort()
+    return result
 
 
 def export_workbook(source=DEFAULT_INPUT, output_dir=DEFAULT_OUTPUT, *,
                     registry_path=DEFAULT_REGISTRY, sheet_name='bond-issuance', check=False):
     registry = load_registry(registry_path)['series']
-    for identifier in SERIES:
+    for identifier in (*SERIES, *MARKET_HEADERS.values()):
+        frequency = 'monthly' if identifier in SERIES else 'daily'
+        unit = 'billions' if identifier in SERIES else 'none'
         entry = registry.get(identifier, {})
-        if entry.get('update_method') != 'manual' or entry.get('native_frequency') != 'monthly':
-            raise ValueError(f'{identifier}: requires manual ownership and monthly frequency')
-        if (entry.get('source_unit') or '').lower() != 'billions':
-            raise ValueError(f'{identifier}: registry source_unit must match workbook billions')
+        if entry.get('update_method') != 'manual' or entry.get('native_frequency') != frequency:
+            raise ValueError(f'{identifier}: requires manual ownership and {frequency} frequency')
+        if (entry.get('source_unit') or '').lower() != unit:
+            raise ValueError(f'{identifier}: registry source_unit must match workbook {unit}')
     series = read_workbook(source, sheet_name)
     payloads = {}
     for identifier, points in series.items():
@@ -144,7 +159,7 @@ def export_workbook(source=DEFAULT_INPUT, output_dir=DEFAULT_OUTPUT, *,
     if not check:
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
-        # Validate all three inputs before writing; stage all files on the same
+        # Validate all inputs before writing; stage all files on the same
         # filesystem, then replace each CSV atomically. Unchanged CSVs stay intact.
         with tempfile.TemporaryDirectory(prefix='.wind-issuance-', dir=output_dir) as directory:
             staged = []
@@ -172,7 +187,7 @@ def main():
         series = export_workbook(args.input, args.output_dir, registry_path=args.registry,
                                  sheet_name=args.sheet, check=args.check)
     except (ValueError, OSError) as error:
-        parser.exit(1, f'Wind issuance export failed: {error}\n')
+        parser.exit(1, f'Wind export failed: {error}\n')
     for identifier, points in series.items():
         missing = sum(value is None for _, value in points)
         print(f'{identifier}: {len(points)} rows, {points[0][0]} to {points[-1][0]}, {missing} missing')

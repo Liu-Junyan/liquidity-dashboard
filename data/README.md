@@ -157,9 +157,9 @@ an in-memory candidate result, not a snapshot or a normalized manifest hash.
 The importer never writes manual, automatic, demo, or production files. Future
 collectors must use the ownership gate before writing automatic inputs.
 
-### Exporting the Wind issuance workbook
+### Exporting the Wind workbook
 
-Keep the refreshable workbook at `data/sources/wind/bond-issuance.xlsx`. Source
+Keep the refreshable workbook at `data/sources/wind/Wind-data.xlsx`. Source
 workbooks belong in Git so another machine can pull, refresh, and export the same
 file. This directory remains outside `site/`, so source workbooks are not included
 in the GitHub Pages website.
@@ -189,10 +189,10 @@ are needed to refresh the workbook, but not to extract its saved results. To rea
 a workbook saved elsewhere:
 
 ```sh
-python3 scripts/export_wind_issuance.py --input /path/to/bond-issuance.xlsx
+python3 scripts/export_wind_issuance.py --input /path/to/Wind-data.xlsx
 ```
 
-The expected worksheet is `bond-issuance` (`--sheet` can select another name):
+The issuance worksheet defaults to `bond-issuance`. Use `--sheet` to override its name.
 
 - Row 1 contains the Wind control formula, which is never evaluated, and the
   required `Billions $` unit label in B1.
@@ -201,17 +201,21 @@ The expected worksheet is `bond-issuance` (`--sheet` can select another name):
 - Row 3 onward contains dates in column A and the saved numeric values. Dates
   must be month-end Excel dates or ISO `YYYY-MM-DD` text; source dates are preserved.
 
-The exporter writes the three files listed above with exactly `date,value`, sorted
+The `market` worksheet uses the same date column and header row. Its `MOVE` and
+`USDX` columns supply daily index levels for `move.csv` and `dollar-index.csv`.
+An Excel `#N/A` in either market value column exports as a blank observation.
+
+The exporter writes all five files with exactly `date,value`, sorted
 oldest first. It preserves Excel numeric values, zeroes, and blank/missing
 values (decimal text may be shortened by the Excel reader); it does not round to
 Excel's displayed two decimal places, convert units, fill missing months, or add
 component series together. The supplied workbook
-produced 190 observations per series from January 2011 through October 2026.
+produced 190 observations per issuance series from January 2011 through October 2026.
 
-Duplicate dates, unknown/duplicate headers, invalid dates or values, Excel errors,
+Duplicate dates, unknown/duplicate headers, invalid dates or values, other Excel errors,
 uncached data formulas, empty/all-missing series, and mismatched registry units or
 ownership fail before any CSV is replaced. All outputs are staged first and each
-file is replaced atomically; this is not a three-file transaction. `--check`
+file is replaced atomically; each replacement applies to one file. `--check`
 validates without writing, and unchanged exports leave CSV files untouched.
 `--output-dir` selects an alternative destination for inspection or tests.
 
