@@ -56,6 +56,7 @@ jobs:
       group: production-pages
       cancel-in-progress: false
     permissions:
+      actions: read
       contents: write
       pull-requests: write
       pages: write
@@ -98,9 +99,28 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Upload the complete validated artifact
         if: steps.candidate.outputs.deploy == 'true'
+        id: upload
         uses: actions/upload-pages-artifact@v4
         with:
           path: dist
+      - name: Wait for the uploaded Pages artifact to appear
+        if: steps.candidate.outputs.deploy == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_ID: ${{ steps.upload.outputs.artifact_id }}
+        run: |
+          # Upload completion can precede visibility to the Pages action.
+          endpoint="repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts?name=github-pages"
+          for delay in 10 10 20 40 40; do
+            sleep "$delay"
+            ids=$(gh api "$endpoint" --jq '.artifacts[] | select(.expired == false) | .id')
+            if [[ -n "$ARTIFACT_ID" && "$ids" == "$ARTIFACT_ID" ]]; then
+              echo "Pages artifact $ARTIFACT_ID is visible for run $GITHUB_RUN_ID."
+              exit 0
+            fi
+          done
+          echo "::error::Expected Pages artifact $ARTIFACT_ID did not appear uniquely for run $GITHUB_RUN_ID."
+          exit 1
       - name: Deploy the exact artifact revision
         if: steps.candidate.outputs.deploy == 'true'
         id: deployment
