@@ -1,6 +1,6 @@
 # USD Liquidity Observatory
 
-A Chinese-language dollar-liquidity research prototype, styled with restrained navy, blue charts, thin rules, and editorial typography inspired by the New York Fed Markets Data Dashboard. **The production dashboard includes the three reviewed SIFMA issuance series. The default local build uses synthetic demo observations.** [data/registry.csv](data/registry.csv) controls dashboard membership, names, grouping, and ordering. The current selection has 23 indicators across 货币层、离岸层、信用层、金融市场层 (9 / 3 / 7 / 4). Rows marked `unavailable` are retained for future use and omitted from the dashboard; blank-category calculation inputs are also hidden.
+A Chinese-language dollar-liquidity research prototype, styled with restrained navy, blue charts, thin rules, and editorial typography inspired by the New York Fed Markets Data Dashboard. **The production dashboard includes MOVE, USDX, and the three SIFMA issuance series. The default local build uses synthetic demo observations.** [data/registry.csv](data/registry.csv) controls dashboard membership, names, grouping, and ordering. The current selection has 23 indicators across 货币层、离岸层、信用层、金融市场层 (9 / 3 / 7 / 4). Rows marked `unavailable` are retained for future use and omitted from the dashboard; blank-category calculation inputs are also hidden.
 
 Each indicator's **查看统计摘要** control shows its trailing 3-month and 1-year means and the latest value's percentile within the selected chart range, with valid sample counts and calculation notes. **展开指标** opens the larger chart, indicator explanation, and source details; no raw-history table is rendered.
 
@@ -40,8 +40,8 @@ JavaScript checks use Node 22+ and built-in modules; `npm install` is unnecessar
 Edit [data/registry.csv](data/registry.csv), then run `python3 scripts/build.py`. The build regenerates the catalog and demo observations from the CSV, including additions, renames, removals, and `unavailable` exclusions. No separate catalog edit is needed. [The registry guide](data/README.md) explains visibility rules and the 16 columns. `python3 scripts/registry.py --output data/registry.json` optionally exports the complete registry, including hidden entries.
 
 Real-data Slices 1–6 are implemented locally within the reviewed scope. The active
-set contains **24 series and 19 displayed indicators**: 18 FRED inputs, three
-SIFMA/Wind manual inputs, and three calculations. SOFR, EFFR, SOFR99, bank assets,
+set contains **26 series and 21 displayed indicators**: 18 FRED inputs, five
+manual inputs from the Wind workbook, and three calculations. SOFR, EFFR, SOFR99, bank assets,
 and Treasury yield change remain internal inputs. Source-specific seasonal
 adjustment, Wednesday/quarter-start/daily-close conventions and freshness checks are
 enforced. The reserve/assets chart explicitly identifies its coverage and seasonal
@@ -50,8 +50,8 @@ mismatch. See the [Slice 6 review and remaining inputs](docs/source-review-slice
 The two ICE BofA credit-spread series use FRED's rolling three-year history, and
 VIX is a daily index level; all are published with the maintainer's confirmed
 redistribution permission recorded in the source review. Treasury bid–ask is
-deferred; Wind USDX/MOVE and FINRA price impact still need source
-definitions. The first hosted production run and rollback remain to be verified
+deferred. The [Wind USDX and MOVE review](docs/source-review-slice-6.md#wind-market-indices)
+records the daily series definitions and publication status. FINRA price impact still needs a source definition. The first hosted production run and rollback remain to be verified
 after merge. Mobile UI polish remains deferred.
 
 Run `python3 scripts/collect.py` to download current histories since `2010-01-01`
@@ -90,7 +90,7 @@ Run one local writer at a time; GitHub production jobs share one publication loc
 The manifest identifies the source commit, exact source-file hashes, and any
 uncommitted source changes. Commit source changes and reassemble before a release.
 Source notices name **Junyan Liu** as publisher. Unconnected indicators display
-`待接入`; the three reviewed SIFMA/Wind series are included in production.
+`待接入`; all five reviewed Wind workbook series are included in production.
 These local commands do not publish; the Slice 5 workflow handles publication.
 
 Builds version the JavaScript module graph and styles by content, and JSON requests

@@ -315,7 +315,8 @@ Exit check: the first production milestone is published successfully; scheduled,
   deferred. Preserve FRED's rolling three-year window and month-end weekend dates,
   and retain VIX index levels with explicit missing markers.
 - [x] Leave cross-currency basis, CDS, ETFs, depth, positioning and leverage unavailable.
-- [ ] Complete the production source review for the Wind USDX and MOVE manual inputs.
+- [x] Review Wind USDX and MOVE identifiers, index levels, date convention and exported histories.
+- [x] Record Wind redistribution permission and activate both daily indices in policy version 8.
 - [ ] Define FINRA coverage/units and the price-impact proxy methodology before activation.
 
 Implementation and evidence: [Slice 6 source review](source-review-slice-6.md).

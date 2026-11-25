@@ -1,9 +1,9 @@
 # Slice 6 source review
 
-Reviewed November 17–18, 2026. Registry specifications are bound to
+Reviewed November 17–25, 2026. Registry specifications are bound to
 `data/source-reviews.json`; changing measurement fields requires renewed review.
-The active set contains 24 series: 18 automatic inputs, three manual inputs and
-three derived outputs, producing 19 displayed indicators. Five inputs stay hidden.
+The active set contains 26 series: 18 automatic inputs, five manual inputs and
+three derived outputs, producing 21 displayed indicators. Five inputs stay hidden.
 ICE credit spreads and VIX were activated on November 18 after the maintainer
 confirmed redistribution permission; Treasury bid–ask is deferred. Existing
 unavailable entries remain excluded.
@@ -200,12 +200,47 @@ working-tree definitions cannot silently replace the audited committed specifica
 Credit SIFMA and Wind, with the permission confirmation recorded here. The
 separate ICE and Cboe confirmations cover only those index series.
 
+## Wind market indices
+
+Reviewed November 25, 2026. The Wind EDB export configuration embedded in the
+`market!A1` comment of `data/sources/wind/Wind-data.xlsx` identifies the two
+series below. Wind supplies the observations. ICE's descriptions establish the
+meaning of the corresponding benchmarks.
+
+| Dashboard ID | Wind EDB ID | Workbook header | Wind unit | Numeric rows | Missing rows |
+| --- | --- | --- | --- | ---: | ---: |
+| `move` | `C7536898` | MOVE | Points | 4,181 | 223 |
+| `dollar-index` | `M0000271` | USDX | March 1973 = 100 | 4,402 | 2 |
+
+**MOVE** measures the option market's implied volatility of US bond yields over
+a one-month horizon. The workbook reports the index level in points. A higher
+reading indicates greater implied yield volatility. [ICE MOVE overview](https://developer.ice.com/fixed-income-data-services/catalog/ice-data-indices-move-index)
+and [ICE interview on the benchmark horizon](https://www.ice.com/insights/fixed-income-data/harley-bassman-a-bond-market-veteran-sees-opportunity-amid-the-higher-rates-backdrop).
+
+**USDX** tracks the US dollar against a fixed-weight basket of six currencies
+using a geometric average of spot exchange rates. A higher index level indicates
+a stronger dollar against the basket. [ICE currency index description](https://developer.ice.com/fixed-income-data-services/catalog/ice-data-indices-currency-indices)
+and [ICE Dollar Index FAQ](https://www.ice.com/publicdocs/futures_us/ICE_Dollar_Index_FAQ.pdf).
+
+**Observation convention.** Use each saved Wind date and level with a scale
+factor of one. The export specifies a requested start of January 1, 2010. Both
+CSVs contain 4,404 dated rows from January 4, 2010 through November 24, 2026.
+A fresh export reproduced both committed CSVs byte for byte, including the
+blank values corresponding to market-sheet missing observations.
+
+The export metadata gives no sampling time, time zone or adjustment convention.
+Use “Wind daily index level” in chart descriptions. For example, the USDX
+observation on September 16, 2020 is 93.1108, while ICE reports a close of
+93.15. Rounding Wind's observation to two decimals gives 93.11. The reason for
+the difference is unverified. [ICE USDX overview](https://status.ice.com/forex/usdx).
+
+**Publication status.** Source identity, units and export integrity are reviewed.
+On November 25, 2026, the maintainer confirmed Wind permission for public
+display and downloadable daily history for both EDB series. Production policy
+version 8 includes both as manual inputs and credits Wind and ICE Data Indices.
+
 ## Deferred sources and maintainer follow-up
 
-- **Wind USDX/MOVE:** The `market` sheet now supplies both daily manual CSVs.
-  Production source review is pending for the Wind series definitions, observation
-  conventions and redistribution terms. The earlier permission recorded for iFind
-  applied to that source.
 - **Treasury bid–ask:** deferred at the maintainer's request; no source substitution.
 - **Price impact/FINRA:** still need instrument coverage, volume units, matched dates,
   signed versus absolute yield change and a defensible proxy interpretation.

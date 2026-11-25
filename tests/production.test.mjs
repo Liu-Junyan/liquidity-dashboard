@@ -44,6 +44,23 @@ test('credit spreads display both ICE OAS series with daily source dates', () =>
   }
 });
 
+test('Wind daily index levels are available with source attribution', () => {
+  const manifest = JSON.parse(readFileSync(new URL('../dist/data/manifest.json', import.meta.url)));
+  const windActive = Number(manifest.policyVersion) >= 8;
+  for (const id of ['move', 'dollar-index']) {
+    const item = display.indicators.find(indicator => indicator.seriesId === id);
+    assert.equal(item.inputAvailable, windActive);
+    if (!windActive) {
+      assert.deepEqual(payload.series[id], []);
+      continue;
+    }
+    assert.equal(item.observationDateRule, 'source-daily-level');
+    assert.equal(item.unit.label, '点');
+    assert.ok(payload.series[id].some(point => Number.isFinite(point.value)));
+    assert.match(item.notices.map(notice => notice.text).join(' '), /Wind EDB/);
+  }
+});
+
 test('VIX displays as an index level with Cboe attribution', () => {
   const vix = display.indicators.find(item => item.seriesId === 'vix');
   assert.equal(vix.nativeFrequency, 'daily');
@@ -213,7 +230,7 @@ try {
     assert.ok(chart.xAxis.min < chart.xAxis.max);
     location.hash = '#indicator=sofr-effr-spread&range=ytd'; handlers.hashchange();
     assert.match(node('#expanded-chart').textContent, /所选区间/);
-    location.hash = '#indicator=dollar-index&range=all'; handlers.hashchange();
+    location.hash = '#indicator=price-impact&range=all'; handlers.hashchange();
     assert.match(node('#dialog-content').innerHTML, /待接入/);
     assert.match(node('#expanded-chart').textContent, /待接入/);
     let prevented = false;

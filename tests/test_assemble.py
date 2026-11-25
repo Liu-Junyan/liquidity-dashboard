@@ -85,7 +85,8 @@ class AssemblyTests(unittest.TestCase):
         spread = next(item for item in catalog['indicators'] if item['id'] == 'sofr-effr-spread')
         self.assertIn('Junyan Liu', json.dumps(spread['notices']))
         self.assertEqual(spread['comparisonPolicy']['valueScale'], 1)
-        self.assertEqual(catalog['dataset']['observationEnd'], '2026-11-16')
+        self.assertEqual(catalog['dataset']['observationEnd'], max(
+            point['date'] for points in observations['series'].values() for point in points))
         for item in catalog['indicators']:
             self.assertNotIn('合成', item['explanation'])
             if not item['inputAvailable']:

@@ -204,5 +204,21 @@
     "dateRule": "source-daily-close",
     "redistribution": "Maintainer confirmed prior written redistribution permission for the Cboe VIX on 2026-11-18. Cboe Volatility Index data; cite Cboe and FRED.",
     "seasonalAdjustment": "NSA"
+  },
+  "move": {
+    "specHash": "d7a2beef55fd9f5e4f29a9fba487e3b7b15f2e28e30b6796a0e053fe5382b9c6",
+    "reviewedOn": "2026-11-25",
+    "reference": "docs/source-review-slice-6.md#wind-market-indices",
+    "explanation": "Wind 日度 MOVE 指数（点），反映美国债券收益率未来一个月的期权隐含波动率。",
+    "dateRule": "source-daily-level",
+    "redistribution": "Maintainer confirmed Wind permission for public display and downloadable history on 2026-11-25. Credit Wind and ICE Data Indices."
+  },
+  "dollar-index": {
+    "specHash": "b28408ddf256b49eb8371449724e912cd9d1c23a523597eb4ce879f23405724a",
+    "reviewedOn": "2026-11-25",
+    "reference": "docs/source-review-slice-6.md#wind-market-indices",
+    "explanation": "Wind 日度美元指数（1973 年 3 月 = 100），衡量美元相对六种货币固定权重篮子的表现。",
+    "dateRule": "source-daily-level",
+    "redistribution": "Maintainer confirmed Wind permission for public display and downloadable history on 2026-11-25. Credit Wind and ICE Data Indices."
   }
 }

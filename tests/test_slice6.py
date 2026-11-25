@@ -117,7 +117,7 @@ class CoverageTests(unittest.TestCase):
         self.assertEqual(validate_activation(self.registry, {'vix'}), ['vix'])
 
     def test_deferred_sources_cannot_activate(self):
-        for key in ('bid-ask-spread', 'price-impact', 'dollar-index', 'move'):
+        for key in ('bid-ask-spread', 'price-impact'):
             self.assertNotIn(key, ACTIVE_SERIES)
             with self.subTest(key=key), self.assertRaises(ValueError):
                 validate_activation(self.registry, {key})

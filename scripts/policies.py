@@ -19,7 +19,7 @@ else:
     from registry import DEFAULT_REGISTRY, load_registry
 
 ROOT = Path(__file__).resolve().parents[1]
-POLICY_VERSION = '7'
+POLICY_VERSION = '8'
 FRED_OBSERVATION_START = '2010-01-01'
 PILOT_SERIES = frozenset({'fed-assets', 'sofr', 'effr', 'sofr-effr-spread', 'fed-repo'})
 ACTIVE_SERIES = PILOT_SERIES | frozenset({
@@ -27,7 +27,7 @@ ACTIVE_SERIES = PILOT_SERIES | frozenset({
     'reserve-assets-ratio', 'treasury-account', 'reverse-repo', 'discount-window',
     'swap-line', 'fima-repo', 'bank-loans', 'lending-standards', 'treasury-yield-chg',
     'bond-issuance', 'treasury-bond-issuance', 'corporate-bond-issuance',
-    'credit-spreads-ig', 'credit-spreads-hy', 'vix',
+    'credit-spreads-ig', 'credit-spreads-hy', 'vix', 'move', 'dollar-index',
 })
 # Conservative calendar-day diagnostics, not release-time guarantees or rejection
 # rules. These tolerate weekends, holidays and ordinary provider ingestion lag.
@@ -94,6 +94,8 @@ POLICIES = {
     'credit-spreads-ig': SeriesPolicy('automatic', 'fred-observations', 'source-daily-close', 'lin'),
     'credit-spreads-hy': SeriesPolicy('automatic', 'fred-observations', 'source-daily-close', 'lin'),
     'corporate-bond-issuance': SeriesPolicy('manual', 'manual-csv', 'month-end'),
+    'move': SeriesPolicy('manual', 'manual-csv', 'source-daily-level'),
+    'dollar-index': SeriesPolicy('manual', 'manual-csv', 'source-daily-level'),
     'vix': SeriesPolicy('automatic', 'fred-observations', 'source-daily-close', 'lin'),
 }
 COLLECTION_SERIES = frozenset(key for key in ACTIVE_SERIES if POLICIES[key].method != 'manual')

@@ -172,7 +172,7 @@ After that commit, `python scripts/check.py` assembles all 24 active series offl
 Policy version 7 adds the Cboe VIX index after the two ICE BofA credit-spread series,
 without changing the v2 snapshot format. Policy versions 4–6 remain accepted for
 exact-byte rollback of their published snapshots. Old required source notices are
-preserved. Treasury bid–ask remains inactive, and iFind/price impact still await
-definitions. See the
+preserved. Policy version 8 adds the Wind MOVE and USDX daily histories and
+supports rollback to version 7. Treasury bid–ask and price impact remain inactive. See the
 [review and evidence](source-review-slice-6.md). Hosted first-deployment and live
 rollback/recovery acceptance remain pending; local Git rehearsals do not replace them.

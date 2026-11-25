@@ -43,6 +43,14 @@ def notices_for(identifier, year):
                  'Maintainer confirmed ICE BofA index redistribution permission on 2026-11-18. '
                  'FRED supplies a rolling three-year history for this series.',
                  'url': f'https://fred.stlouisfed.org/series/{code}'}]
+    wind_indices = {
+        'move': ('ICE BofA MOVE Index', 'C7536898', 'move-index'),
+        'dollar-index': ('ICE U.S. Dollar Index', 'M0000271', 'currency-indices'),
+    }
+    if identifier in wind_indices:
+        title, code, product = wind_indices[identifier]
+        return [{'text': f'{title} · ICE Data Indices · Wind EDB {code}',
+                 'url': f'https://developer.ice.com/fixed-income-data-services/catalog/ice-data-indices-{product}'}]
     if identifier == 'vix':
         return [{'text': 'Source: Cboe Volatility Index (VIX), VIXCLS; distributed by FRED. '
                  'Copyright, Chicago Board Options Exchange, Inc. Maintainer confirmed Cboe VIX '
