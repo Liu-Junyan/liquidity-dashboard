@@ -11,9 +11,9 @@ from pathlib import Path
 if not __package__:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from scripts.artifacts import promote_snapshot, validate_snapshot_destination
+from scripts.artifacts import RECORD, promote_snapshot, validate_snapshot_destination
 from scripts.catalog import build_production_catalog
-from scripts.collect import identity, validate_cached
+from scripts.collect import identity, revision_counts, validate_cached
 from scripts.contracts import require, utc_time, iso_date, validate_snapshot, validate_reference
 from scripts.derive import derive
 from scripts.import_manual import git, import_manual, validate_owner
@@ -107,7 +107,30 @@ def validate_source_dates(points, rule):
         require(len({day.day for day in dates}) <= 1, 'Inconsistent source day-of-month')
 
 
-def assemble(repo=ROOT, *, selected=ACTIVE_SERIES, now=None, manual=None):
+def release_revisions(repo, base_commit, normalized):
+    # The snapshot in the working tree can be a local preview. Read the manifest
+    # from the commit that last recorded a publication on this branch.
+    release = git(repo, 'log', '-1', '--first-parent', '--format=%H', base_commit, '--', RECORD).strip()
+    previous, snapshot_id = {}, None
+    if release:
+        record = json.loads(git(repo, 'show', f'{release}:{RECORD}'))
+        path = 'data/snapshot/manifest.json'
+        data = git(repo, 'show', f'{release}:{path}')
+        require(hashlib.sha256(data.encode()).hexdigest() == record['artifactHashes'][path],
+                'Revision baseline manifest differs from its publication record')
+        manifest = json.loads(data)
+        snapshot_id = record['snapshotId']
+        require(manifest['snapshotId'] == snapshot_id, 'Revision baseline snapshot identity differs')
+        previous = manifest['normalizedInputs']
+    totals = dict.fromkeys(('added', 'revised', 'removed'), 0)
+    for identifier in previous.keys() | normalized.keys():
+        changes = revision_counts(previous.get(identifier, []), normalized.get(identifier, []))
+        for key, count in changes.items():
+            totals[key] += count
+    return snapshot_id, totals
+
+
+def assemble(repo=ROOT, *, selected=ACTIVE_SERIES, now=None, manual=None, baseline_commit=None):
     repo = Path(repo)
     registry = load_registry(repo / 'data/registry.csv')
     reviews = json.loads((repo / 'data/source-reviews.json').read_text(encoding='utf-8'))
@@ -116,16 +139,11 @@ def assemble(repo=ROOT, *, selected=ACTIVE_SERIES, now=None, manual=None):
     utc_time(now)
     commit = git(repo, 'rev-parse', 'HEAD').strip()
     normalized, histories, provenance, outcomes, diagnostics = {}, {}, {}, {}, {}
-    revisions = dict.fromkeys(('added', 'revised', 'removed'), 0)
     manual_ids = [key for key in order if POLICIES[key].method == 'manual']
     if manual is None and manual_ids:
         manual = import_manual(repo, revision=commit)
     if manual is not None:
         require(manual['sourceInputCommit'] == commit, 'Manual audit must match the committed assembly input')
-        for audit in manual['audit']:
-            for identifier in manual_ids:
-                for key in revisions:
-                    revisions[key] += len(audit['changes'].get(identifier, {}).get(key, []))
     for identifier in order:
         entry, policy = registry['series'][identifier], POLICIES[identifier]
         common = {'specHash': specification_hash(entry), 'method': policy.method,
@@ -155,10 +173,9 @@ def assemble(repo=ROOT, *, selected=ACTIVE_SERIES, now=None, manual=None):
                 'providerUnits': record['metadata']['units'] if record['metadata'] else entry['source_unit'],
                 'requestParameters': record['requestParameters'], 'transformation': policy.request_units}
             diagnostics[identifier] = {key: record.get(key) for key in ('error', 'freshness', 'revisionSummary')}
-            for key in revisions:
+            for key in ('added', 'revised', 'removed'):
                 count = record['revisionSummary'][key]
                 require(type(count) is int and count >= 0, 'Invalid automatic revision count')
-                revisions[key] += count
         else:
             require(identifier in manual['series'], f'{identifier}: committed manual input required')
             record = manual['series'][identifier]
@@ -190,11 +207,12 @@ def assemble(repo=ROOT, *, selected=ACTIVE_SERIES, now=None, manual=None):
     catalog, series = build_production_catalog(registry, categories, histories, reviews, now, outcomes)
     source_hashes, modified = source_state(repo, commit)
     observations = {'schemaVersion': 2, 'series': series}
+    baseline_id, revisions = release_revisions(repo, baseline_commit or commit, normalized)
     manifest = {'schemaVersion': 2, 'generatedAt': now, 'sourceInputCommit': commit,
         'sourceFileHashes': source_hashes, 'modifiedSourceFiles': modified,
         'policyVersion': POLICY_VERSION, 'inputHashes': {key: content_hash(value) for key, value in normalized.items()},
         'normalizedInputs': normalized, 'provenance': provenance, 'outcomes': outcomes,
-        'revisionSummary': revisions, 'diagnostics': diagnostics}
+        'revisionBaselineSnapshotId': baseline_id, 'revisionSummary': revisions, 'diagnostics': diagnostics}
     documents = (catalog, observations, manifest)
     snapshot_id = snapshot_identity(documents)
     for document in documents:

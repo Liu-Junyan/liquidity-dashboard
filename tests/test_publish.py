@@ -73,8 +73,47 @@ class PublicationTests(unittest.TestCase):
         public = json.loads((self.repo / 'dist/data/release.json').read_text())
         self.assertEqual(public['artifactCommit'], result['artifact'])
         self.assertEqual(public['snapshotId'], record['snapshotId'])
+        self.assertIn('0 added, 0 revised, 0 removed (reused snapshot)', result['summary'])
         release.validate_public_tree(self.repo / 'dist')
         self.assertEqual(git(self.repo, 'status', '--porcelain'), '')
+
+    def test_release_counts_compare_manual_and_automatic_inputs_to_one_snapshot(self):
+        first = release.prepare(self.repo)
+        manifest = release.read_snapshot(self.repo)[2]
+        self.assertIsNone(manifest['revisionBaselineSnapshotId'])
+        initial_rows = sum(len(points) for points in manifest['normalizedInputs'].values())
+        self.assertEqual(manifest['revisionSummary'], {'added': initial_rows, 'revised': 0, 'removed': 0})
+        self.commit('First publication')
+
+        path = self.repo / 'data/manual/bond-issuance.csv'
+        with path.open('a') as csv:
+            csv.write('2020-02-29,11\n')
+        client = SavedInputClient()
+        fetch = client.fetch
+
+        def corrected_sofr(entry, policy):
+            result = fetch(entry, policy)
+            if entry['indicator_id'] == 'sofr':
+                result['observations'][0]['value'] = 4.2
+            return result
+
+        with patch.object(client, 'fetch', side_effect=corrected_sofr):
+            refresh(self.repo, client, now=self.later_time)
+            self.commit('Append manual date and save corrected SOFR')
+            second = release.prepare(self.repo, mode='refresh', client=client)
+        manifest = release.read_snapshot(self.repo)[2]
+        self.assertEqual(manifest['revisionBaselineSnapshotId'], first['snapshotId'])
+        self.assertEqual(manifest['diagnostics']['sofr']['revisionSummary']['revised'], 0)
+        self.assertEqual(manifest['revisionSummary'], {'added': 1, 'revised': 1, 'removed': 0})
+        self.commit('Second publication')
+        self.assertEqual(release.prepare(self.repo), second)
+
+        (self.repo / 'release-note.txt').write_text('Publish the same inputs again.')
+        self.commit('Source-only change')
+        release.prepare(self.repo)
+        manifest = release.read_snapshot(self.repo)[2]
+        self.assertEqual(manifest['revisionBaselineSnapshotId'], second['snapshotId'])
+        self.assertEqual(manifest['revisionSummary'], {'added': 0, 'revised': 0, 'removed': 0})
 
     def test_fresh_and_reused_publications_each_audit_manual_inputs_once(self):
         with patch('scripts.release.import_manual', wraps=release.import_manual) as audit, \

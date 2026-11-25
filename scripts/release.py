@@ -10,7 +10,7 @@ from pathlib import Path
 if not __package__:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from scripts.artifacts import promote_snapshot
+from scripts.artifacts import RECORD, promote_snapshot
 from scripts.assemble import assemble, validate_assembled_snapshot
 from scripts.collect import refresh, load_api_key
 from scripts.contracts import require
@@ -19,7 +19,6 @@ from scripts.policies import ACTIVE_SERIES, POLICIES
 from scripts.providers.fred import FredClient
 from scripts.registry import ROOT
 
-RECORD = 'data/publication.json'
 GENERATED = ('data/automatic', 'data/snapshot', RECORD)
 SHA = re.compile(r'[0-9a-f]{40}\Z')
 PUBLIC_FILES = {
@@ -96,7 +95,7 @@ def reusable_record(repo, *, manual=None):
         require(documents[2]['sourceInputCommit'] == base, 'Snapshot source commit differs from publication base')
         # Recompute against saved inputs, including manual audits, without changing
         # the original timestamp/base identity. This also detects forged hashes.
-        expected = assemble(repo, now=documents[2]['generatedAt'], manual=manual)
+        expected = assemble(repo, now=documents[2]['generatedAt'], manual=manual, baseline_commit=base)
         expected[2]['sourceInputCommit'] = base
         for actual, candidate in zip(documents, expected):
             require({key: value for key, value in actual.items() if key != 'snapshotId'} ==
@@ -154,13 +153,19 @@ def stamp_output(repo=ROOT):
     return release
 
 
-def summary(repo, record, artifact, delivery, *, manifest=None):
+def summary(repo, record, artifact, delivery, *, manifest=None, reused=False):
     if manifest is None:
         manifest = read_snapshot(repo)[2]
     lines = ['## Production candidate', '', f'- Result: {delivery}', f'- Artifact commit: `{artifact}`',
              f'- Snapshot: `{record["snapshotId"]}`', f'- Mode: {record["mode"]}']
     if record['restoredFrom']:
         lines.append(f'- Restored from: `{record["restoredFrom"]}` (no collection)')
+    elif reused:
+        lines.append('- Input changes this run: 0 added, 0 revised, 0 removed (reused snapshot)')
+    else:
+        changes = manifest['revisionSummary']
+        lines.append(f'- Input changes this run: {changes["added"]} added, '
+                     f'{changes["revised"]} revised, {changes["removed"]} removed')
     lines += ['', '| Source | Outcome | Latest observation | Freshness |', '| --- | --- | --- | --- |']
     warnings = []
     for identifier, outcome in manifest['outcomes'].items():

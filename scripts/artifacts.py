@@ -7,6 +7,7 @@ import tempfile
 from pathlib import Path
 
 SNAPSHOT_FILES = ('catalog.json', 'observations.json', 'manifest.json')
+RECORD = 'data/publication.json'
 
 
 def validate_snapshot_destination(output):

@@ -188,11 +188,12 @@ def publish(repo=ROOT, *, branch='main', mode='publish', rollback=None, delivery
                         report = summary(work, record, artifact, f'Awaiting merge: {pr}')
                         return {'deploy': False, 'artifact': artifact, 'summary': report, 'pr': pr}
                 if remote_head(repo, branch) != artifact:
-                    report = summary(work, record, artifact, 'Superseded; deployment skipped')
+                    report = summary(work, record, artifact, 'Superseded; deployment skipped', reused=artifact == base)
                     return {'deploy': False, 'artifact': artifact, 'summary': report}
                 stage_output(repo, work / 'dist')
                 return {'deploy': True, 'artifact': artifact,
-                        'summary': summary(work, record, artifact, 'Validated artifact ready for Pages')}
+                        'summary': summary(work, record, artifact, 'Validated artifact ready for Pages',
+                                           reused=artifact == base)}
             finally:
                 git(repo, 'worktree', 'remove', '--force', str(work))
     raise ValueError('Default branch kept advancing; no stale artifact was published. Rerun the workflow.')
