@@ -36,6 +36,7 @@ def remote_head(repo, branch):
 
 
 def verify_candidate(repo):
+    """Run the offline checks and leave the tested production site in dist/."""
     env = {key: value for key, value in os.environ.items()
            if key not in {'FRED_API_KEY', 'GITHUB_TOKEN', 'GH_TOKEN'}}
     run(repo, sys.executable, 'scripts/check.py', '--snapshot', str(repo / 'data/snapshot'), env=env)
@@ -162,7 +163,6 @@ def publish(repo=ROOT, *, branch='main', mode='publish', rollback=None, delivery
                         'user.email=41898282+github-actions[bot]@users.noreply.github.com',
                         'commit', '-m', f'data: {record["mode"]} production snapshot')
                 artifact = git(work, 'rev-parse', 'HEAD').strip()
-                run(work, sys.executable, 'scripts/build.py', '--mode', 'production')
                 run(work, sys.executable, 'scripts/release.py', 'stamp')
                 if remote_head(repo, branch) != base:
                     print('Default branch advanced; discarding candidate and reassembling.', flush=True)

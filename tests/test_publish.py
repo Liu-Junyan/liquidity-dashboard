@@ -2,6 +2,7 @@
 import json
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 from datetime import datetime, timedelta, timezone
@@ -13,6 +14,11 @@ from scripts.collect import refresh
 from scripts.import_manual import git
 from scripts.registry import ROOT
 from test_assemble import SavedInputClient
+
+
+def build_candidate(repo):
+    # Publication tests exercise real candidate builds without recursively running the test suite.
+    publish.run(repo, sys.executable, 'scripts/build.py', '--mode', 'production')
 
 
 class PublicationTests(unittest.TestCase):
@@ -51,8 +57,8 @@ class PublicationTests(unittest.TestCase):
         git(self.repo, 'commit', '-m', message)
         return git(self.repo, 'rev-parse', 'HEAD').strip()
 
-    def publish(self, **options):
-        return publish.publish(self.repo, verify=lambda repo: release.read_snapshot(repo), **options)
+    def publish(self, *, verify=build_candidate, **options):
+        return publish.publish(self.repo, verify=verify, **options)
 
     def current(self):
         return publish.remote_head(self.repo, 'main')
@@ -76,6 +82,31 @@ class PublicationTests(unittest.TestCase):
         self.assertIn('0 added, 0 revised, 0 removed (reused snapshot)', result['summary'])
         release.validate_public_tree(self.repo / 'dist')
         self.assertEqual(git(self.repo, 'status', '--porcelain'), '')
+
+    def test_fresh_publish_stamps_and_stages_the_single_checked_build(self):
+        base = self.current()
+        checked = {}
+
+        def verify(repo):
+            build_candidate(repo)
+            output = repo / 'dist'
+            release.validate_public_tree(output, stamped=False)
+            checked.update({path.relative_to(output): path.read_bytes()
+                            for path in output.rglob('*') if path.is_file()})
+
+        with patch.object(publish, 'run', wraps=publish.run) as run:
+            result = self.publish(verify=verify)
+        builds = [call for call in run.call_args_list if 'scripts/build.py' in call.args]
+        self.assertEqual(len(builds), 1)
+        self.assertTrue(result['deploy'])
+        self.assertNotEqual(result['artifact'], base)
+        self.assertEqual(result['artifact'], self.current())
+        output = self.repo / 'dist'
+        release.validate_public_tree(output)
+        self.assertEqual(json.loads((output / 'data/release.json').read_bytes())['artifactCommit'],
+                         result['artifact'])
+        for path, content in checked.items():
+            self.assertEqual((output / path).read_bytes(), content, str(path))
 
     def test_release_counts_compare_manual_and_automatic_inputs_to_one_snapshot(self):
         first = release.prepare(self.repo)
@@ -140,7 +171,7 @@ class PublicationTests(unittest.TestCase):
         calls = []
 
         def advance(repo):
-            release.read_snapshot(repo)
+            build_candidate(repo)
             calls.append(repo)
             if len(calls) == 1:
                 categories = self.repo / 'data/categories.json'
@@ -182,6 +213,7 @@ class PublicationTests(unittest.TestCase):
         (output / 'previous').write_text('Prior deployment')
 
         def advance(repo):
+            build_candidate(repo)
             path = self.repo / 'data/categories.json'
             path.write_text(path.read_text() + '\n')
             self.commit('New input')

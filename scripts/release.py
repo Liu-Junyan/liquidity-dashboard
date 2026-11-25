@@ -129,6 +129,7 @@ def prepare(repo=ROOT, *, mode='publish', client=None):
 
 def validate_public_tree(directory, *, stamped=True):
     directory = Path(directory)
+    require(directory.is_dir() and not directory.is_symlink(), 'Invalid public artifact directory')
     paths = list(directory.rglob('*'))
     require(not any(path.is_symlink() for path in paths), 'Public artifact cannot contain symlinks')
     names = {path.relative_to(directory).as_posix() for path in paths if path.is_file()}
@@ -142,6 +143,7 @@ def stamp_output(repo=ROOT):
     documents = read_snapshot(repo)
     record = json.loads((repo / RECORD).read_text())
     require(record['artifactHashes'] == artifact_hashes(repo), 'Artifact changed after validation')
+    validate_public_tree(repo / 'dist', stamped=False)
     for name in ('catalog', 'observations', 'manifest'):
         require((repo / f'dist/data/{name}.json').read_bytes() ==
                 (repo / f'data/snapshot/{name}.json').read_bytes(), 'Build differs from committed snapshot')
