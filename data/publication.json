@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "mode": "publish",
-  "baseCommit": "9615481f937033249f5f99c279149d8c7604797f",
-  "snapshotId": "production-9f4bd9d9790fa366ca66f676c30cfe75181e1c5bbc9125c8967357a5ba4243f1",
+  "baseCommit": "5ee3fa7d29cfe949942c342c2df8f4ec955d41d7",
+  "snapshotId": "production-5a04844827117afe3eb8359af3c764e19bd9e9a28f839dc7b17b3440c4eff760",
   "restoredFrom": null,
   "artifactHashes": {
     "data/automatic/bank-loans.json": "210b566bd7b1ae0548342d77925bdfe7175730fda2b16344bc22bc8cace9e8a1",
@@ -23,8 +23,8 @@
     "data/automatic/treasury-account.json": "0cc254b73b1610b9a3c4dbcff1023d4c20649ed65382db04364259fbf08a2183",
     "data/automatic/treasury-yield-chg.json": "d35c240fc45f443b9abaad52adc80aca1662394b09927d8b3388b9ac79301790",
     "data/automatic/vix.json": "9732ee3a0c43fb8b701f11a8e352de368c13a833b14eab4a1ed0a70667618b20",
-    "data/snapshot/catalog.json": "46d2f9652ca6b768b9446ffd89a14ab068cf875fd6b4bd773102b2317a643428",
-    "data/snapshot/manifest.json": "9c0ed761e33eca1204453236903796b10de49f87a110da943b24a81978212d77",
-    "data/snapshot/observations.json": "f520ed0c02c0779b2f9529e88fe4d5e9b873d33a9a3d33a877a4bbf4202a60d7"
+    "data/snapshot/catalog.json": "54cdf56c465df51c68dfd852302ba6723a996e74f534ad2077f92afb05764596",
+    "data/snapshot/manifest.json": "bf79244c8cc1ae4ba037e2a9e8a0ae3c9482d9b1323c5c82697e809e4511a7fa",
+    "data/snapshot/observations.json": "843850bc1a9716e465feb25eb69713f558a8f4a1161f30d6d184d429157b363a"
   }
 }
