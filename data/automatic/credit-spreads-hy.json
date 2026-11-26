@@ -3203,21 +3203,21 @@
   },
   "sourceHash": "21f2398f3419ba279fe093e33f78e0db5b60074c7391d7ff247b72bada2384f8",
   "revisionSummary": {
-    "added": 1,
+    "added": 0,
     "removed": 0,
     "revised": 0
   },
   "error": null,
   "outcome": {
-    "status": "updated",
+    "status": "unchanged",
     "latestObservationDate": "2026-11-24",
-    "lastAttempt": "2026-11-25T17:59:06.621967Z",
-    "lastSuccessfulCheck": "2026-11-25T17:59:06.621967Z",
+    "lastAttempt": "2026-11-26T17:43:59.957198Z",
+    "lastSuccessfulCheck": "2026-11-26T17:43:59.957198Z",
     "lastDataChange": "2026-11-25T17:59:06.621967Z"
   },
   "freshness": {
     "latestNumericDate": "2026-11-24",
-    "ageDays": 1,
+    "ageDays": 2,
     "maxAgeDays": 7,
     "status": "current"
   }

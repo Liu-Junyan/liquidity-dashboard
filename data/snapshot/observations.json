@@ -49785,6 +49785,10 @@
       {
         "date": "2026-11-24",
         "value": 0.301
+      },
+      {
+        "date": "2026-11-25",
+        "value": 0.3
       }
     ],
     "discount-window": [
@@ -70945,6 +70949,10 @@
       {
         "date": "2026-11-24",
         "value": 0.002
+      },
+      {
+        "date": "2026-11-25",
+        "value": 0.0
       }
     ],
     "dollar-index": [
@@ -143302,5 +143310,5 @@
     "bid-ask-spread": [],
     "price-impact": []
   },
-  "snapshotId": "production-f37e7305ff1a54c79769474321ae1613edccb2b9f79b8291a53473b16ed98cbf"
+  "snapshotId": "production-b28435ca7cc107b19ee76e6100c0a2ed0ff9ba0f9c0c67189b1361c324ebd699"
 }
