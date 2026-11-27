@@ -17641,6 +17641,14 @@
     {
       "date": "2026-11-24",
       "value": 26.36
+    },
+    {
+      "date": "2026-11-25",
+      "value": 28.29
+    },
+    {
+      "date": "2026-11-26",
+      "value": 26.8
     }
   ],
   "metadata": {
@@ -17649,7 +17657,7 @@
     "frequency_short": "D",
     "seasonal_adjustment_short": "NSA",
     "observation_start": "1990-01-02",
-    "observation_end": "2026-11-24"
+    "observation_end": "2026-11-26"
   },
   "requestParameters": {
     "series_id": "VIXCLS",
@@ -17661,23 +17669,23 @@
     "limit": 100000,
     "offset": 0
   },
-  "sourceHash": "5937acf9ad4bb41a7110e2570dfa0cdd7a976797339c898b1ce3420eccf95fff",
+  "sourceHash": "e97cb77c0ca9d7a488500574cb4223a0c2385543950dbc6eaf782d61e002bc9f",
   "revisionSummary": {
-    "added": 0,
+    "added": 2,
     "removed": 0,
     "revised": 0
   },
   "error": null,
   "outcome": {
-    "status": "unchanged",
-    "latestObservationDate": "2026-11-24",
-    "lastAttempt": "2026-11-26T17:43:59.957198Z",
-    "lastSuccessfulCheck": "2026-11-26T17:43:59.957198Z",
-    "lastDataChange": "2026-11-25T17:59:06.621967Z"
+    "status": "updated",
+    "latestObservationDate": "2026-11-26",
+    "lastAttempt": "2026-11-27T17:28:36.743979Z",
+    "lastSuccessfulCheck": "2026-11-27T17:28:36.743979Z",
+    "lastDataChange": "2026-11-27T17:28:36.743979Z"
   },
   "freshness": {
-    "latestNumericDate": "2026-11-24",
-    "ageDays": 2,
+    "latestNumericDate": "2026-11-26",
+    "ageDays": 1,
     "maxAgeDays": 7,
     "status": "current"
   }

@@ -3211,13 +3211,13 @@
   "outcome": {
     "status": "unchanged",
     "latestObservationDate": "2026-11-24",
-    "lastAttempt": "2026-11-26T17:43:59.957198Z",
-    "lastSuccessfulCheck": "2026-11-26T17:43:59.957198Z",
+    "lastAttempt": "2026-11-27T17:28:36.743979Z",
+    "lastSuccessfulCheck": "2026-11-27T17:28:36.743979Z",
     "lastDataChange": "2026-11-25T17:59:06.621967Z"
   },
   "freshness": {
     "latestNumericDate": "2026-11-24",
-    "ageDays": 2,
+    "ageDays": 3,
     "maxAgeDays": 7,
     "status": "current"
   }

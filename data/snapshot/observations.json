@@ -9025,6 +9025,10 @@
       {
         "date": "2026-11-24",
         "value": 6.0
+      },
+      {
+        "date": "2026-11-25",
+        "value": 7.0
       }
     ],
     "sofr-tail-spread": [
@@ -18050,6 +18054,10 @@
       },
       {
         "date": "2026-11-24",
+        "value": 8.0
+      },
+      {
+        "date": "2026-11-25",
         "value": 8.0
       }
     ],
@@ -125687,6 +125695,14 @@
       {
         "date": "2026-11-24",
         "value": 26.36
+      },
+      {
+        "date": "2026-11-25",
+        "value": 28.29
+      },
+      {
+        "date": "2026-11-26",
+        "value": 26.8
       }
     ],
     "move": [
@@ -143310,5 +143326,5 @@
     "bid-ask-spread": [],
     "price-impact": []
   },
-  "snapshotId": "production-b28435ca7cc107b19ee76e6100c0a2ed0ff9ba0f9c0c67189b1361c324ebd699"
+  "snapshotId": "production-8b882c9bfc4be71751772412b79a2e92f2b96f2fd9e7e51bc8ac5c9346877d81"
 }
