@@ -3533,6 +3533,10 @@
     {
       "date": "2026-11-18",
       "value": 6741452.0
+    },
+    {
+      "date": "2026-11-25",
+      "value": 6732044.0
     }
   ],
   "metadata": {
@@ -3541,7 +3545,7 @@
     "frequency_short": "W",
     "seasonal_adjustment_short": "NSA",
     "observation_start": "2002-12-18",
-    "observation_end": "2026-11-18"
+    "observation_end": "2026-11-25"
   },
   "requestParameters": {
     "series_id": "WALCL",
@@ -3553,23 +3557,23 @@
     "limit": 100000,
     "offset": 0
   },
-  "sourceHash": "5c8cb0327873c3e662bc1343a3efaa73462cfc1d69609ce8d7207029ab625805",
+  "sourceHash": "5e68c56090663e470397808e1a58127d33e60893bf746c87433fe584ed4baf0e",
   "revisionSummary": {
-    "added": 0,
+    "added": 1,
     "removed": 0,
     "revised": 0
   },
   "error": null,
   "outcome": {
-    "status": "unchanged",
-    "latestObservationDate": "2026-11-18",
-    "lastAttempt": "2026-11-27T17:28:36.743979Z",
-    "lastSuccessfulCheck": "2026-11-27T17:28:36.743979Z",
-    "lastDataChange": "2026-11-20T16:10:42.780069Z"
+    "status": "updated",
+    "latestObservationDate": "2026-11-25",
+    "lastAttempt": "2026-11-28T16:11:59.220931Z",
+    "lastSuccessfulCheck": "2026-11-28T16:11:59.220931Z",
+    "lastDataChange": "2026-11-28T16:11:59.220931Z"
   },
   "freshness": {
-    "latestNumericDate": "2026-11-18",
-    "ageDays": 9,
+    "latestNumericDate": "2026-11-25",
+    "ageDays": 3,
     "maxAgeDays": 14,
     "status": "current"
   }

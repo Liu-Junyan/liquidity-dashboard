@@ -3533,6 +3533,10 @@
     {
       "date": "2026-11-18",
       "value": 1.0
+    },
+    {
+      "date": "2026-11-25",
+      "value": 1.0
     }
   ],
   "metadata": {
@@ -3541,7 +3545,7 @@
     "frequency_short": "W",
     "seasonal_adjustment_short": "NSA",
     "observation_start": "2002-12-18",
-    "observation_end": "2026-11-18"
+    "observation_end": "2026-11-25"
   },
   "requestParameters": {
     "series_id": "H41RESPPALGTRFNWW",
@@ -3553,23 +3557,23 @@
     "limit": 100000,
     "offset": 0
   },
-  "sourceHash": "b34af53ad4ed72cfb9d60ec71ea0a5d8b925042fc562152388b747d155aa4c1a",
+  "sourceHash": "b04a77c4600b5a64d400f2e0ce2650d601c5be40e1d7672861654e52a6b55b99",
   "revisionSummary": {
-    "added": 0,
+    "added": 1,
     "removed": 0,
     "revised": 0
   },
   "error": null,
   "outcome": {
-    "status": "unchanged",
-    "latestObservationDate": "2026-11-18",
-    "lastAttempt": "2026-11-27T17:28:36.743979Z",
-    "lastSuccessfulCheck": "2026-11-27T17:28:36.743979Z",
-    "lastDataChange": "2026-11-20T16:10:42.780069Z"
+    "status": "updated",
+    "latestObservationDate": "2026-11-25",
+    "lastAttempt": "2026-11-28T16:11:59.220931Z",
+    "lastSuccessfulCheck": "2026-11-28T16:11:59.220931Z",
+    "lastDataChange": "2026-11-28T16:11:59.220931Z"
   },
   "freshness": {
-    "latestNumericDate": "2026-11-18",
-    "ageDays": 9,
+    "latestNumericDate": "2026-11-25",
+    "ageDays": 3,
     "maxAgeDays": 14,
     "status": "current"
   }

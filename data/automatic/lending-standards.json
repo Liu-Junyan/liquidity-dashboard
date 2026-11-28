@@ -311,13 +311,13 @@
   "outcome": {
     "status": "unchanged",
     "latestObservationDate": "2026-10-01",
-    "lastAttempt": "2026-11-27T17:28:36.743979Z",
-    "lastSuccessfulCheck": "2026-11-27T17:28:36.743979Z",
+    "lastAttempt": "2026-11-28T16:11:59.220931Z",
+    "lastSuccessfulCheck": "2026-11-28T16:11:59.220931Z",
     "lastDataChange": "2026-11-17T07:49:52.018793Z"
   },
   "freshness": {
     "latestNumericDate": "2026-10-01",
-    "ageDays": 57,
+    "ageDays": 58,
     "maxAgeDays": 150,
     "status": "current"
   }

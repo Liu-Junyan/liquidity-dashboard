@@ -3452,83 +3452,87 @@
     },
     {
       "date": "2026-07-01",
-      "value": 13870.2567
+      "value": 13870.2578
     },
     {
       "date": "2026-07-08",
-      "value": 13873.3108
+      "value": 13873.3122
     },
     {
       "date": "2026-07-15",
-      "value": 13915.7234
+      "value": 13915.7217
     },
     {
       "date": "2026-07-22",
-      "value": 13910.4012
+      "value": 13910.4002
     },
     {
       "date": "2026-07-29",
-      "value": 13933.198
+      "value": 13933.2002
     },
     {
       "date": "2026-08-05",
-      "value": 13962.2509
+      "value": 13962.252
     },
     {
       "date": "2026-08-12",
-      "value": 13990.34
+      "value": 13991.4213
     },
     {
       "date": "2026-08-19",
-      "value": 14031.3406
+      "value": 14033.5347
     },
     {
       "date": "2026-08-26",
-      "value": 14050.1802
+      "value": 14053.6262
     },
     {
       "date": "2026-09-02",
-      "value": 14043.8285
+      "value": 14048.1411
     },
     {
       "date": "2026-09-09",
-      "value": 14082.249
+      "value": 14087.8721
     },
     {
       "date": "2026-09-16",
-      "value": 14104.2022
+      "value": 14110.7491
     },
     {
       "date": "2026-09-23",
-      "value": 14116.0384
+      "value": 14123.6874
     },
     {
       "date": "2026-09-30",
-      "value": 14145.8054
+      "value": 14150.2548
     },
     {
       "date": "2026-10-07",
-      "value": 14178.7012
+      "value": 14181.8669
     },
     {
       "date": "2026-10-14",
-      "value": 14205.1679
+      "value": 14207.2581
     },
     {
       "date": "2026-10-21",
-      "value": 14217.6636
+      "value": 14218.7016
     },
     {
       "date": "2026-10-28",
-      "value": 14218.1277
+      "value": 14218.2121
     },
     {
       "date": "2026-11-04",
-      "value": 14225.9883
+      "value": 14227.3447
     },
     {
       "date": "2026-11-11",
-      "value": 14264.2085
+      "value": 14265.5297
+    },
+    {
+      "date": "2026-11-18",
+      "value": 14267.2709
     }
   ],
   "metadata": {
@@ -3537,7 +3541,7 @@
     "frequency_short": "W",
     "seasonal_adjustment_short": "SA",
     "observation_start": "1973-01-03",
-    "observation_end": "2026-11-11"
+    "observation_end": "2026-11-18"
   },
   "requestParameters": {
     "series_id": "TOTLL",
@@ -3549,23 +3553,23 @@
     "limit": 100000,
     "offset": 0
   },
-  "sourceHash": "8307f3cccfb9b65e6123764001a6fefa7b3c26faa8a2940fa0d942dcf041f540",
+  "sourceHash": "56cfda2af2c8d92cd13cd9dd962ae8449b4254e45614e2a1361cce602e544c9b",
   "revisionSummary": {
-    "added": 0,
+    "added": 1,
     "removed": 0,
-    "revised": 0
+    "revised": 20
   },
   "error": null,
   "outcome": {
-    "status": "unchanged",
-    "latestObservationDate": "2026-11-11",
-    "lastAttempt": "2026-11-27T17:28:36.743979Z",
-    "lastSuccessfulCheck": "2026-11-27T17:28:36.743979Z",
-    "lastDataChange": "2026-11-21T15:23:15.125636Z"
+    "status": "updated",
+    "latestObservationDate": "2026-11-18",
+    "lastAttempt": "2026-11-28T16:11:59.220931Z",
+    "lastSuccessfulCheck": "2026-11-28T16:11:59.220931Z",
+    "lastDataChange": "2026-11-28T16:11:59.220931Z"
   },
   "freshness": {
-    "latestNumericDate": "2026-11-11",
-    "ageDays": 16,
+    "latestNumericDate": "2026-11-18",
+    "ageDays": 10,
     "maxAgeDays": 21,
     "status": "current"
   }
