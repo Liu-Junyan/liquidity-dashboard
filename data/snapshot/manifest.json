@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-27T17:28:47.724954Z",
-  "sourceInputCommit": "8635da1136d21813b843ede9aa2c4eac2f7ad4f1",
+  "generatedAt": "2026-11-28T10:13:17.583225Z",
+  "sourceInputCommit": "a751f8ec2f2bcf63a339a4ac6e13f7469a15d165",
   "sourceFileHashes": {
     "data/categories.json": "41b46e91bcbdfef69a4471b6fbdd3af84d6a1aa3ad01e1c09f57d9c20f89620c",
     "data/registry.csv": "b50012137659cb3493d275c3c1ac7a8c4e4d1b63f026674c3463a7620b963d92",
@@ -179282,9 +179282,9 @@
       "lastDataChange": null
     }
   },
-  "revisionBaselineSnapshotId": "production-b28435ca7cc107b19ee76e6100c0a2ed0ff9ba0f9c0c67189b1361c324ebd699",
+  "revisionBaselineSnapshotId": "production-8b882c9bfc4be71751772412b79a2e92f2b96f2fd9e7e51bc8ac5c9346877d81",
   "revisionSummary": {
-    "added": 5,
+    "added": 0,
     "revised": 0,
     "removed": 0
   },
@@ -179542,5 +179542,5 @@
       }
     }
   },
-  "snapshotId": "production-8b882c9bfc4be71751772412b79a2e92f2b96f2fd9e7e51bc8ac5c9346877d81"
+  "snapshotId": "production-d67be7005e5f86654ef39f010bd30210b9cd5812bcd8e61d2af17e368b3cf81b"
 }
